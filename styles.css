@@ -563,7 +563,7 @@ a.step__name:hover { color: var(--cyan); }
   .card--hero { flex-direction: column; gap: 22px; }
   .card--hero .card__id { flex: none; }
   .card--wide { flex-direction: column; gap: 20px; }
-  .card--wide .card__lead { flex: none; width: 100%; max-width: 380px; }
+  .card--wide .card__lead { flex: none; width: 100%; max-width: 320px; }
   .card--wide .card__id { flex: none; }
   .showcase__card { gap: 20px; padding: 22px; }
   .showcase__main { grid-template-columns: 1fr; gap: 22px; }

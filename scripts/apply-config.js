@@ -206,7 +206,7 @@ function cardOf(site) {
       '<span class="card__domain">' + esc(hostname(site.url)) + "</span></span></div>";
   const thumb = site.image && site.span === "full"
     ? '<span class="card__thumb"><img src="' + esc(site.image) + '" alt="' +
-      esc(site.imageAlt || site.name + " 示意图") + '" loading="lazy" decoding="async"></span>'
+      esc(site.imageAlt || site.name + " 示意图") + '" decoding="async"></span>'
     : "";
   const lead = thumb ? '<div class="card__lead">' + idBlock + thumb + "</div>" : idBlock;
   return open +

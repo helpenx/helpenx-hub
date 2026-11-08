@@ -237,7 +237,7 @@
 
     var thumb = site.image && site.span === "full"
       ? '<span class="card__thumb"><img src="' + escapeHtml(site.image) + '" alt="' +
-        escapeHtml(site.imageAlt || site.name + " 示意图") + '" loading="lazy" decoding="async"></span>'
+        escapeHtml(site.imageAlt || site.name + " 示意图") + '" decoding="async"></span>'
       : "";
     var lead = thumb ? '<div class="card__lead">' + idBlock + thumb + "</div>" : idBlock;
 

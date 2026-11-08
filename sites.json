@@ -1,24 +1,24 @@
 {
   "brand": {
     "name": "HelpEnx",
-    "fullName": "HelpEnx 工作台",
-    "tagline": "从剧本到成片、从素材到工具：AIGC 生产、开源项目、在线工具箱、行业演示与技术沉淀，收进同一块面板，一次点击即可进入。",
+    "fullName": "HelpEnx Hub (数字工坊)",
+    "tagline": "从创意到落地、从剧本到成片、从素材到工具：AIGC 生产、开源项目、在线工具箱、行业演示与技术沉淀，在此一触即达。",
     "site": "helpenx.com",
     "github": "https://github.com/neopen"
   },
   "seo": {
-    "title": "HelpEnx 工作台｜短剧 AI 生产 · 开源项目 · 在线工具箱 · 行业演示",
-    "description": "HelpEnx 工作台：短剧 AI 生产编排 Studio、AI 分镜 PenShot、任务队列 NeoTask、在线工具箱 Helpoke、智慧城市与安检/TMS/ERP 行业演示、技术博客。全部服务一次点击直达。",
-    "keywords": ["HelpEnx", "HelpEnx 工作台", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "Python 任务队列", "在线工具箱", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
+    "title": "HelpEnx Hub｜短剧 AI 生产 · 开源项目 · 在线工具箱 · 行业演示",
+    "description": "HelpEnx Hub：短剧 AI 生产编排 Studio、AI 分镜 PenShot、任务队列 NeoTask、在线工具箱 Helpoke、智慧城市与安检/TMS/ERP 行业演示、技术博客。全部服务一次点击直达。",
+    "keywords": ["HelpEnx", "HelpEnx Studio", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "Python 任务队列", "在线工具箱", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
     "url": "https://helpenx.com/",
     "image": "https://helpenx.com/assets/studio-pipeline.svg",
     "imageAlt": "HelpEnx Studio 短剧 AI 生产链路示意图",
-    "name": "HelpEnx 工作台",
+    "name": "HelpEnx Hub",
     "locale": "zh_CN",
     "language": "zh-CN"
   },
   "categories": [
-    { "id": "studio", "name": "AIGC 生产", "shortName": "AIGC 生产" },
+    { "id": "studio", "name": "AIGC Studio", "shortName": "AIGC Studio" },
     { "id": "oss", "name": "开源项目", "shortName": "开源项目" },
     { "id": "tools", "name": "效率工具", "shortName": "效率工具" },
     { "id": "content", "name": "内容与扩展", "shortName": "博客内容" },
@@ -34,7 +34,7 @@
       "status": "live",
       "image": "./assets/studio-pipeline.svg",
       "ctaLabel": "立即体验 AIGC Studio",
-      "tagline": "短剧 AI 生产编排台",
+      "tagline": "AIGC 创意工坊",
       "description": "从创意、剧本到成片的全链路多 Agent 编排：自动完成分集分场、分镜脚本、关键帧、视频片段与配音剪辑，并把角色、场景、道具、模型等数字资产统一沉淀为可复用资产库——换一部剧不必从零重画，跨镜头、跨集保持同一张脸、同一个空间。一致性记忆与自动质检把返工压到最低，整集可一键生成，也可以在任意节点人工介入、用对话直接改写——例如「把第 3 场第 2 镜改成仰拍，时长缩到 4 秒」。",
       "pipeline": ["创意 / 剧本", "分集分场", "分镜脚本", "数字资产 · 角色 / 场景 / 模型", "关键帧", "视频片段", "配音 · 口型 · BGM", "剪辑合成"],
       "features": ["角色 / 场景 / 模型资产库", "多模型路由与降级", "跨镜头跨集一致性", "自动质检与返工", "断点续跑与配额调度", "Tool / MCP / API 开放", "可用率与成本指标"],

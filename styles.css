@@ -103,7 +103,7 @@ body {
 /* ---------- Hero ---------- */
 main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 
-.hero { padding: 46px 0 30px; max-width: 860px; }
+.hero { padding: 46px 0 30px; max-width: 880px; }
 .hero__title {
   font-size: clamp(34px, 5.4vw, 54px);
   font-weight: 700; letter-spacing: -0.02em; line-height: 1.12;
@@ -113,7 +113,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   background: linear-gradient(94deg, var(--cyan) 5%, var(--violet) 95%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.hero__sub { color: var(--text-dim); margin-top: 16px; font-size: 16px; max-width: 860px; }
+.hero__sub { color: var(--text-dim); margin-top: 16px; font-size: 16px; max-width: 880px; }
 .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 
 /* ---------- 页眉搜索 ---------- */

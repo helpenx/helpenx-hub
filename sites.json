@@ -1,27 +1,27 @@
 {
   "brand": {
-    "name": "HelpEnx",
-    "fullName": "HelpEnx Hub (数字工坊)",
+    "name": "HelpEnX",
+    "fullName": "HelpEnX Hub (数字工坊)",
     "tagline": "从创意到落地、从剧本到成片、从素材到工具：AIGC 生产、开源项目、在线工具箱、行业演示与技术沉淀，在此一触即达。",
     "site": "helpenx.com",
     "github": "https://github.com/neopen"
   },
   "seo": {
-    "title": "HelpEnx Hub｜短剧 AI 生产 · 开源项目 · 在线工具箱 · 行业演示",
-    "description": "HelpEnx Hub：短剧 AI 生产编排 Studio、AI 分镜 PenShot、任务队列 NeoTask、在线工具箱 Helpoke、智慧城市与安检/TMS/ERP 行业演示、技术博客。全部服务一次点击直达。",
-    "keywords": ["HelpEnx", "HelpEnx Studio", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "Python 任务队列", "在线工具箱", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
+    "title": "HelpEnX Hub｜短剧 AI 生产 · 开源项目 · 在线工具箱 · 行业演示",
+    "description": "HelpEnX Hub：短剧 AI 生产编排 Studio、AI 分镜 PenShot、任务队列 NeoTask、在线工具箱 Helpoke、智慧城市与安检/TMS/ERP 行业演示、技术博客。全部服务一次点击直达。",
+    "keywords": ["HelpEnX", "HelpEnX Studio", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "Python 任务队列", "在线工具箱", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
     "url": "https://helpenx.com/",
     "image": "https://helpenx.com/assets/studio-pipeline.svg",
-    "imageAlt": "HelpEnx Studio 短剧 AI 生产链路示意图",
-    "name": "HelpEnx Hub",
+    "imageAlt": "HelpEnX Studio 短剧 AI 生产链路示意图",
+    "name": "HelpEnX Hub",
     "locale": "zh_CN",
     "language": "zh-CN"
   },
   "story": {
-    "eyebrow": "AIGC Studio · 定位",
+    "eyebrow": "HelpEnX Studio · 定位",
     "title": "一条从念头到成片的生产线",
     "lead": [
-      "HelpEnx Studio 不是一个单点 AIGC 工具，而是一条把「一句台词、一个画面、一个说不清的情绪」变成可发布成片的生产线。六个环节各自解决一道不可替代的题，串起来才是一整套工序。",
+      "HelpEnX Studio 不是一个单点 AIGC 工具，而是一条把「一句台词、一个画面、一个说不清的情绪」变成可发布成片的生产线。六个环节各自解决一道不可替代的题，串起来才是一整套工序。",
       "每一环都能单独使用，组合起来才是一条流水线——这也是「编排台」与「生成器」的区别：模型会换代，故事的结构与工序不会。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。"
     ],
     "stages": [
@@ -92,7 +92,7 @@
   "sites": [
     {
       "id": "studio",
-      "name": "HelpEnx Studio",
+      "name": "HelpEnX Studio",
       "url": "https://studio.helpenx.com",
       "category": "studio",
       "size": "hero",

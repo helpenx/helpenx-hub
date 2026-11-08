@@ -299,6 +299,70 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 }
 .showcase__bands .card__features { border-top: 0; padding-top: 0; margin-top: 0; }
 
+/* ---------- AIGC Studio 定位与流水线 ---------- */
+.story { padding: 4px 0 46px; }
+.story[hidden] { display: none; }
+/* Studio 卡片嵌在定位引言与流水线之间 */
+.story > .showcase { padding: 0 0 38px; }
+.story__head { max-width: 880px; margin-bottom: 26px; }
+.story__eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12.5px; font-weight: 600; letter-spacing: 0.06em;
+  color: var(--cyan);
+}
+.story__eyebrow::before {
+  content: ""; width: 18px; height: 1px; background: currentColor; opacity: 0.5;
+}
+.story__title {
+  margin: 9px 0 12px;
+  font-size: clamp(22px, 2.6vw, 29px); font-weight: 680;
+  letter-spacing: -0.015em; line-height: 1.3; color: var(--ink);
+}
+.story__lead {
+  margin: 0 0 9px; max-width: 120ch;
+  font-size: 14.5px; line-height: 1.85; color: var(--text-dim);
+}
+.story__lead:last-child { margin-bottom: 0; }
+
+.story__steps { list-style: none; margin: 0; padding: 0; }
+.step {
+  display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 20px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.step:last-child { border-bottom: 1px solid var(--border); }
+.step__num {
+  font-family: var(--mono); font-size: 12.5px; font-weight: 600;
+  color: var(--text-faint); padding-top: 3px; letter-spacing: 0.04em;
+}
+.step__head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.step__name {
+  font-size: 16.5px; font-weight: 650; letter-spacing: 0.01em;
+  color: var(--ink); text-decoration: none;
+}
+a.step__name:hover { color: var(--cyan); }
+.step__cn { font-size: 12.5px; font-weight: 600; color: var(--text-faint); }
+.step__status {
+  margin-left: auto;
+  padding: 2px 9px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 600; white-space: nowrap;
+}
+.step__status--live { color: var(--green); background: rgba(8, 122, 67, 0.08); border: 1px solid rgba(8, 122, 67, 0.2); }
+.step__status--wip { color: var(--amber); background: rgba(150, 101, 10, 0.07); border: 1px solid rgba(150, 101, 10, 0.2); }
+.step__tagline {
+  margin: 9px 0 0;
+  font-size: 14.5px; line-height: 1.72; color: var(--text);
+}
+.step__story {
+  margin: 7px 0 0; max-width: 110ch;
+  font-size: 13.5px; line-height: 1.85; color: var(--text-faint);
+}
+.story__note {
+  margin: 20px 0 0;
+  padding-left: 14px; border-left: 2px solid var(--border);
+  font-size: 13px; line-height: 1.8; color: var(--text-faint);
+}
+
 .board__title {
   display: flex; align-items: center; gap: 14px;
   font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
@@ -361,6 +425,30 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .card--hero .card__id { flex: 0 0 260px; }
 .card--hero .card__name { font-size: 21px; }
 .card--hero .card__desc { -webkit-line-clamp: 4; }
+
+/* 通栏卡：用于被单独强调的服务（如 NeoTask） */
+.card--wide { grid-column: 1 / -1; flex-direction: row; align-items: flex-start; gap: 32px; padding: 26px 30px; }
+.card--wide .card__lead { flex: 0 0 300px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.card--wide .card__id { flex: none; }
+.card--wide .card__name { font-size: 19px; }
+.card--wide .card__desc { -webkit-line-clamp: 4; }
+.card__thumb {
+  display: block; overflow: hidden;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: #f8fafc;
+}
+.card__thumb img { display: block; width: 100%; height: auto; }
+
+/* 未上线服务：灰化、虚线边、不可点击 */
+.card--planned { cursor: default; background: #fbfcfe; border-style: dashed; }
+.card--planned:hover { transform: none; border-color: var(--border); box-shadow: var(--shadow); }
+.card--planned .card__name { color: var(--text-dim); }
+.card__badge {
+  flex: none; padding: 2px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+  color: var(--text-faint); background: rgba(15, 34, 67, 0.05);
+  border: 1px solid var(--border);
+}
 
 .card__id { display: flex; align-items: center; gap: 14px; }
 .card__icon {
@@ -474,12 +562,16 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   .suggest { min-width: 0; }
   .card--hero { flex-direction: column; gap: 22px; }
   .card--hero .card__id { flex: none; }
+  .card--wide { flex-direction: column; gap: 20px; }
+  .card--wide .card__lead { flex: none; width: 100%; max-width: 380px; }
+  .card--wide .card__id { flex: none; }
   .showcase__card { gap: 20px; padding: 22px; }
   .showcase__main { grid-template-columns: 1fr; gap: 22px; }
   .showcase__media { width: 100%; max-width: 360px; }
   .showcase__name { font-size: 21px; }
   .showcase__bands { gap: 14px; padding-top: 18px; }
   .ghlink span { display: none; }
+  .step { grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
 }
 @media (max-width: 680px) {
   main { padding: 0 20px; }
@@ -490,6 +582,10 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   .card--hero { padding: 24px; }
   .card__arrow { top: 22px; right: 20px; }
   .chips { gap: 18px; }
+  .story { padding-bottom: 34px; }
+  .step { grid-template-columns: 1fr; gap: 8px; padding: 18px 0; }
+  .step__num { padding-top: 0; }
+  .step__status { margin-left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

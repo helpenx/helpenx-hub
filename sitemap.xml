@@ -11,12 +11,17 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://task.helpenx.com/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://shot.helpenx.com/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://task.helpenx.com/</loc>
+    <loc>https://clip.helpenx.com/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

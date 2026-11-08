@@ -2,8 +2,9 @@
   "use strict";
 
   var ACCENTS = { studio: "#0a7494", oss: "#6d4bf0", tools: "#087a43", demo: "#4d6484", content: "#96650a" };
+  var PLANNED_ACCENT = "#8b98a9";
   var DEFAULT_ACCENT = "#0a7494";
-  var STATUS_LABEL = { live: "运行中", wip: "开发中", pause: "已暂停", archived: "已归档" };
+  var STATUS_LABEL = { live: "运行中", wip: "规划中", pause: "已暂停", archived: "已归档" };
 
   function el(id) { return document.getElementById(id); }
 
@@ -72,7 +73,7 @@
           { text: String(site.name || "").toLowerCase(), w: 40 },
           { text: String(site.tagline || "").toLowerCase(), w: 26 },
           { text: fieldText(site.keywords, identity), w: 34 },
-          { text: (hostOf(site.url) + " " + String(site.url || "")).toLowerCase(), w: 22 },
+          { text: (hostOf(site.url) + " " + String(site.url || "")).toLowerCase(), w: 22, exactOnly: true },
           { text: categoryName(site.category).toLowerCase(), w: 18 },
           { text: fieldText(site.features, identity), w: 15 },
           { text: fieldText(site.pipeline, identity), w: 13 },
@@ -120,7 +121,8 @@
         if (!f.text) continue;
         if (f.text.indexOf(tok) !== -1) {
           hit = f.w + (j === 0 && f.text.indexOf(tok) === 0 ? 12 : 0);
-        } else if (tok.length >= 3 && isLatin(tok) && isSubsequence(f.text, tok)) {
+        } else if (tok.length >= 3 && isLatin(tok) && f.w >= 13 && !f.exactOnly && isSubsequence(f.text, tok)) {
+          // 模糊子序列只在短字段上生效：长描述和 URL（https、.cn 等）里零散字母几乎能拼出任何查询词
           hit = f.w * 0.5;
         }
         if (hit > best) best = hit;
@@ -200,30 +202,46 @@
     var host = hostOf(site.url);
     var status = site.status || "live";
     var isHero = site.size === "hero" && !query;
+    // 未上线的服务不跳转（地址尚未部署），以灰底 + 规划中标签呈现
+    var planned = status !== "live";
 
-    var card = document.createElement("a");
-    card.className = "card" + (isHero ? " card--hero" : "");
-    card.href = site.url;
-    card.target = "_blank";
-    card.rel = "noopener";
-    card.style.setProperty("--accent", accentFor(site));
+    var card = document.createElement(planned ? "div" : "a");
+    card.className = "card" + (isHero ? " card--hero" : "") +
+      (site.span === "full" ? " card--wide" : "") + (planned ? " card--planned" : "");
+    if (!planned) {
+      card.href = site.url;
+      card.target = "_blank";
+      card.rel = "noopener";
+    }
+    card.style.setProperty("--accent", planned ? PLANNED_ACCENT : accentFor(site));
     card.style.animationDelay = Math.min(index, 8) * 50 + "ms";
 
     var repo = site.repo
       ? '<span class="card__repo">' + GITHUB_ICON + "源码仓库</span>"
       : "";
+    var badge = planned
+      ? '<span class="card__badge">' + (STATUS_LABEL[status] || "规划中") + "</span>"
+      : '<span class="dot dot--' + status + '" title="' + STATUS_LABEL[status] + '"></span>';
 
-    card.innerHTML =
+    var idBlock =
       '<div class="card__id">' +
         '<span class="card__icon" aria-hidden="true">' + iconGlyph(site) + "</span>" +
         '<span class="card__idtext">' +
           '<span class="card__titlerow">' +
             '<span class="card__name">' + highlight(site.name, query) + "</span>" +
-            '<span class="dot dot--' + status + '" title="' + STATUS_LABEL[status] + '"></span>' +
+            badge +
           "</span>" +
           '<span class="card__domain">' + highlight(host, query) + "</span>" +
         "</span>" +
-      "</div>" +
+      "</div>";
+
+    var thumb = site.image && site.span === "full"
+      ? '<span class="card__thumb"><img src="' + escapeHtml(site.image) + '" alt="' +
+        escapeHtml(site.imageAlt || site.name + " 示意图") + '" loading="lazy" decoding="async"></span>'
+      : "";
+    var lead = thumb ? '<div class="card__lead">' + idBlock + thumb + "</div>" : idBlock;
+
+    card.innerHTML = lead +
       '<div class="card__main">' +
         '<span class="card__tagline">' + highlight(site.tagline || "", query) + "</span>" +
         flowHtml(site, query) +
@@ -231,7 +249,7 @@
         featuresHtml(site, query) +
         repo +
       "</div>" +
-      '<span class="card__arrow" aria-hidden="true">&#8599;</span>';
+      (planned ? "" : '<span class="card__arrow" aria-hidden="true">&#8599;</span>');
 
     var repoNode = card.querySelector(".card__repo");
     if (repoNode) {
@@ -247,8 +265,12 @@
   function renderShowcase() {
     var box = el("showcase");
     var hs = heroSite();
+    var visible = !!hs && showcaseVisible();
+    // 定位引言与六段流水线只属于 AIGC 类目：按其他类目筛选或搜索时随旗舰卡一起收起
+    var story = el("story");
+    if (story) story.hidden = !visible;
     box.textContent = "";
-    if (!hs || !showcaseVisible()) { box.hidden = true; return; }
+    if (!visible) { box.hidden = true; return; }
     box.hidden = false;
 
     var status = hs.status || "live";
@@ -324,9 +346,10 @@
   function dividerNode(label, note) {
     var d = document.createElement("div");
     d.className = "grid__divider";
+    d.setAttribute("role", "separator");
     d.innerHTML =
-      '<span class="grid__divider-label">' + escapeHtml(label) + "</span>" +
-      '<span class="grid__divider-note">' + escapeHtml(note) + "</span>" +
+      (label ? '<span class="grid__divider-label">' + escapeHtml(label) + "</span>" : "") +
+      (note ? '<span class="grid__divider-note">' + escapeHtml(note) + "</span>" : "") +
       '<span class="grid__divider-rule" aria-hidden="true"></span>';
     return d;
   }
@@ -338,16 +361,19 @@
     var sites = visibleSites();
     if (inShowcase) sites = sites.filter(function (s) { return s.size !== "hero"; });
 
-    // 演示项目与在售服务之间插一条通栏分隔；搜索或已按分类筛选时不插，避免分隔线错位
-    var demoName = categoryName("demo");
-    var demoTotal = sites.filter(function (s) { return s.category === "demo"; }).length;
-    var mayDivide = !state.query && state.category === "all" && demoTotal > 0 && demoTotal < sites.length;
-    var divided = false;
+    // 分隔条来自 sites.json 的 dividerBefore；搜索或已按分类筛选时不插，避免分隔线错位
+    var mayDivide = !state.query && state.category === "all";
 
     sites.forEach(function (site, i) {
-      if (mayDivide && !divided && site.category === "demo") {
-        grid.appendChild(dividerNode(demoName, "行业案例演示 · " + demoTotal));
-        divided = true;
+      var dv = site.dividerBefore;
+      if (mayDivide && dv && i > 0) {
+        var cfg = dv === true ? {} : dv;
+        var note = cfg.note || "";
+        if (cfg.countCategory) {
+          var n = sites.filter(function (s) { return s.category === cfg.countCategory; }).length;
+          note = (note ? note + " · " : "") + n;
+        }
+        grid.appendChild(dividerNode(cfg.label || "", note));
       }
       grid.appendChild(renderCard(site, i));
     });
@@ -658,7 +684,7 @@
     el("year").textContent = new Date().getFullYear();
 
     var live = sites.filter(function (s) { return (s.status || "live") === "live"; }).length;
-    el("header-stat").textContent = live + " / " + sites.length + " 服务在线";
+    el("header-stat").textContent = live + " / " + sites.length + " 服务";
 
     if (brand.github) el("github-link").href = brand.github;
     if (hs) {

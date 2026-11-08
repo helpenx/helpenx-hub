@@ -6,7 +6,7 @@
 <!-- SEO:START 本区块由 sites.json 生成，改配置后运行 node scripts/apply-config.js，请勿手改 -->
 <title>HelpEnx Hub｜短剧 AI 生产 · 开源项目 · 在线工具箱 · 行业演示</title>
 <meta name="description" content="HelpEnx Hub：短剧 AI 生产编排 Studio、AI 分镜 PenShot、任务队列 NeoTask、在线工具箱 Helpoke、智慧城市与安检/TMS/ERP 行业演示、技术博客。全部服务一次点击直达。" />
-<meta name="keywords" content="HelpEnx, HelpEnx Hub, 短剧 AI 生成, AI 分镜, AIGC 生产编排, 数字资产, Python 任务队列, 在线工具箱, 智慧城市, 智慧安检, TMS 运输管理系统, 电商 ERP, 技术博客, 开源项目, HelpEnx Studio, PenShot, NeoTask, Helpoke 工具箱, 余一叶知秋尽, 智慧城市管理平台, 智慧安检运营管理平台, 汇通物流 TMS, Sailfish ERP, 灵犀 AIGC 创作台" />
+<meta name="keywords" content="HelpEnx, HelpEnx Studio, 短剧 AI 生成, AI 分镜, AIGC 生产编排, 数字资产, Python 任务队列, 在线工具箱, 智慧城市, 智慧安检, TMS 运输管理系统, 电商 ERP, 技术博客, 开源项目, NeoTask, PenPlot, PenShot, PenGen, PenDub, PenClip, PenFix, Helpoke 工具箱, 余一叶知秋尽, 智慧城市管理平台" />
 <meta name="author" content="HelpEnx" />
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 <meta name="googlebot" content="index, follow" />
@@ -22,7 +22,7 @@
 <meta property="og:url" content="https://helpenx.com/" />
 <meta property="og:title" content="HelpEnx Hub｜短剧 AI 生产 · 开源项目 · 在线工具箱 · 行业演示" />
 <meta property="og:description" content="HelpEnx Hub：短剧 AI 生产编排 Studio、AI 分镜 PenShot、任务队列 NeoTask、在线工具箱 Helpoke、智慧城市与安检/TMS/ERP 行业演示、技术博客。全部服务一次点击直达。" />
-<meta property="og:site_name" content="HelpEnx Hub" />
+<meta property="og:site_name" content="HelpEnx Hub (数字工坊)" />
 <meta property="og:locale" content="zh_CN" />
 <meta property="og:image" content="https://helpenx.com/assets/studio-pipeline.svg" />
 <meta property="og:image:alt" content="HelpEnx Studio 短剧 AI 生产链路示意图" />
@@ -56,8 +56,8 @@
     },
     {
       "@type": "ItemList",
-      "name": "HelpEnx Hub 服务清单",
-      "numberOfItems": 10,
+      "name": "HelpEnx Hub (数字工坊) 服务清单",
+      "numberOfItems": 15,
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -68,7 +68,7 @@
             "url": "https://studio.helpenx.com",
             "description": "从创意、剧本到成片的全链路多 Agent 编排：自动完成分集分场、分镜脚本、关键帧、视频片段与配音剪辑，并把角色、场景、道具、模型等数字资产统一沉淀为可复用资产库——换一部剧不必从零重画，跨镜头、跨集保持同一张脸、同一个空间。一致性记忆与自动质检把返工压到最低，整集可一键生成，也可以在任意节点人工介入、用对话直接改写——例如「把第 3 场第 2 镜改成仰拍，时长缩到 4 秒」。",
             "keywords": "短剧 AI 生成, AI 短剧, 剧本转视频, AIGC 工作流, 多 Agent 编排, 分镜脚本生成, 数字资产库, 角色一致性, 场景资产, 模型资产, AI 配音, 口型同步, 文生视频, 图生视频, AI 剪辑, 短剧制作",
-            "headline": "短剧 AI 生产编排台",
+            "headline": "AIGC 创意工坊",
             "featureList": [
               "角色 / 场景 / 模型资产库",
               "多模型路由与降级",
@@ -87,18 +87,21 @@
           "position": 2,
           "item": {
             "@type": "WebApplication",
-            "name": "PenShot",
-            "url": "https://shot.helpenx.com",
-            "description": "将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。",
-            "keywords": "AI 分镜, 分镜生成, 剧本拆解, 分场脚本, 镜头语言, 视频提示词, 提示词生成, storyboard, Text to Video, AI 编剧, 开源 Agent",
-            "headline": "AI 分镜生成 Agent",
+            "name": "NeoTask",
+            "url": "https://task.helpenx.com",
+            "description": "先用纯 Python 把后台任务跑起来，需要分布式时再切到 Redis 共享队列——不必从第一天就部署中间件。优先级插队、延迟与 Cron 定时、多 Worker 并发、失败自动重试，任务状态可落在内存、SQLite 或 Redis，并带生命周期事件、进度上报与失败任务回收，适合 AI 生成、视频转码、批量抓取这类长任务。",
+            "keywords": "Python 任务队列, 异步任务, Celery 替代, Redis 队列, 任务调度, 定时任务, 后台任务, 分布式任务, 消息队列, asyncio 并发, 失败重试, Task Queue, Python 开源库",
+            "headline": "Python 异步任务队列",
             "featureList": [
-              "多 Agent 流水线",
-              "一致性记忆",
-              "模型适配",
-              "SDK & API"
+              "优先级插队",
+              "Cron / 延迟任务",
+              "多 Worker 并发",
+              "失败自动重试",
+              "内存 / SQLite / Redis",
+              "分布式锁与节点心跳",
+              "进度与事件上报"
             ],
-            "codeRepository": "https://github.com/neopen/story-shot-agent",
+            "codeRepository": "https://github.com/neopen/neotask",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Web"
           }
@@ -108,25 +111,45 @@
           "position": 3,
           "item": {
             "@type": "WebApplication",
-            "name": "NeoTask",
-            "url": "https://task.helpenx.com",
-            "description": "用几行代码接管后台任务，从单机内存平滑扩展到 Redis 分布式集群，不必再为一条队列单独搭建与运维基础设施。",
-            "keywords": "Python 任务队列, 异步任务, Celery 替代, Redis 队列, 定时任务, 后台任务, 分布式任务, 消息队列, Task Queue, Python 开源库",
-            "headline": "Python 异步任务队列",
+            "name": "PenShot",
+            "url": "https://shot.helpenx.com",
+            "description": "将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。",
+            "keywords": "AI 分镜, 分镜生成, 剧本拆解, 分场脚本, 镜头语言, 视频提示词, 提示词生成, storyboard, Text to Video, AI 编剧, 开源 Agent",
+            "headline": "剧本分镜 · 把文字翻译成镜头",
             "featureList": [
-              "优先级调度",
-              "Cron 定时",
-              "分布式执行",
-              "零外部依赖"
+              "多 Agent 流水线",
+              "一致性记忆",
+              "模型适配",
+              "SDK & API"
             ],
-            "codeRepository": "https://github.com/neopen/neotask",
-            "applicationCategory": "DeveloperApplication",
+            "codeRepository": "https://github.com/neopen/story-shot-agent",
+            "applicationCategory": "MultimediaApplication",
             "operatingSystem": "Web"
           }
         },
         {
           "@type": "ListItem",
           "position": 4,
+          "item": {
+            "@type": "WebApplication",
+            "name": "PenClip",
+            "url": "https://clip.helpenx.com",
+            "description": "把生成的视频片段与同步好的音频按叙事节奏组装成完整作品，处理转场、节奏、时长与镜头顺序，输出可发布的成片。",
+            "keywords": "AI 剪辑, 视频剪辑, 自动成片, 转场, 节奏控制, 镜头排序, 短视频制作",
+            "headline": "视频剪辑 · 按叙事节奏成片",
+            "featureList": [
+              "叙事节奏剪辑",
+              "转场与调色",
+              "镜头顺序编排",
+              "成片导出"
+            ],
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Web"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
           "item": {
             "@type": "WebApplication",
             "name": "Helpoke 工具箱",
@@ -146,7 +169,7 @@
         },
         {
           "@type": "ListItem",
-          "position": 5,
+          "position": 6,
           "item": {
             "@type": "Blog",
             "name": "余一叶知秋尽",
@@ -164,7 +187,7 @@
         },
         {
           "@type": "ListItem",
-          "position": 6,
+          "position": 7,
           "item": {
             "@type": "WebApplication",
             "name": "智慧城市管理平台",
@@ -185,7 +208,7 @@
         },
         {
           "@type": "ListItem",
-          "position": 7,
+          "position": 8,
           "item": {
             "@type": "WebApplication",
             "name": "智慧安检运营管理平台",
@@ -206,7 +229,7 @@
         },
         {
           "@type": "ListItem",
-          "position": 8,
+          "position": 9,
           "item": {
             "@type": "WebApplication",
             "name": "汇通物流 TMS",
@@ -228,7 +251,7 @@
         },
         {
           "@type": "ListItem",
-          "position": 9,
+          "position": 10,
           "item": {
             "@type": "WebApplication",
             "name": "Sailfish ERP",
@@ -248,7 +271,7 @@
         },
         {
           "@type": "ListItem",
-          "position": 10,
+          "position": 11,
           "item": {
             "@type": "WebApplication",
             "name": "灵犀 AIGC 创作台",
@@ -309,6 +332,30 @@
       <path d="M11 3.2c.9 4.6 2.3 6 6.9 6.9-4.6.9-6 2.3-6.9 6.9-.9-4.6-2.3-6-6.9-6.9 4.6-.9 6-2.3 6.9-6.9Z" />
       <path d="M18.4 15.6c.4 1.9 1 2.5 2.9 2.9-1.9.4-2.5 1-2.9 2.9-.4-1.9-1-2.5-2.9-2.9 1.9-.4 2.5-1 2.9-2.9Z" />
     </g>
+    <g id="hx-i-pen" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3Z" />
+      <path d="m13.5 6.5 4 4" />
+    </g>
+    <g id="hx-i-frames" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M8.6 5v14M15.4 5v14" />
+    </g>
+    <g id="hx-i-play" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.4" y="4.6" width="17.2" height="14.8" rx="3" />
+      <path d="M10.2 9.3v5.4l4.6-2.7-4.6-2.7Z" />
+    </g>
+    <g id="hx-i-wave" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 10.2v3.6M8 7.2v9.6M12 4.6v14.8M16 7.6v8.8M20 10.2v3.6" />
+    </g>
+    <g id="hx-i-scissors" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="6.4" cy="18" r="2.4" />
+      <circle cx="6.4" cy="6" r="2.4" />
+      <path d="M8.5 7.4 20 17.4M8.5 16.6 20 6.6" />
+    </g>
+    <g id="hx-i-checkbadge" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="8.6" />
+      <path d="m8.2 12.2 2.5 2.6 5-5.4" />
+    </g>
   </defs>
 </svg>
 <div class="bg-grid" aria-hidden="true"></div>
@@ -359,21 +406,50 @@
     <nav class="chips" id="chips" aria-label="分类筛选"></nav>
   </section>
 
-  <section class="showcase" id="showcase" aria-label="重点产品">
-    <!-- CARDS-HERO:START 本区块由 sites.json 预渲染，供不执行 JS 的爬虫与首屏使用，JS 加载后重绘，请勿手改 -->
-    <article class="showcase__card" style="--accent:#0a7494"><div class="showcase__head"><div class="showcase__idline"><span class="showcase__name">HelpEnx Studio</span><span class="dot dot--live" title="运行中"></span><span class="showcase__domain">studio.helpenx.com</span></div><a class="btn btn-primary" href="https://studio.helpenx.com" target="_blank" rel="noopener">立即体验 AIGC Studio<span class="btn__arrow" aria-hidden="true">→</span></a></div><div class="showcase__main"><div class="showcase__text"><span class="showcase__tagline">短剧 AI 生产编排台</span><p class="showcase__desc">从创意、剧本到成片的全链路多 Agent 编排：自动完成分集分场、分镜脚本、关键帧、视频片段与配音剪辑，并把角色、场景、道具、模型等数字资产统一沉淀为可复用资产库——换一部剧不必从零重画，跨镜头、跨集保持同一张脸、同一个空间。一致性记忆与自动质检把返工压到最低，整集可一键生成，也可以在任意节点人工介入、用对话直接改写——例如「把第 3 场第 2 镜改成仰拍，时长缩到 4 秒」。</p></div><a class="showcase__media" href="https://studio.helpenx.com" target="_blank" rel="noopener"><img src="./assets/studio-pipeline.svg" alt="HelpEnx Studio 生产链路示意"></a></div><div class="showcase__bands"><div class="card__flow"><span class="card__flow-step">创意 / 剧本</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">分集分场</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">分镜脚本</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">数字资产 · 角色 / 场景 / 模型</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">关键帧</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">视频片段</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">配音 · 口型 · BGM</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">剪辑合成</span></div><ul class="card__features"><li>角色 / 场景 / 模型资产库</li><li>多模型路由与降级</li><li>跨镜头跨集一致性</li><li>自动质检与返工</li><li>断点续跑与配额调度</li><li>Tool / MCP / API 开放</li><li>可用率与成本指标</li></ul></div></article>
-    <!-- CARDS-HERO:END -->
+  <section class="story" id="story" aria-labelledby="story-title">
+    <!-- STORY-HEAD:START 本区块由 sites.json 的 story 生成，改配置后运行 node scripts/apply-config.js，请勿手改 -->
+    <div class="story__head">
+      <span class="story__eyebrow">AIGC Studio · 定位</span>
+      <h2 class="story__title" id="story-title">一条从念头到成片的生产线</h2>
+      <p class="story__lead">HelpEnx Studio 不是一个单点 AIGC 工具，而是一条把「一句台词、一个画面、一个说不清的情绪」变成可发布成片的生产线。六个环节各自解决一道不可替代的题，串起来才是一整套工序。</p>
+      <p class="story__lead">每一环都能单独使用，组合起来才是一条流水线——这也是「编排台」与「生成器」的区别：模型会换代，故事的结构与工序不会。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。</p>
+    </div>
+    <!-- STORY-HEAD:END -->
+
+    <section class="showcase" id="showcase" aria-label="重点产品">
+      <!-- CARDS-HERO:START 本区块由 sites.json 预渲染，供不执行 JS 的爬虫与首屏使用，JS 加载后重绘，请勿手改 -->
+      <article class="showcase__card" style="--accent:#0a7494"><div class="showcase__head"><div class="showcase__idline"><span class="showcase__name">HelpEnx Studio</span><span class="dot dot--live" title="运行中"></span><span class="showcase__domain">studio.helpenx.com</span></div><a class="btn btn-primary" href="https://studio.helpenx.com" target="_blank" rel="noopener">立即体验 AIGC Studio <span class="btn__arrow" aria-hidden="true">→</span></a></div><div class="showcase__main"><div class="showcase__text"><span class="showcase__tagline">AIGC 创意工坊</span><p class="showcase__desc">从创意、剧本到成片的全链路多 Agent 编排：自动完成分集分场、分镜脚本、关键帧、视频片段与配音剪辑，并把角色、场景、道具、模型等数字资产统一沉淀为可复用资产库——换一部剧不必从零重画，跨镜头、跨集保持同一张脸、同一个空间。一致性记忆与自动质检把返工压到最低，整集可一键生成，也可以在任意节点人工介入、用对话直接改写——例如「把第 3 场第 2 镜改成仰拍，时长缩到 4 秒」。</p></div><a class="showcase__media" href="https://studio.helpenx.com" target="_blank" rel="noopener"><img src="./assets/studio-pipeline.svg" alt="HelpEnx Studio 生产链路示意"></a></div><div class="showcase__bands"><div class="card__flow"><span class="card__flow-step">创意 / 剧本</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">分集分场</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">分镜脚本</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">数字资产 · 角色 / 场景 / 模型</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">关键帧</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">视频片段</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">配音 · 口型 · BGM</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">剪辑合成</span></div><ul class="card__features"><li>角色 / 场景 / 模型资产库</li><li>多模型路由与降级</li><li>跨镜头跨集一致性</li><li>自动质检与返工</li><li>断点续跑与配额调度</li><li>Tool / MCP / API 开放</li><li>可用率与成本指标</li></ul></div></article>
+      <!-- CARDS-HERO:END -->
+    </section>
+
+    <!-- STORY-STEPS:START 本区块由 sites.json 的 story 生成，改配置后运行 node scripts/apply-config.js，请勿手改 -->
+    <ol class="story__steps">
+      <li class="step"><span class="step__num" aria-hidden="true">01</span><div class="step__body"><div class="step__head"><span class="step__name">PenPlot</span><span class="step__cn">剧情创作</span><span class="step__status step__status--wip">规划中</span></div><p class="step__tagline">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架。</p><p class="step__story">每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。</p></div></li>
+      <li class="step"><span class="step__num" aria-hidden="true">02</span><div class="step__body"><div class="step__head"><a class="step__name" href="https://shot.helpenx.com" target="_blank" rel="noopener">PenShot</a><span class="step__cn">剧本分镜</span><span class="step__status step__status--live">已上线</span></div><p class="step__tagline">识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表。</p><p class="step__story">剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。</p></div></li>
+      <li class="step"><span class="step__num" aria-hidden="true">03</span><div class="step__body"><div class="step__head"><span class="step__name">PenGen</span><span class="step__cn">视频生成</span><span class="step__status step__status--wip">规划中</span></div><p class="step__tagline">承接分镜表，驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环。</p><p class="step__story">分镜表再精细，也只是图纸。PenGen 把图纸变成会动的画面：每个 shot 在这里被生成、被渲染，被赋予光影和运动。故事写完了、镜头切好了，到这里才第一次开始播放。</p></div></li>
+      <li class="step"><span class="step__num" aria-hidden="true">04</span><div class="step__body"><div class="step__head"><span class="step__name">PenDub</span><span class="step__cn">音频同步</span><span class="step__status step__status--wip">规划中</span></div><p class="step__tagline">配音、音效与背景音乐对齐视频时间线，让每句台词落在该落的画面上。</p><p class="step__story">画面会动之后，视频还是哑的。音频与画面的同步最容易被忽略，又最影响观感：差半秒，观众就觉得「哪里不对」——PenDub 的工作就是让这半秒不存在。</p></div></li>
+      <li class="step"><span class="step__num" aria-hidden="true">05</span><div class="step__body"><div class="step__head"><a class="step__name" href="https://clip.helpenx.com" target="_blank" rel="noopener">PenClip</a><span class="step__cn">视频剪辑</span><span class="step__status step__status--live">已上线</span></div><p class="step__tagline">按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。</p><p class="step__story">素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。</p></div></li>
+      <li class="step"><span class="step__num" aria-hidden="true">06</span><div class="step__body"><div class="step__head"><span class="step__name">PenFix</span><span class="step__cn">质量审核</span><span class="step__status step__status--wip">规划中</span></div><p class="step__tagline">检查画面一致性、音画同步、内容合规与技术指标，标记问题并给出修复建议。</p><p class="step__story">「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。</p></div></li>
+    </ol>
+    <p class="story__note">六个环节各有主页，也由 Studio 编排成一条可复用、可人工介入、可核算成本的工作流。</p>
+    <!-- STORY-STEPS:END -->
   </section>
 
   <section class="board" id="board" aria-live="polite">
     <h2 class="board__title" id="board-title">更多服务</h2>
     <div class="grid" id="grid">
       <!-- CARDS-GRID:START 本区块由 sites.json 预渲染，供不执行 JS 的爬虫与首屏使用，JS 加载后重绘，请勿手改 -->
-      <a class="card" href="https://shot.helpenx.com" target="_blank" rel="noopener" style="--accent:#6d4bf0"><div class="card__id"><span class="card__icon" aria-hidden="true">P</span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenShot</span><span class="dot dot--live" title="运行中"></span></span><span class="card__domain">shot.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">AI 分镜生成 Agent</span><p class="card__desc">将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。</p><ul class="card__features"><li>多 Agent 流水线</li><li>一致性记忆</li><li>模型适配</li><li>SDK &amp; API</li></ul><span class="card__repo">源码仓库</span></div><span class="card__arrow" aria-hidden="true">↗</span></a>
-      <a class="card" href="https://task.helpenx.com" target="_blank" rel="noopener" style="--accent:#6d4bf0"><div class="card__id"><span class="card__icon" aria-hidden="true">N</span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">NeoTask</span><span class="dot dot--live" title="运行中"></span></span><span class="card__domain">task.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">Python 异步任务队列</span><p class="card__desc">用几行代码接管后台任务，从单机内存平滑扩展到 Redis 分布式集群，不必再为一条队列单独搭建与运维基础设施。</p><ul class="card__features"><li>优先级调度</li><li>Cron 定时</li><li>分布式执行</li><li>零外部依赖</li></ul><span class="card__repo">源码仓库</span></div><span class="card__arrow" aria-hidden="true">↗</span></a>
+      <a class="card card--wide" href="https://task.helpenx.com" target="_blank" rel="noopener" style="--accent:#6d4bf0"><div class="card__lead"><div class="card__id"><span class="card__icon" aria-hidden="true">N</span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">NeoTask</span><span class="dot dot--live" title="运行中"></span></span><span class="card__domain">task.helpenx.com</span></span></div><span class="card__thumb"><img src="./assets/neotask-queue.svg" alt="NeoTask 异步任务队列示意：业务代码投递任务、优先级队列、多 Worker 消费与失败退避重试" loading="lazy" decoding="async"></span></div><div class="card__main"><span class="card__tagline">Python 异步任务队列</span><p class="card__desc">先用纯 Python 把后台任务跑起来，需要分布式时再切到 Redis 共享队列——不必从第一天就部署中间件。优先级插队、延迟与 Cron 定时、多 Worker 并发、失败自动重试，任务状态可落在内存、SQLite 或 Redis，并带生命周期事件、进度上报与失败任务回收，适合 AI 生成、视频转码、批量抓取这类长任务。</p><ul class="card__features"><li>优先级插队</li><li>Cron / 延迟任务</li><li>多 Worker 并发</li><li>失败自动重试</li><li>内存 / SQLite / Redis</li><li>分布式锁与节点心跳</li><li>进度与事件上报</li></ul><span class="card__repo">源码仓库</span></div><span class="card__arrow" aria-hidden="true">↗</span></a>
+      <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-pen"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenPlot</span><span class="card__badge">规划中</span></span><span class="card__domain">plot.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">剧情创作 · 从念头到故事线</span><p class="card__desc">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架，让一个模糊的想法变成一条能往下走的故事线。</p><ul class="card__features"><li>故事线梳理</li><li>情节节点打磨</li><li>结构化剧本骨架</li><li>起承转合设计</li></ul></div></div>
+      <a class="card" href="https://shot.helpenx.com" target="_blank" rel="noopener" style="--accent:#0a7494"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-frames"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenShot</span><span class="dot dot--live" title="运行中"></span></span><span class="card__domain">shot.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">剧本分镜 · 把文字翻译成镜头</span><p class="card__desc">将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。</p><ul class="card__features"><li>多 Agent 流水线</li><li>一致性记忆</li><li>模型适配</li><li>SDK &amp; API</li></ul><span class="card__repo">源码仓库</span></div><span class="card__arrow" aria-hidden="true">↗</span></a>
+      <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-play"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenGen</span><span class="card__badge">规划中</span></span><span class="card__domain">gen.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">视频生成 · 把分镜变成画面</span><p class="card__desc">承接分镜表驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环：每个 shot 在这里被生成、渲染，被赋予光影与运动。</p><ul class="card__features"><li>多模型路由</li><li>关键帧生成</li><li>镜头级重生成</li><li>跨镜头一致性</li></ul></div></div>
+      <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-wave"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenDub</span><span class="card__badge">规划中</span></span><span class="card__domain">dub.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">音频同步 · 让画面开口说话</span><p class="card__desc">负责视频的听觉层：配音、音效与背景音乐对齐视频时间线，确保每句台词落在该落的画面上，每个音效踩在该踩的节点上。</p><ul class="card__features"><li>AI 配音</li><li>音效与 BGM</li><li>音画时间线对齐</li><li>口型同步</li></ul></div></div>
+      <a class="card" href="https://clip.helpenx.com" target="_blank" rel="noopener" style="--accent:#0a7494"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-scissors"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenClip</span><span class="dot dot--live" title="运行中"></span></span><span class="card__domain">clip.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">视频剪辑 · 按叙事节奏成片</span><p class="card__desc">把生成的视频片段与同步好的音频按叙事节奏组装成完整作品，处理转场、节奏、时长与镜头顺序，输出可发布的成片。</p><ul class="card__features"><li>叙事节奏剪辑</li><li>转场与调色</li><li>镜头顺序编排</li><li>成片导出</li></ul></div><span class="card__arrow" aria-hidden="true">↗</span></a>
+      <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-checkbadge"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenFix</span><span class="card__badge">规划中</span></span><span class="card__domain">fix.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">质量审核 · 发布前的最后一道关</span><p class="card__desc">逐项检查画面一致性、音画同步、内容合规与技术指标（分辨率、码率、时长），标记问题并给出修复建议，确保产出达到可发布标准。</p><ul class="card__features"><li>画面一致性检查</li><li>音画同步校验</li><li>内容合规审查</li><li>技术指标检测</li></ul></div></div>
+      <div class="grid__divider" role="separator"><span class="grid__divider-rule" aria-hidden="true"></span></div>
       <a class="card" href="https://helpoke.com" target="_blank" rel="noopener" style="--accent:#087a43"><div class="card__id"><span class="card__icon" aria-hidden="true">H</span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">Helpoke 工具箱</span><span class="dot dot--live" title="运行中"></span></span><span class="card__domain">helpoke.com</span></span></div><div class="card__main"><span class="card__tagline">浏览器端在线工具箱</span><p class="card__desc">图片、视频、数据与加解密等常用处理全部在浏览器本地完成，文件不离开你的设备，打开即用、无需注册。</p><ul class="card__features"><li>本地处理</li><li>文件不上传</li><li>无需注册</li><li>离线可用</li></ul></div><span class="card__arrow" aria-hidden="true">↗</span></a>
       <a class="card" href="https://pengline.cn" target="_blank" rel="noopener" style="--accent:#96650a"><div class="card__id"><span class="card__icon" aria-hidden="true">余</span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">余一叶知秋尽</span><span class="dot dot--live" title="运行中"></span></span><span class="card__domain">pengline.cn</span></span></div><div class="card__main"><span class="card__tagline">技术博客</span><p class="card__desc">AI、系统架构与工程实践的第一手记录，把选型过程中的判断依据与踩过的坑，沉淀为可以直接复用的方法与结论。</p><ul class="card__features"><li>源码解析</li><li>RAG 评测</li><li>架构实践</li><li>选型结论</li></ul></div><span class="card__arrow" aria-hidden="true">↗</span></a>
-      <div class="grid__divider"><span class="grid__divider-label">演示项目</span><span class="grid__divider-note">行业案例演示 · 5</span><span class="grid__divider-rule" aria-hidden="true"></span></div>
+      <div class="grid__divider" role="separator"><span class="grid__divider-label">演示项目</span><span class="grid__divider-note">行业案例演示 · 5</span><span class="grid__divider-rule" aria-hidden="true"></span></div>
       <a class="card" href="https://city.pengline.cn" target="_blank" rel="noopener" style="--accent:#4d6484"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-city"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">智慧城市管理平台</span><span class="dot dot--live" title="运行中"></span></span><span class="card__domain">city.pengline.cn</span></span></div><div class="card__main"><span class="card__tagline">城市运行 IOT 演示</span><p class="card__desc">面向城市运行管理的 IOT 演示平台：以物联设备台账与实时数据为基础，把数字城管、综合指挥、决策分析、智慧街面、环卫、市政、排水、照明、停车等 13 个模块汇聚到同一张态势图，支撑多部门协同调度与可视化决策。</p><ul class="card__features"><li>13 个业务模块</li><li>设备接入与台账</li><li>24/7 实时监控</li><li>综合指挥调度</li><li>可视化决策大屏</li></ul></div><span class="card__arrow" aria-hidden="true">↗</span></a>
       <a class="card" href="https://aiot.pengline.cn" target="_blank" rel="noopener" style="--accent:#4d6484"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-shield"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">智慧安检运营管理平台</span><span class="dot dot--live" title="运行中"></span></span><span class="card__domain">aiot.pengline.cn</span></span></div><div class="card__main"><span class="card__tagline">安检作业 AIOT 演示</span><p class="card__desc">覆盖安检作业、集中判图、复检开包、处置交接与通行核验的一体化演示：安检机、安检门、毫米波门、人证对比与探测设备统一接入，人脸识别辅助通行管理，并以告警中心、维保工单、排班与绩效考核支撑日常运营。</p><ul class="card__features"><li>集中判图与复检开包</li><li>多类安检设备接入</li><li>人脸识别通行核验</li><li>告警中心与维保工单</li><li>排班与绩效考核</li></ul></div><span class="card__arrow" aria-hidden="true">↗</span></a>
       <a class="card" href="https://tms.pengline.cn" target="_blank" rel="noopener" style="--accent:#4d6484"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-truck"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">汇通物流 TMS</span><span class="dot dot--live" title="运行中"></span></span><span class="card__domain">tms.pengline.cn</span></span></div><div class="card__main"><span class="card__tagline">运输管理系统演示</span><p class="card__desc">面向物流企业的运输管理演示系统：订单受理、在途跟踪、异常处理与费用结算在同一条流程内闭环，配套运力与车辆调度、按角色划分的数据权限，以及运输与经营指标的实时看板。</p><ul class="card__features"><li>订单与在途跟踪</li><li>异常处理闭环</li><li>费用结算与对账</li><li>运力与车辆调度</li><li>角色权限控制</li><li>实时经营指标</li></ul></div><span class="card__arrow" aria-hidden="true">↗</span></a>
@@ -393,8 +469,9 @@
   <nav class="footnav" aria-label="服务直达">
     <!-- FOOTNAV:START 本区块由 sites.json 生成，改配置后运行 node scripts/apply-config.js，请勿手改 -->
   <a href="https://studio.helpenx.com" target="_blank" rel="noopener">HelpEnx Studio</a>
-  <a href="https://shot.helpenx.com" target="_blank" rel="noopener">PenShot</a>
   <a href="https://task.helpenx.com" target="_blank" rel="noopener">NeoTask</a>
+  <a href="https://shot.helpenx.com" target="_blank" rel="noopener">PenShot</a>
+  <a href="https://clip.helpenx.com" target="_blank" rel="noopener">PenClip</a>
   <a href="https://helpoke.com" target="_blank" rel="noopener">Helpoke 工具箱</a>
   <a href="https://pengline.cn" target="_blank" rel="noopener">余一叶知秋尽</a>
   <a href="https://city.pengline.cn" target="_blank" rel="noopener">智慧城市管理平台</a>
@@ -417,14 +494,14 @@
   "brand": {
     "name": "HelpEnx",
     "fullName": "HelpEnx Hub (数字工坊)",
-    "tagline": "从剧本到成片、从素材到工具：AIGC 生产、开源项目、在线工具箱、行业演示与技术沉淀，收进同一块面板，一次点击即可进入。",
+    "tagline": "从创意到落地、从剧本到成片、从素材到工具：AIGC 生产、开源项目、在线工具箱、行业演示与技术沉淀，在此一触即达。",
     "site": "helpenx.com",
     "github": "https://github.com/neopen"
   },
   "seo": {
     "title": "HelpEnx Hub｜短剧 AI 生产 · 开源项目 · 在线工具箱 · 行业演示",
     "description": "HelpEnx Hub：短剧 AI 生产编排 Studio、AI 分镜 PenShot、任务队列 NeoTask、在线工具箱 Helpoke、智慧城市与安检/TMS/ERP 行业演示、技术博客。全部服务一次点击直达。",
-    "keywords": ["HelpEnx", "HelpEnx Hub", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "Python 任务队列", "在线工具箱", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
+    "keywords": ["HelpEnx", "HelpEnx Studio", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "Python 任务队列", "在线工具箱", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
     "url": "https://helpenx.com/",
     "image": "https://helpenx.com/assets/studio-pipeline.svg",
     "imageAlt": "HelpEnx Studio 短剧 AI 生产链路示意图",
@@ -432,8 +509,73 @@
     "locale": "zh_CN",
     "language": "zh-CN"
   },
+  "story": {
+    "eyebrow": "AIGC Studio · 定位",
+    "title": "一条从念头到成片的生产线",
+    "lead": [
+      "HelpEnx Studio 不是一个单点 AIGC 工具，而是一条把「一句台词、一个画面、一个说不清的情绪」变成可发布成片的生产线。六个环节各自解决一道不可替代的题，串起来才是一整套工序。",
+      "每一环都能单独使用，组合起来才是一条流水线——这也是「编排台」与「生成器」的区别：模型会换代，故事的结构与工序不会。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。"
+    ],
+    "stages": [
+      {
+        "id": "penplot",
+        "name": "PenPlot",
+        "cn": "剧情创作",
+        "url": "https://plot.helpenx.com",
+        "status": "wip",
+        "tagline": "把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架。",
+        "story": "每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。"
+      },
+      {
+        "id": "penshot",
+        "name": "PenShot",
+        "cn": "剧本分镜",
+        "url": "https://shot.helpenx.com",
+        "status": "live",
+        "tagline": "识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表。",
+        "story": "剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。"
+      },
+      {
+        "id": "pengen",
+        "name": "PenGen",
+        "cn": "视频生成",
+        "url": "https://gen.helpenx.com",
+        "status": "wip",
+        "tagline": "承接分镜表，驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环。",
+        "story": "分镜表再精细，也只是图纸。PenGen 把图纸变成会动的画面：每个 shot 在这里被生成、被渲染，被赋予光影和运动。故事写完了、镜头切好了，到这里才第一次开始播放。"
+      },
+      {
+        "id": "pendub",
+        "name": "PenDub",
+        "cn": "音频同步",
+        "url": "https://dub.helpenx.com",
+        "status": "wip",
+        "tagline": "配音、音效与背景音乐对齐视频时间线，让每句台词落在该落的画面上。",
+        "story": "画面会动之后，视频还是哑的。音频与画面的同步最容易被忽略，又最影响观感：差半秒，观众就觉得「哪里不对」——PenDub 的工作就是让这半秒不存在。"
+      },
+      {
+        "id": "penclip",
+        "name": "PenClip",
+        "cn": "视频剪辑",
+        "url": "https://clip.helpenx.com",
+        "status": "live",
+        "tagline": "按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。",
+        "story": "素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。"
+      },
+      {
+        "id": "penfix",
+        "name": "PenFix",
+        "cn": "质量审核",
+        "url": "https://fix.helpenx.com",
+        "status": "wip",
+        "tagline": "检查画面一致性、音画同步、内容合规与技术指标，标记问题并给出修复建议。",
+        "story": "「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。"
+      }
+    ],
+    "note": "六个环节各有主页，也由 Studio 编排成一条可复用、可人工介入、可核算成本的工作流。"
+  },
   "categories": [
-    { "id": "studio", "name": "AIGC 生产", "shortName": "AIGC 生产" },
+    { "id": "studio", "name": "AIGC Studio", "shortName": "AIGC Studio" },
     { "id": "oss", "name": "开源项目", "shortName": "开源项目" },
     { "id": "tools", "name": "效率工具", "shortName": "效率工具" },
     { "id": "content", "name": "内容与扩展", "shortName": "博客内容" },
@@ -448,24 +590,12 @@
       "size": "hero",
       "status": "live",
       "image": "./assets/studio-pipeline.svg",
-      "ctaLabel": "体验 AIGC Studio",
-      "tagline": "短剧 AI 生产编排台",
+      "ctaLabel": "立即体验 AIGC Studio",
+      "tagline": "AIGC 创意工坊",
       "description": "从创意、剧本到成片的全链路多 Agent 编排：自动完成分集分场、分镜脚本、关键帧、视频片段与配音剪辑，并把角色、场景、道具、模型等数字资产统一沉淀为可复用资产库——换一部剧不必从零重画，跨镜头、跨集保持同一张脸、同一个空间。一致性记忆与自动质检把返工压到最低，整集可一键生成，也可以在任意节点人工介入、用对话直接改写——例如「把第 3 场第 2 镜改成仰拍，时长缩到 4 秒」。",
       "pipeline": ["创意 / 剧本", "分集分场", "分镜脚本", "数字资产 · 角色 / 场景 / 模型", "关键帧", "视频片段", "配音 · 口型 · BGM", "剪辑合成"],
       "features": ["角色 / 场景 / 模型资产库", "多模型路由与降级", "跨镜头跨集一致性", "自动质检与返工", "断点续跑与配额调度", "Tool / MCP / API 开放", "可用率与成本指标"],
       "keywords": ["短剧 AI 生成", "AI 短剧", "剧本转视频", "AIGC 工作流", "多 Agent 编排", "分镜脚本生成", "数字资产库", "角色一致性", "场景资产", "模型资产", "AI 配音", "口型同步", "文生视频", "图生视频", "AI 剪辑", "短剧制作"]
-    },
-    {
-      "id": "penshot",
-      "name": "PenShot",
-      "url": "https://shot.helpenx.com",
-      "category": "oss",
-      "status": "live",
-      "tagline": "AI 分镜生成 Agent",
-      "description": "将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。",
-      "features": ["多 Agent 流水线", "一致性记忆", "模型适配", "SDK & API"],
-      "keywords": ["AI 分镜", "分镜生成", "剧本拆解", "分场脚本", "镜头语言", "视频提示词", "提示词生成", "storyboard", "Text to Video", "AI 编剧", "开源 Agent"],
-      "repo": "https://github.com/neopen/story-shot-agent"
     },
     {
       "id": "neotask",
@@ -473,11 +603,87 @@
       "url": "https://task.helpenx.com",
       "category": "oss",
       "status": "live",
+      "span": "full",
       "tagline": "Python 异步任务队列",
-      "description": "用几行代码接管后台任务，从单机内存平滑扩展到 Redis 分布式集群，不必再为一条队列单独搭建与运维基础设施。",
-      "features": ["优先级调度", "Cron 定时", "分布式执行", "零外部依赖"],
-      "keywords": ["Python 任务队列", "异步任务", "Celery 替代", "Redis 队列", "定时任务", "后台任务", "分布式任务", "消息队列", "Task Queue", "Python 开源库"],
+      "description": "先用纯 Python 把后台任务跑起来，需要分布式时再切到 Redis 共享队列——不必从第一天就部署中间件。优先级插队、延迟与 Cron 定时、多 Worker 并发、失败自动重试，任务状态可落在内存、SQLite 或 Redis，并带生命周期事件、进度上报与失败任务回收，适合 AI 生成、视频转码、批量抓取这类长任务。",
+      "features": ["优先级插队", "Cron / 延迟任务", "多 Worker 并发", "失败自动重试", "内存 / SQLite / Redis", "分布式锁与节点心跳", "进度与事件上报"],
+      "keywords": ["Python 任务队列", "异步任务", "Celery 替代", "Redis 队列", "任务调度", "定时任务", "后台任务", "分布式任务", "消息队列", "asyncio 并发", "失败重试", "Task Queue", "Python 开源库"],
+      "image": "./assets/neotask-queue.svg",
+      "imageAlt": "NeoTask 异步任务队列示意：业务代码投递任务、优先级队列、多 Worker 消费与失败退避重试",
       "repo": "https://github.com/neopen/neotask"
+    },
+    {
+      "id": "penplot",
+      "name": "PenPlot",
+      "url": "https://plot.helpenx.com",
+      "category": "studio",
+      "status": "wip",
+      "icon": "pen",
+      "tagline": "剧情创作 · 从念头到故事线",
+      "description": "把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架，让一个模糊的想法变成一条能往下走的故事线。",
+      "features": ["故事线梳理", "情节节点打磨", "结构化剧本骨架", "起承转合设计"],
+      "keywords": ["AI 编剧", "剧本创作", "故事线", "情节设计", "剧本骨架", "分集大纲", "创意孵化"]
+    },
+    {
+      "id": "penshot",
+      "name": "PenShot",
+      "url": "https://shot.helpenx.com",
+      "category": "studio",
+      "status": "live",
+      "icon": "frames",
+      "tagline": "剧本分镜 · 把文字翻译成镜头",
+      "description": "将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。",
+      "features": ["多 Agent 流水线", "一致性记忆", "模型适配", "SDK & API"],
+      "keywords": ["AI 分镜", "分镜生成", "剧本拆解", "分场脚本", "镜头语言", "视频提示词", "提示词生成", "storyboard", "Text to Video", "AI 编剧", "开源 Agent"],
+      "repo": "https://github.com/neopen/story-shot-agent"
+    },
+    {
+      "id": "pengen",
+      "name": "PenGen",
+      "url": "https://gen.helpenx.com",
+      "category": "studio",
+      "status": "wip",
+      "icon": "play",
+      "tagline": "视频生成 · 把分镜变成画面",
+      "description": "承接分镜表驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环：每个 shot 在这里被生成、渲染，被赋予光影与运动。",
+      "features": ["多模型路由", "关键帧生成", "镜头级重生成", "跨镜头一致性"],
+      "keywords": ["AI 视频生成", "文生视频", "图生视频", "视频模型", "关键帧", "镜头生成", "AI 渲染"]
+    },
+    {
+      "id": "pendub",
+      "name": "PenDub",
+      "url": "https://dub.helpenx.com",
+      "category": "studio",
+      "status": "wip",
+      "icon": "wave",
+      "tagline": "音频同步 · 让画面开口说话",
+      "description": "负责视频的听觉层：配音、音效与背景音乐对齐视频时间线，确保每句台词落在该落的画面上，每个音效踩在该踩的节点上。",
+      "features": ["AI 配音", "音效与 BGM", "音画时间线对齐", "口型同步"],
+      "keywords": ["AI 配音", "音画同步", "口型同步", "音效生成", "背景音乐", "语音合成", "TTS"]
+    },
+    {
+      "id": "penclip",
+      "name": "PenClip",
+      "url": "https://clip.helpenx.com",
+      "category": "studio",
+      "status": "live",
+      "icon": "scissors",
+      "tagline": "视频剪辑 · 按叙事节奏成片",
+      "description": "把生成的视频片段与同步好的音频按叙事节奏组装成完整作品，处理转场、节奏、时长与镜头顺序，输出可发布的成片。",
+      "features": ["叙事节奏剪辑", "转场与调色", "镜头顺序编排", "成片导出"],
+      "keywords": ["AI 剪辑", "视频剪辑", "自动成片", "转场", "节奏控制", "镜头排序", "短视频制作"]
+    },
+    {
+      "id": "penfix",
+      "name": "PenFix",
+      "url": "https://fix.helpenx.com",
+      "category": "studio",
+      "status": "wip",
+      "icon": "checkbadge",
+      "tagline": "质量审核 · 发布前的最后一道关",
+      "description": "逐项检查画面一致性、音画同步、内容合规与技术指标（分辨率、码率、时长），标记问题并给出修复建议，确保产出达到可发布标准。",
+      "features": ["画面一致性检查", "音画同步校验", "内容合规审查", "技术指标检测"],
+      "keywords": ["视频审核", "内容合规", "画质检测", "音画同步校验", "质量把关", "AI 质检"]
     },
     {
       "id": "helpoke",
@@ -485,6 +691,7 @@
       "url": "https://helpoke.com",
       "category": "tools",
       "status": "live",
+      "dividerBefore": true,
       "tagline": "浏览器端在线工具箱",
       "description": "图片、视频、数据与加解密等常用处理全部在浏览器本地完成，文件不离开你的设备，打开即用、无需注册。",
       "features": ["本地处理", "文件不上传", "无需注册", "离线可用"],
@@ -508,6 +715,7 @@
       "url": "https://city.pengline.cn",
       "category": "demo",
       "status": "live",
+      "dividerBefore": { "label": "演示项目", "note": "行业案例演示", "countCategory": "demo" },
       "icon": "city",
       "tagline": "城市运行 IOT 演示",
       "description": "面向城市运行管理的 IOT 演示平台：以物联设备台账与实时数据为基础，把数字城管、综合指挥、决策分析、智慧街面、环卫、市政、排水、照明、停车等 13 个模块汇聚到同一张态势图，支撑多部门协同调度与可视化决策。",

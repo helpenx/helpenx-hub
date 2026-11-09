@@ -22,11 +22,20 @@
     "language": "zh-CN"
   },
   "story": {
-    "eyebrow": "HelpEnX Studio · 定位",
-    "title": "一条从念头到成片的生产线",
+    "eyebrow": "HelpEnX Studio · 协作模型",
+    "title": "六环不是流水线，是同一张时间线上的事件网络",
     "lead": [
-      "HelpEnX Studio 不是一个单点 AIGC 工具，而是一条把「一句台词、一个画面、一个说不清的情绪」变成可发布成片的生产线。六个环节各自解决一道不可替代的题，串起来才是一整套工序。",
-      "每一环都能单独使用，组合起来才是一条流水线——这也是「编排台」与「生成器」的区别：模型会换代，故事的结构与工序不会。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。"
+      "HelpEnX Studio 把剧本、分镜、画面、音频、剪辑与质检写进同一个 Project 时间线。六个环节围绕这份共享状态协作，而不是把素材一站站往下传。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。",
+      "任何一环的产出都会发出事件：PenShot 更新分镜，会唤醒 PenGen 与 PenDub；PenGen 出片，会触发 PenFix 质检；质检通过与音频时长变化，又会回流到 PenClip 和 PenShot。多对多，而非单向。"
+    ],
+    "busLabel": "DATA BUS · 共享状态",
+    "busNote": "所有环节共享同一个 Project 时间线，变更以事件流转",
+    "events": [
+      { "from": "penshot", "to": ["pengen", "pendub"], "kind": "wake", "label": "PenShot 分镜更新 → 唤醒 PenGen、PenDub" },
+      { "from": "pengen", "to": ["penfix"], "kind": "wake", "label": "PenGen 片段产出 → 唤醒 PenFix 质检" },
+      { "from": "penfix", "to": ["penclip"], "kind": "wake", "label": "PenFix 通过 → PenClip 替换占位符" },
+      { "from": "pendub", "to": ["penshot", "penclip"], "kind": "feedback", "label": "PenDub 时长变化 → 回调 PenShot、PenClip" },
+      { "from": "penfix", "to": ["pengen", "pendub"], "kind": "rule", "label": "PenFix 标准 → 覆盖画面与口型" }
     ],
     "stages": [
       {
@@ -90,7 +99,7 @@
         "story": "「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。"
       }
     ],
-    "note": "六个环节各有主页，也由 Studio 编排成一条可复用、可人工介入、可核算成本的工作流。"
+    "note": "所有环节共享同一个 Project 时间线；每次变更都是一次事件，由 NeoTask 接收、排序并唤醒相关环节。"
   },
   "categories": [
     { "id": "studio", "name": "AIGC Studio", "shortName": "AIGC Studio" },

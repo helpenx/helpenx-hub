@@ -352,7 +352,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
 <link rel="mask-icon" href="./assets/icons/favicon-mask.svg" color="#0a7494" />
-<link rel="stylesheet" href="./styles.css?v=20261109m" />
+<link rel="stylesheet" href="./styles.css?v=20261109n" />
 </head>
 <body>
 <svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
@@ -473,10 +473,10 @@
   <section class="story" id="story" aria-labelledby="story-title">
     <!-- STORY-HEAD:START 本区块由 sites.json 的 story 生成，改配置后运行 node scripts/apply-config.js，请勿手改 -->
     <div class="story__head">
-      <span class="story__eyebrow">HelpEnX Studio · 定位</span>
-      <h2 class="story__title" id="story-title">一条从念头到成片的生产线</h2>
-      <p class="story__lead">HelpEnX Studio 不是一个单点 AIGC 工具，而是一条把「一句台词、一个画面、一个说不清的情绪」变成可发布成片的生产线。六个环节各自解决一道不可替代的题，串起来才是一整套工序。</p>
-      <p class="story__lead">每一环都能单独使用，组合起来才是一条流水线——这也是「编排台」与「生成器」的区别：模型会换代，故事的结构与工序不会。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。</p>
+      <span class="story__eyebrow">HelpEnX Studio · 协作模型</span>
+      <h2 class="story__title" id="story-title">六环不是流水线，是同一张时间线上的事件网络</h2>
+      <p class="story__lead">HelpEnX Studio 把剧本、分镜、画面、音频、剪辑与质检写进同一个 Project 时间线。六个环节围绕这份共享状态协作，而不是把素材一站站往下传。</p>
+      <p class="story__lead">任何一环的产出都会发出事件：PenShot 更新分镜，会唤醒 PenGen 与 PenDub；PenGen 出片，会触发 PenFix 质检；质检通过与音频时长变化，又会回流到 PenClip 和 PenShot。多对多，而非单向。</p>
     </div>
     <!-- STORY-HEAD:END -->
 
@@ -488,17 +488,20 @@
         <span class="flow-pool__monogram">N</span>
       </div>
       <div class="flow-pool__head">
-        <button class="flow-pool__label" type="button" aria-pressed="false"><span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span><span class="flow-pool__tag">任务池</span><span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span>动态演示</span></button>
-        <span class="flow-pool__note">六个环节像任务一样在池中排队、调度与流转</span>
+        <button class="flow-pool__label" type="button" aria-pressed="false"><span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span><span class="flow-pool__tag">任务池</span><span class="flow-pool__bus">DATA BUS · 共享状态</span><span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span>事件演示</span></button>
+        <span class="flow-pool__note" data-idle="所有环节共享同一个 Project 时间线，变更以事件流转" data-events="PenShot 分镜更新 → 唤醒 PenGen、PenDub||PenGen 片段产出 → 唤醒 PenFix 质检||PenFix 通过 → PenClip 替换占位符||PenDub 时长变化 → 回调 PenShot、PenClip||PenFix 标准 → 覆盖画面与口型">所有环节共享同一个 Project 时间线，变更以事件流转</span>
       </div>
       <div class="flow" data-flow>
       <div class="flow__rail">
         <span class="flow__line" aria-hidden="true">
-          <span class="flow__bead flow__bead--f1"></span>
-          <span class="flow__bead flow__bead--f2"></span>
-          <span class="flow__bead flow__bead--f3"></span>
-          <span class="flow__bead flow__bead--back flow__bead--r1"></span>
-          <span class="flow__bead flow__bead--back flow__bead--r2"></span>
+          <span class="flow__bead flow__bead--wake" style="--from:20%;--to:40%;--delay:0s;--dur:3.4s"></span>
+          <span class="flow__bead flow__bead--wake" style="--from:20%;--to:60%;--delay:0.18s;--dur:3.4s"></span>
+          <span class="flow__bead flow__bead--wake" style="--from:40%;--to:100%;--delay:0.55s;--dur:3.65s"></span>
+          <span class="flow__bead flow__bead--wake flow__bead--rev" style="--from:100%;--to:80%;--delay:1.1s;--dur:3.9s"></span>
+          <span class="flow__bead flow__bead--feedback flow__bead--rev" style="--from:60%;--to:20%;--delay:1.65s;--dur:4.15s"></span>
+          <span class="flow__bead flow__bead--feedback" style="--from:60%;--to:80%;--delay:1.83s;--dur:4.15s"></span>
+          <span class="flow__bead flow__bead--rule flow__bead--rev" style="--from:100%;--to:40%;--delay:2.2s;--dur:4.4s"></span>
+          <span class="flow__bead flow__bead--rule flow__bead--rev" style="--from:100%;--to:60%;--delay:2.38s;--dur:4.4s"></span>
         </span>
         <ol class="flow__stops">
           <li class="flow__stop flow__stop--up" style="--i:0">
@@ -517,7 +520,7 @@
               <span class="flow__hook">把「他推开门」翻译成看得见的镜头。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--feedback" style="--delay:1.65s;--dur:4.15s"></span></span>
           </li>
           <li class="flow__stop flow__stop--up" style="--i:2">
             <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-pengen" data-flow-index="2">
@@ -526,7 +529,7 @@
               <span class="flow__hook">图纸落地的瞬间，故事第一次开始播放。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0s;--dur:3.4s"></span><span class="flow__hit flow__hit--rule" style="--delay:2.2s;--dur:4.4s"></span></span>
           </li>
           <li class="flow__stop flow__stop--down" style="--i:3">
             <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-pendub" data-flow-index="3">
@@ -535,7 +538,7 @@
               <span class="flow__hook">让每句台词，都落在该落的那一秒。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0.18s;--dur:3.4s"></span><span class="flow__hit flow__hit--rule" style="--delay:2.38s;--dur:4.4s"></span></span>
           </li>
           <li class="flow__stop flow__stop--up" style="--i:4">
             <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-penclip" data-flow-index="4">
@@ -544,7 +547,7 @@
               <span class="flow__hook">同样的素材，剪法不同就是两部作品。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:1.1s;--dur:3.9s"></span><span class="flow__hit flow__hit--feedback" style="--delay:1.83s;--dur:4.15s"></span></span>
           </li>
           <li class="flow__stop flow__stop--down" style="--i:5">
             <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-penfix" data-flow-index="5">
@@ -553,7 +556,7 @@
               <span class="flow__hook">敢说「不」的环节，才让成片敢交出去。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0.55s;--dur:3.65s"></span></span>
           </li>
         </ol>
       </div>
@@ -594,7 +597,7 @@
       </div>
       </div>
     </div>
-    <p class="story__note">六个环节各有主页，也由 Studio 编排成一条可复用、可人工介入、可核算成本的工作流。</p>
+    <p class="story__note">所有环节共享同一个 Project 时间线；每次变更都是一次事件，由 NeoTask 接收、排序并唤醒相关环节。</p>
     <!-- STORY-STEPS:END -->
 
     <section class="showcase" id="showcase" aria-label="重点产品">
@@ -696,11 +699,20 @@
     "language": "zh-CN"
   },
   "story": {
-    "eyebrow": "HelpEnX Studio · 定位",
-    "title": "一条从念头到成片的生产线",
+    "eyebrow": "HelpEnX Studio · 协作模型",
+    "title": "六环不是流水线，是同一张时间线上的事件网络",
     "lead": [
-      "HelpEnX Studio 不是一个单点 AIGC 工具，而是一条把「一句台词、一个画面、一个说不清的情绪」变成可发布成片的生产线。六个环节各自解决一道不可替代的题，串起来才是一整套工序。",
-      "每一环都能单独使用，组合起来才是一条流水线——这也是「编排台」与「生成器」的区别：模型会换代，故事的结构与工序不会。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。"
+      "HelpEnX Studio 把剧本、分镜、画面、音频、剪辑与质检写进同一个 Project 时间线。六个环节围绕这份共享状态协作，而不是把素材一站站往下传。",
+      "任何一环的产出都会发出事件：PenShot 更新分镜，会唤醒 PenGen 与 PenDub；PenGen 出片，会触发 PenFix 质检；质检通过与音频时长变化，又会回流到 PenClip 和 PenShot。多对多，而非单向。"
+    ],
+    "busLabel": "DATA BUS · 共享状态",
+    "busNote": "所有环节共享同一个 Project 时间线，变更以事件流转",
+    "events": [
+      { "from": "penshot", "to": ["pengen", "pendub"], "kind": "wake", "label": "PenShot 分镜更新 → 唤醒 PenGen、PenDub" },
+      { "from": "pengen", "to": ["penfix"], "kind": "wake", "label": "PenGen 片段产出 → 唤醒 PenFix 质检" },
+      { "from": "penfix", "to": ["penclip"], "kind": "wake", "label": "PenFix 通过 → PenClip 替换占位符" },
+      { "from": "pendub", "to": ["penshot", "penclip"], "kind": "feedback", "label": "PenDub 时长变化 → 回调 PenShot、PenClip" },
+      { "from": "penfix", "to": ["pengen", "pendub"], "kind": "rule", "label": "PenFix 标准 → 覆盖画面与口型" }
     ],
     "stages": [
       {
@@ -764,7 +776,7 @@
         "story": "「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。"
       }
     ],
-    "note": "六个环节各有主页，也由 Studio 编排成一条可复用、可人工介入、可核算成本的工作流。"
+    "note": "所有环节共享同一个 Project 时间线；每次变更都是一次事件，由 NeoTask 接收、排序并唤醒相关环节。"
   },
   "categories": [
     { "id": "studio", "name": "AIGC Studio", "shortName": "AIGC Studio" },
@@ -994,6 +1006,6 @@
   ]
 }
 </script>
-<script src="./app.js?v=20261109c"></script>
+<script src="./app.js?v=20261109d"></script>
 </body>
 </html>

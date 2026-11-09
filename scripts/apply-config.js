@@ -302,6 +302,33 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   const story = cfg.story || {};
   const stages = story.stages || [];
 
+  // 事件总线：把 from/to 转成总线位置百分比，并为目标节点生成到达闪光
+  const stageIndex = {};
+  stages.forEach((s, i) => { stageIndex[s.id] = i; });
+  const lastIdx = Math.max(stages.length - 1, 1);
+  const eventPairs = [];
+  const hitsByStage = {};
+  const eventCaptions = [];
+  (story.events || []).forEach((ev, g) => {
+    const from = stageIndex[ev.from];
+    if (from == null) return;
+    if (ev.label) eventCaptions.push(ev.label);
+    (ev.to || []).forEach((id, k) => {
+      const to = stageIndex[id];
+      if (to == null) return;
+      const pair = {
+        kind: ev.kind || "wake",
+        from: +(from / lastIdx * 100).toFixed(2),
+        to: +(to / lastIdx * 100).toFixed(2),
+        delay: +(g * 0.55 + k * 0.18).toFixed(2),
+        dur: +(3.4 + g * 0.25).toFixed(2),
+        rev: to < from
+      };
+      eventPairs.push(pair);
+      (hitsByStage[id] = hitsByStage[id] || []).push(pair);
+    });
+  });
+
   function writeBlock(startMarker, endMarker, pad, lines) {
     const a = html.indexOf(startMarker), b = html.indexOf(endMarker);
     if (a === -1 || b === -1) throw new Error("缺少 " + startMarker + " 标记");
@@ -336,17 +363,19 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
     flowLines.push(flowPad + '    <button class="flow-pool__label" type="button" aria-pressed="false">' +
       '<span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span>' +
       '<span class="flow-pool__tag">任务池</span>' +
-      '<span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span>动态演示</span></button>');
-    flowLines.push(flowPad + '    <span class="flow-pool__note">六个环节像任务一样在池中排队、调度与流转</span>');
+      '<span class="flow-pool__bus">' + esc(story.busLabel || "DATA BUS") + "</span>" +
+      '<span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span>事件演示</span></button>');
+    flowLines.push(flowPad + '    <span class="flow-pool__note" data-idle="' + esc(story.busNote || "") +
+      '" data-events="' + esc(eventCaptions.join("||")) + '">' + esc(story.busNote || "") + "</span>");
     flowLines.push(flowPad + "  </div>");
     flowLines.push(flowPad + '  <div class="flow" data-flow>');
     flowLines.push(flowPad + '  <div class="flow__rail">');
     flowLines.push(flowPad + '    <span class="flow__line" aria-hidden="true">');
-    flowLines.push(flowPad + '      <span class="flow__bead flow__bead--f1"></span>');
-    flowLines.push(flowPad + '      <span class="flow__bead flow__bead--f2"></span>');
-    flowLines.push(flowPad + '      <span class="flow__bead flow__bead--f3"></span>');
-    flowLines.push(flowPad + '      <span class="flow__bead flow__bead--back flow__bead--r1"></span>');
-    flowLines.push(flowPad + '      <span class="flow__bead flow__bead--back flow__bead--r2"></span>');
+    eventPairs.forEach((p) => {
+      flowLines.push(flowPad + '      <span class="flow__bead flow__bead--' + p.kind +
+        (p.rev ? " flow__bead--rev" : "") +
+        '" style="--from:' + p.from + '%;--to:' + p.to + '%;--delay:' + p.delay + 's;--dur:' + p.dur + 's"></span>');
+    });
     flowLines.push(flowPad + '    </span>');
     flowLines.push(flowPad + '    <ol class="flow__stops">');
     stages.forEach((s, i) => {
@@ -363,7 +392,9 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
       if (s.hook) flowLines.push(flowPad + '          <span class="flow__hook">' + esc(s.hook) + "</span>");
       flowLines.push(flowPad + "        </button>");
       flowLines.push(flowPad + '        <span class="flow__stem" aria-hidden="true"></span>');
-      flowLines.push(flowPad + '        <span class="flow__dot" aria-hidden="true"></span>');
+      const hits = (hitsByStage[s.id] || []).map((h) =>
+        '<span class="flow__hit flow__hit--' + h.kind + '" style="--delay:' + h.delay + 's;--dur:' + h.dur + 's"></span>').join("");
+      flowLines.push(flowPad + '        <span class="flow__dot" aria-hidden="true">' + hits + "</span>");
       flowLines.push(flowPad + "      </li>");
     });
     flowLines.push(flowPad + "    </ol>");

@@ -740,13 +740,34 @@
     if (!pool) return;
     var label = pool.querySelector(".flow-pool__label");
     if (!label) return;
+    var note = pool.querySelector(".flow-pool__note");
+    var idleNote = note ? note.getAttribute("data-idle") || note.textContent : "";
+    var captions = note ? (note.getAttribute("data-events") || "").split("||").filter(function (s) { return s.trim(); }) : [];
+    var captionTimer = null;
+    var captionIndex = 0;
     var pinned = false;
+
+    function startCaptions() {
+      if (!note || !captions.length || captionTimer) return;
+      captionIndex = 0;
+      note.textContent = captions[0];
+      captionTimer = setInterval(function () {
+        captionIndex = (captionIndex + 1) % captions.length;
+        note.textContent = captions[captionIndex];
+      }, 2600);
+    }
+
+    function stopCaptions() {
+      if (captionTimer) { clearInterval(captionTimer); captionTimer = null; }
+      if (note) note.textContent = idleNote;
+    }
 
     function sync() {
       var wide = !window.matchMedia("(max-width: 1060px)").matches;
       var on = wide && (pinned || label.matches(":hover"));
       pool.classList.toggle("is-demo", on);
       label.setAttribute("aria-pressed", on ? "true" : "false");
+      if (on) startCaptions(); else stopCaptions();
     }
 
     label.addEventListener("pointerenter", sync);

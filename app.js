@@ -4,7 +4,7 @@
   var ACCENTS = { studio: "#0a7494", oss: "#6d4bf0", tools: "#087a43", demo: "#4d6484", content: "#96650a" };
   var PLANNED_ACCENT = "#8b98a9";
   var DEFAULT_ACCENT = "#0a7494";
-  var STATUS_LABEL = { live: "运行中", wip: "规划中", pause: "已暂停", archived: "已归档" };
+  var STATUS_LABEL = { planned: "规划中", design: "设计中", dev: "开发中", test: "测试中", live: "已上线", iterating: "迭代中", archived: "已归档" };
 
   function el(id) { return document.getElementById(id); }
 
@@ -202,8 +202,8 @@
     var host = hostOf(site.url);
     var status = site.status || "live";
     var isHero = site.size === "hero" && !query;
-    // 未上线的服务不跳转（地址尚未部署），以灰底 + 规划中标签呈现
-    var planned = status !== "live";
+    // 生命周期阶段与部署解耦：只有地址尚未部署（deployed:false）的服务不跳转，以灰底 + 阶段标签呈现
+    var planned = site.deployed === false;
 
     var card = document.createElement(planned ? "div" : "a");
     card.className = "card" + (isHero ? " card--hero" : "") +
@@ -219,9 +219,8 @@
     var repo = site.repo
       ? '<span class="card__repo">' + GITHUB_ICON + "源码仓库</span>"
       : "";
-    var badge = planned
-      ? '<span class="card__badge">' + (STATUS_LABEL[status] || "规划中") + "</span>"
-      : '<span class="dot dot--' + status + '" title="' + STATUS_LABEL[status] + '"></span>';
+    var badge = '<span class="status-tag status-tag--' + status + '">' +
+      (STATUS_LABEL[status] || "规划中") + "</span>";
 
     var idBlock =
       '<div class="card__id">' +
@@ -288,7 +287,7 @@
       '<div class="showcase__head">' +
         '<div class="showcase__idline">' +
           '<span class="showcase__name">' + escapeHtml(hs.name) + "</span>" +
-          '<span class="dot dot--' + status + '" title="' + STATUS_LABEL[status] + '"></span>' +
+          '<span class="status-tag status-tag--' + status + '">' + (STATUS_LABEL[status] || "") + "</span>" +
           '<span class="showcase__domain">' + escapeHtml(hostOf(hs.url)) + "</span>" +
         "</div>" +
         '<a class="btn btn-primary" href="' + escapeHtml(hs.url) + '" target="_blank" rel="noopener">' +
@@ -683,7 +682,7 @@
     if (brand.tagline) el("hero-tagline").textContent = brand.tagline;
     el("year").textContent = new Date().getFullYear();
 
-    var live = sites.filter(function (s) { return (s.status || "live") === "live"; }).length;
+    var live = sites.filter(function (s) { return s.deployed !== false; }).length;
     el("header-stat").textContent = live + " / " + sites.length + " 服务";
 
     if (brand.github) el("github-link").href = brand.github;

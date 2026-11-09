@@ -347,8 +347,13 @@ a.step__name:hover { color: var(--cyan); }
   padding: 2px 9px; border-radius: 999px;
   font-size: 11.5px; font-weight: 600; white-space: nowrap;
 }
+.step__status--planned { color: #64748b; background: rgba(100, 116, 139, 0.07); border: 1px solid rgba(100, 116, 139, 0.2); }
+.step__status--design { color: #a21caf; background: rgba(192, 38, 211, 0.07); border: 1px solid rgba(192, 38, 211, 0.22); }
+.step__status--dev { color: #1d4ed8; background: rgba(37, 99, 235, 0.07); border: 1px solid rgba(37, 99, 235, 0.2); }
+.step__status--test { color: #b45309; background: rgba(217, 119, 6, 0.08); border: 1px solid rgba(217, 119, 6, 0.22); }
 .step__status--live { color: var(--green); background: rgba(8, 122, 67, 0.08); border: 1px solid rgba(8, 122, 67, 0.2); }
-.step__status--wip { color: var(--amber); background: rgba(150, 101, 10, 0.07); border: 1px solid rgba(150, 101, 10, 0.2); }
+.step__status--iterating { color: var(--cyan); background: rgba(10, 116, 148, 0.07); border: 1px solid rgba(10, 116, 148, 0.2); }
+.step__status--archived { color: #8b98a9; background: rgba(139, 152, 169, 0.07); border: 1px solid rgba(139, 152, 169, 0.22); }
 .step__tagline {
   margin: 9px 0 0;
   font-size: 14.5px; line-height: 1.72; color: var(--text);
@@ -373,6 +378,12 @@ a.step__name:hover { color: var(--cyan); }
   content: ""; flex: 1; height: 1px; background: var(--border);
 }
 .board__title[hidden] { display: none; }
+
+.board__legend {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px;
+  margin: -8px 0 18px;
+  font-size: 12px; color: var(--text-faint);
+}
 
 /* ---------- 卡片 ---------- */
 .board { padding: 8px 0 88px; }
@@ -443,12 +454,17 @@ a.step__name:hover { color: var(--cyan); }
 .card--planned { cursor: default; background: #fbfcfe; border-style: dashed; }
 .card--planned:hover { transform: none; border-color: var(--border); box-shadow: var(--shadow); }
 .card--planned .card__name { color: var(--text-dim); }
-.card__badge {
-  flex: none; padding: 2px 8px; border-radius: 999px;
-  font-size: 11px; font-weight: 600; white-space: nowrap;
-  color: var(--text-faint); background: rgba(15, 34, 67, 0.05);
-  border: 1px solid var(--border);
+.status-tag {
+  flex: none; padding: 1px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 600; line-height: 1.75; white-space: nowrap;
 }
+.status-tag--planned { color: #64748b; background: rgba(100, 116, 139, 0.07); border: 1px solid rgba(100, 116, 139, 0.2); }
+.status-tag--design { color: #a21caf; background: rgba(192, 38, 211, 0.07); border: 1px solid rgba(192, 38, 211, 0.22); }
+.status-tag--dev { color: #1d4ed8; background: rgba(37, 99, 235, 0.07); border: 1px solid rgba(37, 99, 235, 0.2); }
+.status-tag--test { color: #b45309; background: rgba(217, 119, 6, 0.08); border: 1px solid rgba(217, 119, 6, 0.22); }
+.status-tag--live { color: var(--green); background: rgba(8, 122, 67, 0.08); border: 1px solid rgba(8, 122, 67, 0.2); }
+.status-tag--iterating { color: var(--cyan); background: rgba(10, 116, 148, 0.07); border: 1px solid rgba(10, 116, 148, 0.2); }
+.status-tag--archived { color: #7d8da3; background: rgba(125, 141, 163, 0.08); border: 1px solid rgba(125, 141, 163, 0.24); }
 
 .card__id { display: flex; align-items: center; gap: 14px; }
 .card__icon {
@@ -462,7 +478,7 @@ a.step__name:hover { color: var(--cyan); }
 .card__glyph { width: 23px; height: 23px; display: block; }
 .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 .card__idtext { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.card__titlerow { display: flex; align-items: center; gap: 9px; }
+.card__titlerow { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
 .card__name { font-size: 17px; font-weight: 650; letter-spacing: -0.005em; }
 .card__domain {
   font-family: var(--mono); font-size: 12px; color: var(--text-faint);
@@ -474,12 +490,6 @@ a.step__name:hover { color: var(--cyan); }
   transition: transform 0.22s ease, color 0.22s ease;
 }
 .card:hover .card__arrow { transform: translate(3px, -3px); color: var(--accent); }
-
-.dot { flex: none; width: 7px; height: 7px; border-radius: 50%; }
-.dot--live { background: var(--green); }
-.dot--wip { background: var(--cyan); }
-.dot--pause { background: var(--amber); }
-.dot--archived { background: var(--text-faint); }
 
 .card__main { display: flex; flex-direction: column; gap: 14px; flex: 1; min-width: 0; }
 .card__tagline {

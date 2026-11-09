@@ -11,7 +11,8 @@ const cfg = JSON.parse(read("sites.json"));
 const seo = cfg.seo || {};
 const brand = cfg.brand || {};
 const sites = cfg.sites || [];
-const liveSites = sites.filter((s) => (s.status || "live") === "live");
+// 生命周期阶段（规划中→已归档）与部署可用性解耦：deployed:false 表示地址尚未部署
+const availableSites = sites.filter((s) => s.deployed !== false);
 
 const esc = (s) => String(s == null ? "" : s)
   .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -129,7 +130,7 @@ const graph = {
       "@type": "ItemList",
       "name": (brand.fullName || "HelpEnx") + " 服务清单",
       "numberOfItems": sites.length,
-      "itemListElement": liveSites.map((s, i) => entity(s, i + 1))
+      "itemListElement": availableSites.map((s, i) => entity(s, i + 1))
     }
   ]
 };
@@ -154,7 +155,7 @@ const eol = html.indexOf("\r\n") !== -1 ? "\r\n" : "\n";
   const START = "<!-- FOOTNAV:START", END = "<!-- FOOTNAV:END -->";
   const a = html.indexOf(START), b = html.indexOf(END);
   if (a === -1 || b === -1) throw new Error("缺少 FOOTNAV 标记");
-  const links = liveSites.map((s) =>
+  const links = availableSites.map((s) =>
     '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a>");
   if (brand.github) {
     links.push('<a href="' + esc(brand.github) + '" target="_blank" rel="noopener me">GitHub</a>');
@@ -166,7 +167,7 @@ const eol = html.indexOf("\r\n") !== -1 ? "\r\n" : "\n";
 // 预渲染卡片：不执行 JS 的爬虫（百度、搜狗等）与首屏直接拿到正文，JS 加载后由 app.js 重绘
 const ACCENTS = { studio: "#0a7494", oss: "#6d4bf0", tools: "#087a43", demo: "#4d6484", content: "#96650a" };
 const PLANNED_ACCENT = "#8b98a9";
-const STATUS_LABEL = { live: "运行中", wip: "规划中", pause: "已暂停", archived: "已归档" };
+const STATUS_LABEL = { planned: "规划中", design: "设计中", dev: "开发中", test: "测试中", live: "已上线", iterating: "迭代中", archived: "已归档" };
 
 function hostname(u) {
   try { return new URL(u).hostname; } catch (e) { return u; }
@@ -188,16 +189,15 @@ function iconGlyphOf(site) {
 }
 function cardOf(site) {
   const status = site.status || "live";
-  const planned = status !== "live";
+  const planned = site.deployed === false;
   const accent = planned ? PLANNED_ACCENT : (ACCENTS[site.category] || "#0a7494");
   const cls = "card" + (site.span === "full" ? " card--wide" : "") + (planned ? " card--planned" : "");
   const tag = planned ? "div" : "a";
   const open = planned
     ? '<div class="' + cls + '" style="--accent:' + accent + '">'
     : '<a class="' + cls + '" href="' + esc(site.url) + '" target="_blank" rel="noopener" style="--accent:' + accent + '">';
-  const badge = planned
-    ? '<span class="card__badge">' + esc(STATUS_LABEL[status] || "规划中") + "</span>"
-    : '<span class="dot dot--' + status + '" title="' + esc(STATUS_LABEL[status] || "") + '"></span>';
+  const badge = '<span class="status-tag status-tag--' + status + '">' +
+    esc(STATUS_LABEL[status] || "规划中") + "</span>";
   const idBlock = '<div class="card__id"><span class="card__icon" aria-hidden="true">' +
       iconGlyphOf(site) + "</span>" +
       '<span class="card__idtext"><span class="card__titlerow">' +
@@ -229,7 +229,7 @@ function heroCardOf(site) {
   return '<article class="showcase__card" style="--accent:' + (ACCENTS[site.category] || "#0a7494") + '">' +
     '<div class="showcase__head"><div class="showcase__idline">' +
       '<span class="showcase__name">' + esc(site.name) + "</span>" +
-      '<span class="dot dot--' + status + '" title="' + (STATUS_LABEL[status] || "") + '"></span>' +
+      '<span class="status-tag status-tag--' + status + '">' + esc(STATUS_LABEL[status] || "") + "</span>" +
       '<span class="showcase__domain">' + esc(hostname(site.url)) + "</span></div>" +
     '<a class="btn btn-primary" href="' + esc(site.url) + '" target="_blank" rel="noopener">' +
       esc(site.ctaLabel || "进入") + ' <span class="btn__arrow" aria-hidden="true">→</span></a></div>' +
@@ -300,22 +300,22 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   writeBlock("<!-- STORY-HEAD:START", "<!-- STORY-HEAD:END -->", headPad, headLines);
 
   // 六段流水线：顺序即 sites.json 中 story.stages 的顺序（plot → shot → gen → dub → clip → fix）
-  const TAG = { live: "已上线", wip: "规划中" };
+  // 阶段与是否链出以 sites 中同 id 服务为准：未部署的地址不链出，避免对外抛 404
   const stepPad = "    ";
   const stepLines = [];
   if (stages.length) {
     stepLines.push(stepPad + '<ol class="story__steps">');
     stages.forEach((s, i) => {
-      const st = s.status === "live" ? "live" : "wip";
-      // 仅已上线的环节链出：规划中的地址尚未部署，避免对外抛 404
-      const name = s.url && st === "live"
+      const site = sites.find((x) => x.id === s.id) || {};
+      const st = site.status || s.status || "planned";
+      const name = s.url && site.deployed !== false
         ? '<a class="step__name" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a>"
         : '<span class="step__name">' + esc(s.name) + "</span>";
       stepLines.push(stepPad + "  <li class=\"step\"><span class=\"step__num\" aria-hidden=\"true\">" +
         String(i + 1).padStart(2, "0") + "</span>" +
         '<div class="step__body"><div class="step__head">' + name +
           '<span class="step__cn">' + esc(s.cn || "") + "</span>" +
-          '<span class="step__status step__status--' + st + '">' + (TAG[st] || "") + "</span></div>" +
+          '<span class="step__status step__status--' + st + '">' + (STATUS_LABEL[st] || "") + "</span></div>" +
         '<p class="step__tagline">' + esc(s.tagline || "") + "</p>" +
         '<p class="step__story">' + esc(s.story || "") + "</p></div></li>");
     });
@@ -347,9 +347,9 @@ write("robots.txt", [
   ""
 ].join("\n"));
 
-// 只收录已上线（status === live）的同域/子域地址：规划中的站点尚未部署，进 sitemap 会变成软 404
+// 只收录已部署的同域/子域地址：未部署的站点进 sitemap 会变成软 404
 const sameOrigin = sites.filter((s) => {
-  if ((s.status || "live") !== "live") return false;
+  if (s.deployed === false) return false;
   try { return new URL(s.url).host.split(".").slice(-2).join(".") === domain; } catch (e) { return false; }
 });
 write("sitemap.xml", [
@@ -375,8 +375,8 @@ write("sitemap.xml", [
 const embedded = JSON.parse(html.match(/<script type="application\/json" id="sites-embed">[\r\n]*([\s\S]*?)[\r\n]*<\/script>/)[1]);
 if (JSON.stringify(embedded) !== JSON.stringify(cfg)) throw new Error("内嵌数据与 sites.json 不一致");
 
-console.log("head meta：", head.length - 1, "行 + 1 段 JSON-LD（", graph["@graph"].length, "个实体，", liveSites.length, "个服务条目 ）");
+console.log("head meta：", head.length - 1, "行 + 1 段 JSON-LD（", graph["@graph"].length, "个实体，", availableSites.length, "个服务条目 ）");
 console.log("meta keywords：", keywords.length, "个候选，写入", Math.min(keywords.length, KW_LIMIT), "个");
-console.log("页脚静态链接：", liveSites.length + (brand.github ? 1 : 0), "条");
-console.log("sitemap.xml：", sameOrigin.length + 1, "条同域 URL；跳过未上线与非同域", sites.length - sameOrigin.length, "条");
+console.log("页脚静态链接：", availableSites.length + (brand.github ? 1 : 0), "条");
+console.log("sitemap.xml：", sameOrigin.length + 1, "条同域 URL；跳过未部署与非同域", sites.length - sameOrigin.length, "条");
 console.log("内嵌数据与 sites.json 一致：true");

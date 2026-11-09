@@ -678,7 +678,6 @@
   function bindHeader() {
     var brand = state.data.brand || {};
     var sites = state.data.sites || [];
-    var hs = heroSite();
     if (brand.tagline) el("hero-tagline").textContent = brand.tagline;
     el("year").textContent = new Date().getFullYear();
 
@@ -686,11 +685,6 @@
     el("header-stat").textContent = live + " / " + sites.length + " 服务";
 
     if (brand.github) el("github-link").href = brand.github;
-    if (hs) {
-      var cta = el("cta-primary");
-      cta.href = hs.url;
-      cta.textContent = hs.ctaLabel || "进入 " + hs.name;
-    }
   }
 
   loadData().then(function (data) {

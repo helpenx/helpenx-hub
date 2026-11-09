@@ -164,6 +164,28 @@ const eol = html.indexOf("\r\n") !== -1 ? "\r\n" : "\n";
   html = html.slice(0, commentEnd + 1) + "  " + links.join(eol + "  ") + eol + "    " + html.slice(b);
 })();
 
+// 首页主行动按钮：由 brand.cta 独立维护（外链新开标签，站内锚点原地跳转）
+(function () {
+  const START = "<!-- HEROCTA:START", END = "<!-- HEROCTA:END -->";
+  const a = html.indexOf(START), b = html.indexOf(END);
+  if (a === -1 || b === -1) throw new Error("缺少 HEROCTA 标记");
+  const cta = brand.cta || {};
+  function ctaBtn(item, cls, id) {
+    if (!item || !item.label) return "";
+    const href = item.url || "#";
+    const ext = href.charAt(0) !== "#";
+    return '<a class="' + cls + '" id="' + id + '" href="' + esc(href) + '"' +
+      (ext ? ' target="_blank" rel="noopener"' : "") + ">" + esc(item.label) + "</a>";
+  }
+  const lines = [
+    ctaBtn(cta.primary, "btn btn-primary", "cta-primary"),
+    ctaBtn(cta.secondary, "btn btn-ghost", "cta-secondary")
+  ].filter(Boolean);
+  const pad = (html.slice(0, a).match(/[ \t]*$/) || [""])[0];
+  const body = lines.length ? pad + lines.join(eol + pad) + eol : "";
+  html = html.slice(0, html.indexOf("\n", a) + 1) + body + pad + html.slice(b);
+})();
+
 // 预渲染卡片：不执行 JS 的爬虫（百度、搜狗等）与首屏直接拿到正文，JS 加载后由 app.js 重绘
 const ACCENTS = { studio: "#0a7494", oss: "#6d4bf0", tools: "#087a43", demo: "#4d6484", content: "#96650a" };
 const PLANNED_ACCENT = "#8b98a9";

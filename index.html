@@ -461,9 +461,10 @@
     <p class="hero__sub" id="hero-tagline"></p>
 
     <div class="hero__cta">
-		<!--  id="cta-primary" 加这个会被json数据替换-->
-      <a class="btn btn-primary" href="#" target="_blank" rel="noopener">体验 AIGC Studio</a>
-      <a class="btn btn-ghost" href="#board">查看全部服务</a>
+      <!-- HEROCTA:START 本区块由 sites.json 的 brand.cta 生成，请勿手改 -->
+      <a class="btn btn-primary" id="cta-primary" href="https://studio.helpenx.com" target="_blank" rel="noopener">体验 AIGC Studio</a>
+      <a class="btn btn-ghost" id="cta-secondary" href="#board">查看全部服务</a>
+      <!-- HEROCTA:END -->
     </div>
 
     <nav class="chips" id="chips" aria-label="分类筛选"></nav>
@@ -572,7 +573,11 @@
     "fullName": "HelpEnX Hub (数字工坊)",
     "tagline": "从创意到落地、从剧本到成片、从素材到工具：AIGC 生产、开源项目、在线工具箱、行业演示与技术沉淀，在此一触即达。",
     "site": "helpenx.com",
-    "github": "https://github.com/neopen"
+    "github": "https://github.com/neopen",
+    "cta": {
+      "primary": { "label": "立即体验 AIGC Studio", "url": "https://studio.helpenx.com" },
+      "secondary": { "label": "查看全部服务", "url": "#board" }
+    }
   },
   "seo": {
     "title": "HelpEnX Hub｜短剧 AI 生产 · 开源项目 · 在线工具箱 · 行业演示",

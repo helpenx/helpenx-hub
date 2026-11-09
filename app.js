@@ -734,6 +734,33 @@
     });
   }
 
+  /* NeoTask 演示模式：悬停或点击标识，任务光点在池中正向流动、返工回流 */
+  function bindFlowDemo() {
+    var pool = document.querySelector(".flow-pool");
+    if (!pool) return;
+    var label = pool.querySelector(".flow-pool__label");
+    if (!label) return;
+    var pinned = false;
+
+    function sync() {
+      var wide = !window.matchMedia("(max-width: 1060px)").matches;
+      var on = wide && (pinned || label.matches(":hover"));
+      pool.classList.toggle("is-demo", on);
+      label.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+
+    label.addEventListener("pointerenter", sync);
+    label.addEventListener("pointerleave", sync);
+    label.addEventListener("click", function () {
+      pinned = !pinned;
+      sync();
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && pinned) { pinned = false; sync(); }
+    });
+    window.addEventListener("resize", sync);
+  }
+
   function bindHeader() {
     var brand = state.data.brand || {};
     var sites = state.data.sites || [];
@@ -751,6 +778,7 @@
     buildIndex();
     bindHeader();
     bindFlow();
+    bindFlowDemo();
     renderChips();
     renderShowcase();
     renderGrid();

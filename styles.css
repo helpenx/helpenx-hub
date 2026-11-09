@@ -353,11 +353,17 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   font-family: var(--mono); font-size: 210px; font-weight: 700; line-height: 1;
   color: rgba(109, 75, 240, 0.05); user-select: none;
 }
-.flow-pool__label {
+.flow-pool__head {
   position: relative; z-index: 1;
-  display: flex; align-items: center; gap: 9px;
+  display: flex; align-items: center; gap: 12px;
   margin: 0 0 4px; min-height: 24px;
 }
+.flow-pool__label {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 0; border: 0; background: none;
+  font: inherit; color: inherit; cursor: pointer; border-radius: 8px;
+}
+.flow-pool__label:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
 .flow-pool__tile {
   width: 22px; height: 22px; border-radius: 7px;
   display: grid; place-items: center;
@@ -370,6 +376,26 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   padding: 1px 8px; border-radius: 999px;
   font-size: 10.5px; font-weight: 600; color: var(--cyan);
   background: rgba(10, 116, 148, 0.06); border: 1px solid rgba(10, 116, 148, 0.2);
+}
+.flow-pool__hint {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 9px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 600; color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.7); border: 1px solid var(--border);
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.flow-pool__play {
+  width: 0; height: 0;
+  border-left: 6px solid currentColor;
+  border-top: 3.5px solid transparent;
+  border-bottom: 3.5px solid transparent;
+}
+.flow-pool__label:hover .flow-pool__hint,
+.flow-pool__label:focus-visible .flow-pool__hint {
+  color: var(--cyan); border-color: rgba(10, 116, 148, 0.35); background: #fff;
+}
+.flow-pool.is-demo .flow-pool__hint {
+  color: var(--cyan); border-color: rgba(10, 116, 148, 0.45); background: rgba(10, 116, 148, 0.07);
 }
 .flow-pool__note { margin-left: auto; font-size: 11.5px; color: var(--text-faint); opacity: 0.85; }
 .flow { position: relative; z-index: 1; margin-top: 10px; }
@@ -403,6 +429,34 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   box-shadow: 0 0 12px rgba(10, 116, 148, 0.35);
   transition: width 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
+/* 演示模式的任务光点：默认隐藏，悬停 NeoTask 后沿轴穿梭 */
+.flow__bead {
+  position: absolute; top: 50%; left: 0; z-index: 2;
+  width: 64px; height: 5px; margin-top: -2.5px; border-radius: 3px;
+  opacity: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(10, 116, 148, 0.15) 45%, rgba(10, 116, 148, 0.9));
+}
+.flow__bead::after {
+  content: ""; position: absolute; top: 50%; right: -1px;
+  width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(10, 116, 148, 0.8), 0 0 2px rgba(10, 116, 148, 0.9);
+}
+.flow__bead--back {
+  background: linear-gradient(270deg, transparent, rgba(224, 138, 30, 0.15) 45%, rgba(224, 138, 30, 0.9));
+}
+.flow__bead--back::after {
+  right: auto; left: -1px; background: #fff7e8;
+  box-shadow: 0 0 8px rgba(224, 138, 30, 0.75), 0 0 2px rgba(224, 138, 30, 0.85);
+}
+.flow-pool.is-demo .flow__line { animation-duration: 0.9s; }
+.flow-pool.is-demo .flow__line::before { animation: none; opacity: 0; }
+.flow-pool.is-demo .flow__dot::after { animation: none; opacity: 0; }
+.flow-pool.is-demo .flow__bead--f1 { animation: flowBeadFwd 4.6s linear infinite; }
+.flow-pool.is-demo .flow__bead--f2 { animation: flowBeadFwd 5.4s linear infinite 0.7s; }
+.flow-pool.is-demo .flow__bead--f3 { animation: flowBeadFwd 6.2s linear infinite 1.5s; }
+.flow-pool.is-demo .flow__bead--r1 { animation: flowBeadBack 4.2s linear infinite 0.5s; }
+.flow-pool.is-demo .flow__bead--r2 { animation: flowBeadBack 5.2s linear infinite 2.3s; }
 .flow__stops {
   position: relative; z-index: 1;
   display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0 12px;
@@ -516,6 +570,19 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 
 @keyframes flowDash {
   to { background-position: 11px 0; }
+}
+@keyframes flowBeadFwd {
+  0% { left: 0%; opacity: 0; }
+  6% { opacity: 0.95; }
+  90% { opacity: 0.95; }
+  100% { left: 100%; opacity: 0; }
+}
+@keyframes flowBeadBack {
+  0% { left: 100%; opacity: 0; }
+  8% { opacity: 0.95; }
+  58% { left: 40%; opacity: 0.95; }
+  72% { left: 40%; opacity: 0; }
+  100% { left: 40%; opacity: 0; }
 }
 @keyframes flowNodePass {
   0% { opacity: 0; transform: scale(0.5); box-shadow: 0 0 0 0 rgba(10, 116, 148, 0.45); }
@@ -744,6 +811,8 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 @media (max-width: 1060px) {
   .flow-pool { padding: 14px 14px 16px; border-radius: 18px; }
   .flow-pool__note { display: none; }
+  .flow-pool__hint { display: none; }
+  .flow-pool__label { cursor: default; }
   .flow__stops {
     display: flex; gap: 12px; height: auto;
     margin: 0 -2px; padding: 4px 2px 10px;

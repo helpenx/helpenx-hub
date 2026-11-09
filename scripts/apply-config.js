@@ -332,12 +332,22 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
     flowLines.push(flowPad + '    <span class="flow-pool__wave flow-pool__wave--b"></span>');
     flowLines.push(flowPad + '    <span class="flow-pool__monogram">N</span>');
     flowLines.push(flowPad + "  </div>");
-    flowLines.push(flowPad + '  <p class="flow-pool__label"><span class="flow-pool__tile">N</span>' +
-      '<span class="flow-pool__name">NeoTask</span><span class="flow-pool__tag">任务池</span>' +
-      '<span class="flow-pool__note">六个环节像任务一样在池中排队、调度与流转</span></p>');
+    flowLines.push(flowPad + '  <div class="flow-pool__head">');
+    flowLines.push(flowPad + '    <button class="flow-pool__label" type="button" aria-pressed="false">' +
+      '<span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span>' +
+      '<span class="flow-pool__tag">任务池</span>' +
+      '<span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span>动态演示</span></button>');
+    flowLines.push(flowPad + '    <span class="flow-pool__note">六个环节像任务一样在池中排队、调度与流转</span>');
+    flowLines.push(flowPad + "  </div>");
     flowLines.push(flowPad + '  <div class="flow" data-flow>');
     flowLines.push(flowPad + '  <div class="flow__rail">');
-    flowLines.push(flowPad + '    <span class="flow__line" aria-hidden="true"></span>');
+    flowLines.push(flowPad + '    <span class="flow__line" aria-hidden="true">');
+    flowLines.push(flowPad + '      <span class="flow__bead flow__bead--f1"></span>');
+    flowLines.push(flowPad + '      <span class="flow__bead flow__bead--f2"></span>');
+    flowLines.push(flowPad + '      <span class="flow__bead flow__bead--f3"></span>');
+    flowLines.push(flowPad + '      <span class="flow__bead flow__bead--back flow__bead--r1"></span>');
+    flowLines.push(flowPad + '      <span class="flow__bead flow__bead--back flow__bead--r2"></span>');
+    flowLines.push(flowPad + '    </span>');
     flowLines.push(flowPad + '    <ol class="flow__stops">');
     stages.forEach((s, i) => {
       const st = (sites.find((x) => x.id === s.id) || {}).status || s.status || "planned";

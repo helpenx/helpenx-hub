@@ -488,12 +488,72 @@
 
     <!-- STORY-STEPS:START 本区块由 sites.json 的 story 生成，改配置后运行 node scripts/apply-config.js，请勿手改 -->
     <ol class="story__steps">
-      <li class="step"><span class="step__num" aria-hidden="true">01</span><div class="step__body"><div class="step__head"><span class="step__name">PenPlot</span><span class="step__cn">剧情创作</span><span class="step__status step__status--planned">规划中</span></div><p class="step__tagline">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架。</p><p class="step__story">每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。</p></div></li>
-      <li class="step"><span class="step__num" aria-hidden="true">02</span><div class="step__body"><div class="step__head"><a class="step__name" href="https://shot.helpenx.com" target="_blank" rel="noopener">PenShot</a><span class="step__cn">剧本分镜</span><span class="step__status step__status--iterating">迭代中</span></div><p class="step__tagline">识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表。</p><p class="step__story">剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。</p></div></li>
-      <li class="step"><span class="step__num" aria-hidden="true">03</span><div class="step__body"><div class="step__head"><span class="step__name">PenGen</span><span class="step__cn">视频生成</span><span class="step__status step__status--design">设计中</span></div><p class="step__tagline">承接分镜表，驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环。</p><p class="step__story">分镜表再精细，也只是图纸。PenGen 把图纸变成会动的画面：每个 shot 在这里被生成、被渲染，被赋予光影和运动。故事写完了、镜头切好了，到这里才第一次开始播放。</p></div></li>
-      <li class="step"><span class="step__num" aria-hidden="true">04</span><div class="step__body"><div class="step__head"><span class="step__name">PenDub</span><span class="step__cn">音频同步</span><span class="step__status step__status--planned">规划中</span></div><p class="step__tagline">配音、音效与背景音乐对齐视频时间线，让每句台词落在该落的画面上。</p><p class="step__story">画面会动之后，视频还是哑的。音频与画面的同步最容易被忽略，又最影响观感：差半秒，观众就觉得「哪里不对」——PenDub 的工作就是让这半秒不存在。</p></div></li>
-      <li class="step"><span class="step__num" aria-hidden="true">05</span><div class="step__body"><div class="step__head"><a class="step__name" href="https://clip.helpenx.com" target="_blank" rel="noopener">PenClip</a><span class="step__cn">视频剪辑</span><span class="step__status step__status--dev">开发中</span></div><p class="step__tagline">按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。</p><p class="step__story">素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。</p></div></li>
-      <li class="step"><span class="step__num" aria-hidden="true">06</span><div class="step__body"><div class="step__head"><span class="step__name">PenFix</span><span class="step__cn">质量审核</span><span class="step__status step__status--planned">规划中</span></div><p class="step__tagline">检查画面一致性、音画同步、内容合规与技术指标，标记问题并给出修复建议。</p><p class="step__story">「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。</p></div></li>
+      <li class="step">
+        <details class="step__details">
+          <summary class="step__summary">
+            <span class="step__num" aria-hidden="true">01</span>
+            <span class="step__title"><span class="step__name">PenPlot</span><span class="step__cn">剧情创作</span><span class="step__status step__status--planned">规划中</span></span>
+            <span class="step__hook">一句台词、一个画面，就能长出一整部戏。</span>
+            <span class="step__chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="step__body"><p class="step__tagline">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架。</p><p class="step__story">每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。</p></div>
+        </details>
+      </li>
+      <li class="step">
+        <details class="step__details">
+          <summary class="step__summary">
+            <span class="step__num" aria-hidden="true">02</span>
+            <span class="step__title"><span class="step__name">PenShot</span><span class="step__cn">剧本分镜</span><span class="step__status step__status--iterating">迭代中</span></span>
+            <span class="step__hook">把「他推开门」翻译成看得见的镜头。</span>
+            <span class="step__chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="step__body"><p class="step__tagline">识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表。</p><p class="step__story">剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。</p><a class="step__visit" href="https://shot.helpenx.com" target="_blank" rel="noopener">进入 PenShot <span aria-hidden="true">↗</span></a></div>
+        </details>
+      </li>
+      <li class="step">
+        <details class="step__details">
+          <summary class="step__summary">
+            <span class="step__num" aria-hidden="true">03</span>
+            <span class="step__title"><span class="step__name">PenGen</span><span class="step__cn">视频生成</span><span class="step__status step__status--design">设计中</span></span>
+            <span class="step__hook">图纸落地的瞬间，故事第一次开始播放。</span>
+            <span class="step__chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="step__body"><p class="step__tagline">承接分镜表，驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环。</p><p class="step__story">分镜表再精细，也只是图纸。PenGen 把图纸变成会动的画面：每个 shot 在这里被生成、被渲染，被赋予光影和运动。故事写完了、镜头切好了，到这里才第一次开始播放。</p></div>
+        </details>
+      </li>
+      <li class="step">
+        <details class="step__details">
+          <summary class="step__summary">
+            <span class="step__num" aria-hidden="true">04</span>
+            <span class="step__title"><span class="step__name">PenDub</span><span class="step__cn">音频同步</span><span class="step__status step__status--planned">规划中</span></span>
+            <span class="step__hook">让每句台词，都落在该落的那一秒。</span>
+            <span class="step__chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="step__body"><p class="step__tagline">配音、音效与背景音乐对齐视频时间线，让每句台词落在该落的画面上。</p><p class="step__story">画面会动之后，视频还是哑的。音频与画面的同步最容易被忽略，又最影响观感：差半秒，观众就觉得「哪里不对」——PenDub 的工作就是让这半秒不存在。</p></div>
+        </details>
+      </li>
+      <li class="step">
+        <details class="step__details">
+          <summary class="step__summary">
+            <span class="step__num" aria-hidden="true">05</span>
+            <span class="step__title"><span class="step__name">PenClip</span><span class="step__cn">视频剪辑</span><span class="step__status step__status--dev">开发中</span></span>
+            <span class="step__hook">同样的素材，剪法不同就是两部作品。</span>
+            <span class="step__chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="step__body"><p class="step__tagline">按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。</p><p class="step__story">素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。</p><a class="step__visit" href="https://clip.helpenx.com" target="_blank" rel="noopener">进入 PenClip <span aria-hidden="true">↗</span></a></div>
+        </details>
+      </li>
+      <li class="step">
+        <details class="step__details">
+          <summary class="step__summary">
+            <span class="step__num" aria-hidden="true">06</span>
+            <span class="step__title"><span class="step__name">PenFix</span><span class="step__cn">质量审核</span><span class="step__status step__status--planned">规划中</span></span>
+            <span class="step__hook">敢说「不」的环节，才让成片敢交出去。</span>
+            <span class="step__chevron" aria-hidden="true"></span>
+          </summary>
+          <div class="step__body"><p class="step__tagline">检查画面一致性、音画同步、内容合规与技术指标，标记问题并给出修复建议。</p><p class="step__story">「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。</p></div>
+        </details>
+      </li>
     </ol>
     <p class="story__note">六个环节各有主页，也由 Studio 编排成一条可复用、可人工介入、可核算成本的工作流。</p>
     <!-- STORY-STEPS:END -->
@@ -575,7 +635,7 @@
     "site": "helpenx.com",
     "github": "https://github.com/neopen",
     "cta": {
-      "primary": { "label": "立即体验 AIGC Studio", "url": "https://studio.helpenx.com" },
+      "primary": { "label": "体验 AIGC Studio", "url": "https://studio.helpenx.com" },
       "secondary": { "label": "查看全部服务", "url": "#board" }
     }
   },
@@ -604,6 +664,7 @@
         "cn": "剧情创作",
         "url": "https://plot.helpenx.com",
         "status": "planned",
+        "hook": "一句台词、一个画面，就能长出一整部戏。",
         "tagline": "把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架。",
         "story": "每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。"
       },
@@ -613,6 +674,7 @@
         "cn": "剧本分镜",
         "url": "https://shot.helpenx.com",
         "status": "iterating",
+        "hook": "把「他推开门」翻译成看得见的镜头。",
         "tagline": "识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表。",
         "story": "剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。"
       },
@@ -622,6 +684,7 @@
         "cn": "视频生成",
         "url": "https://gen.helpenx.com",
         "status": "design",
+        "hook": "图纸落地的瞬间，故事第一次开始播放。",
         "tagline": "承接分镜表，驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环。",
         "story": "分镜表再精细，也只是图纸。PenGen 把图纸变成会动的画面：每个 shot 在这里被生成、被渲染，被赋予光影和运动。故事写完了、镜头切好了，到这里才第一次开始播放。"
       },
@@ -631,6 +694,7 @@
         "cn": "音频同步",
         "url": "https://dub.helpenx.com",
         "status": "planned",
+        "hook": "让每句台词，都落在该落的那一秒。",
         "tagline": "配音、音效与背景音乐对齐视频时间线，让每句台词落在该落的画面上。",
         "story": "画面会动之后，视频还是哑的。音频与画面的同步最容易被忽略，又最影响观感：差半秒，观众就觉得「哪里不对」——PenDub 的工作就是让这半秒不存在。"
       },
@@ -640,6 +704,7 @@
         "cn": "视频剪辑",
         "url": "https://clip.helpenx.com",
         "status": "dev",
+        "hook": "同样的素材，剪法不同就是两部作品。",
         "tagline": "按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。",
         "story": "素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。"
       },
@@ -649,6 +714,7 @@
         "cn": "质量审核",
         "url": "https://fix.helpenx.com",
         "status": "planned",
+        "hook": "敢说「不」的环节，才让成片敢交出去。",
         "tagline": "检查画面一致性、音画同步、内容合规与技术指标，标记问题并给出修复建议。",
         "story": "「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。"
       }

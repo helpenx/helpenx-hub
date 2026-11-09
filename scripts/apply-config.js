@@ -322,7 +322,7 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   writeBlock("<!-- STORY-HEAD:START", "<!-- STORY-HEAD:END -->", headPad, headLines);
 
   // 六段流水线：顺序即 sites.json 中 story.stages 的顺序（plot → shot → gen → dub → clip → fix）
-  // 阶段与是否链出以 sites 中同 id 服务为准：未部署的地址不链出，避免对外抛 404
+  // 原生 details 折叠，默认收起；阶段与是否链出以 sites 中同 id 服务为准，未部署的地址不链出
   const stepPad = "    ";
   const stepLines = [];
   if (stages.length) {
@@ -330,16 +330,27 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
     stages.forEach((s, i) => {
       const site = sites.find((x) => x.id === s.id) || {};
       const st = site.status || s.status || "planned";
-      const name = s.url && site.deployed !== false
-        ? '<a class="step__name" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a>"
-        : '<span class="step__name">' + esc(s.name) + "</span>";
-      stepLines.push(stepPad + "  <li class=\"step\"><span class=\"step__num\" aria-hidden=\"true\">" +
-        String(i + 1).padStart(2, "0") + "</span>" +
-        '<div class="step__body"><div class="step__head">' + name +
-          '<span class="step__cn">' + esc(s.cn || "") + "</span>" +
-          '<span class="step__status step__status--' + st + '">' + (STATUS_LABEL[st] || "") + "</span></div>" +
+      const visit = s.url && site.deployed !== false
+        ? '<a class="step__visit" href="' + esc(s.url) + '" target="_blank" rel="noopener">进入 ' +
+          esc(s.name) + ' <span aria-hidden="true">↗</span></a>'
+        : "";
+      stepLines.push(stepPad + '  <li class="step">');
+      stepLines.push(stepPad + '    <details class="step__details">');
+      stepLines.push(stepPad + '      <summary class="step__summary">');
+      stepLines.push(stepPad + '        <span class="step__num" aria-hidden="true">' +
+        String(i + 1).padStart(2, "0") + "</span>");
+      stepLines.push(stepPad + '        <span class="step__title">' +
+        '<span class="step__name">' + esc(s.name) + "</span>" +
+        '<span class="step__cn">' + esc(s.cn || "") + "</span>" +
+        '<span class="step__status step__status--' + st + '">' + (STATUS_LABEL[st] || "") + "</span></span>");
+      if (s.hook) stepLines.push(stepPad + '        <span class="step__hook">' + esc(s.hook) + "</span>");
+      stepLines.push(stepPad + '        <span class="step__chevron" aria-hidden="true"></span>');
+      stepLines.push(stepPad + "      </summary>");
+      stepLines.push(stepPad + '      <div class="step__body">' +
         '<p class="step__tagline">' + esc(s.tagline || "") + "</p>" +
-        '<p class="step__story">' + esc(s.story || "") + "</p></div></li>");
+        '<p class="step__story">' + esc(s.story || "") + "</p>" + visit + "</div>");
+      stepLines.push(stepPad + "    </details>");
+      stepLines.push(stepPad + "  </li>");
     });
     stepLines.push(stepPad + "</ol>");
     if (story.note) stepLines.push(stepPad + '<p class="story__note">' + esc(story.note) + "</p>");

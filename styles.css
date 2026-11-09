@@ -325,28 +325,58 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .story__lead:last-child { margin-bottom: 0; }
 
 .story__steps { list-style: none; margin: 0; padding: 0; }
-.step {
-  display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 20px;
-  padding: 20px 0;
-  border-top: 1px solid var(--border);
-}
+.step { border-top: 1px solid var(--border); }
 .step:last-child { border-bottom: 1px solid var(--border); }
-.step__num {
-  font-family: var(--mono); font-size: 12.5px; font-weight: 600;
-  color: var(--text-faint); padding-top: 3px; letter-spacing: 0.04em;
+.step__details > summary { list-style: none; }
+.step__summary::-webkit-details-marker { display: none; }
+.step__summary {
+  display: grid;
+  grid-template-columns: 44px auto minmax(0, 1fr) 16px;
+  grid-template-areas: "num title hook chev";
+  align-items: center;
+  gap: 0 16px;
+  padding: 16px 0;
+  cursor: pointer;
 }
-.step__head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.step__summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 8px; }
+.step__num {
+  grid-area: num;
+  font-family: var(--mono); font-size: 12.5px; font-weight: 600;
+  color: var(--text-faint); letter-spacing: 0.04em;
+}
+.step__title { grid-area: title; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
 .step__name {
   font-size: 16.5px; font-weight: 650; letter-spacing: 0.01em;
   color: var(--ink); text-decoration: none;
+  transition: color 0.18s ease;
 }
-a.step__name:hover { color: var(--cyan); }
+.step__summary:hover .step__name { color: var(--cyan); }
 .step__cn { font-size: 12.5px; font-weight: 600; color: var(--text-faint); }
 .step__status {
-  margin-left: auto;
   padding: 2px 9px; border-radius: 999px;
   font-size: 11.5px; font-weight: 600; white-space: nowrap;
 }
+/* 分隔线上的钩子文案：折叠时也能读到一句故事 */
+.step__hook {
+  grid-area: hook;
+  justify-self: end; max-width: 100%; min-width: 0;
+  font-size: 14px; font-weight: 500; letter-spacing: 0.01em;
+  color: var(--text-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.step__hook::before { content: "“"; color: var(--cyan); font-weight: 700; }
+.step__hook::after { content: "”"; color: var(--cyan); font-weight: 700; }
+.step__chevron {
+  grid-area: chev;
+  width: 8px; height: 8px; margin-right: 3px;
+  border-right: 1.7px solid var(--text-faint);
+  border-bottom: 1.7px solid var(--text-faint);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.22s ease;
+}
+.step__details[open] .step__chevron { transform: rotate(225deg) translateY(-2px); }
+.step__details[open] .step__summary { padding-bottom: 8px; }
+.step__body { padding: 0 0 18px 60px; }
 .step__status--planned { color: #64748b; background: rgba(100, 116, 139, 0.07); border: 1px solid rgba(100, 116, 139, 0.2); }
 .step__status--design { color: #a21caf; background: rgba(192, 38, 211, 0.07); border: 1px solid rgba(192, 38, 211, 0.22); }
 .step__status--dev { color: #1d4ed8; background: rgba(37, 99, 235, 0.07); border: 1px solid rgba(37, 99, 235, 0.2); }
@@ -355,13 +385,20 @@ a.step__name:hover { color: var(--cyan); }
 .step__status--iterating { color: var(--cyan); background: rgba(10, 116, 148, 0.07); border: 1px solid rgba(10, 116, 148, 0.2); }
 .step__status--archived { color: #8b98a9; background: rgba(139, 152, 169, 0.07); border: 1px solid rgba(139, 152, 169, 0.22); }
 .step__tagline {
-  margin: 9px 0 0;
+  margin: 0;
   font-size: 14.5px; line-height: 1.72; color: var(--text);
 }
 .step__story {
   margin: 7px 0 0; max-width: 110ch;
   font-size: 13.5px; line-height: 1.85; color: var(--text-faint);
 }
+.step__visit {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 11px;
+  font-size: 13px; font-weight: 600; color: var(--cyan); text-decoration: none;
+}
+.step__visit:hover { text-decoration: underline; text-underline-offset: 3px; }
+.step__visit:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
 .story__note {
   margin: 20px 0 0;
   padding-left: 14px; border-left: 2px solid var(--border);
@@ -581,7 +618,8 @@ a.step__name:hover { color: var(--cyan); }
   .showcase__name { font-size: 21px; }
   .showcase__bands { gap: 14px; padding-top: 18px; }
   .ghlink span { display: none; }
-  .step { grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
+  .step__summary { grid-template-columns: 40px auto minmax(0, 1fr) 16px; gap: 0 14px; }
+  .step__body { padding-left: 54px; }
 }
 @media (max-width: 680px) {
   main { padding: 0 20px; }
@@ -593,9 +631,16 @@ a.step__name:hover { color: var(--cyan); }
   .card__arrow { top: 22px; right: 20px; }
   .chips { gap: 18px; }
   .story { padding-bottom: 34px; }
-  .step { grid-template-columns: 1fr; gap: 8px; padding: 18px 0; }
-  .step__num { padding-top: 0; }
-  .step__status { margin-left: 0; }
+  .step__summary {
+    grid-template-columns: 32px minmax(0, 1fr) 16px;
+    grid-template-areas:
+      "num title chev"
+      ". hook hook";
+    gap: 7px 12px;
+    padding: 15px 0;
+  }
+  .step__hook { justify-self: start; white-space: normal; overflow: visible; font-size: 13.5px; }
+  .step__body { padding: 0 0 16px 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

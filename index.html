@@ -352,7 +352,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
 <link rel="mask-icon" href="./assets/icons/favicon-mask.svg" color="#0a7494" />
-<link rel="stylesheet" href="./styles.css?v=20261109j" />
+<link rel="stylesheet" href="./styles.css?v=20261109l" />
 </head>
 <body>
 <svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
@@ -480,14 +480,15 @@
     </div>
     <!-- STORY-HEAD:END -->
 
-    <section class="showcase" id="showcase" aria-label="重点产品">
-      <!-- CARDS-HERO:START 本区块由 sites.json 预渲染，供不执行 JS 的爬虫与首屏使用，JS 加载后重绘，请勿手改 -->
-      <article class="showcase__card" style="--accent:#0a7494"><div class="showcase__head"><div class="showcase__idline"><span class="showcase__name">HelpEnX Studio</span><span class="status-tag status-tag--design">设计中</span><span class="showcase__domain">studio.helpenx.com</span></div><a class="btn btn-primary" href="https://studio.helpenx.com" target="_blank" rel="noopener">立即体验 AIGC Studio <span class="btn__arrow" aria-hidden="true">→</span></a></div><div class="showcase__main"><div class="showcase__text"><span class="showcase__tagline">AIGC 创意工坊</span><p class="showcase__desc">从创意、剧本到成片的全链路多 Agent 编排：自动完成分集分场、分镜脚本、关键帧、视频片段与配音剪辑，并把角色、场景、道具、模型等数字资产统一沉淀为可复用资产库——换一部剧不必从零重画，跨镜头、跨集保持同一张脸、同一个空间。一致性记忆与自动质检把返工压到最低，整集可一键生成，也可以在任意节点人工介入、用对话直接改写——例如「把第 3 场第 2 镜改成仰拍，时长缩到 4 秒」。</p></div><a class="showcase__media" href="https://studio.helpenx.com" target="_blank" rel="noopener"><img src="./assets/studio-pipeline.svg" alt="HelpEnX Studio 生产链路示意"></a></div><div class="showcase__bands"><div class="card__flow"><span class="card__flow-step">创意 / 剧本</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">分集分场</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">分镜脚本</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">数字资产 · 角色 / 场景 / 模型</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">关键帧</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">视频片段</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">配音 · 口型 · BGM</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">剪辑合成</span></div><ul class="card__features"><li>角色 / 场景 / 模型资产库</li><li>多模型路由与降级</li><li>跨镜头跨集一致性</li><li>自动质检与返工</li><li>断点续跑与配额调度</li><li>Tool / MCP / API 开放</li><li>可用率与成本指标</li></ul></div></article>
-      <!-- CARDS-HERO:END -->
-    </section>
-
     <!-- STORY-STEPS:START 本区块由 sites.json 的 story 生成，改配置后运行 node scripts/apply-config.js，请勿手改 -->
-    <div class="flow" data-flow>
+    <div class="flow-pool">
+      <div class="flow-pool__bg" aria-hidden="true">
+        <span class="flow-pool__wave flow-pool__wave--a"></span>
+        <span class="flow-pool__wave flow-pool__wave--b"></span>
+        <span class="flow-pool__monogram">N</span>
+      </div>
+      <p class="flow-pool__label"><span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span><span class="flow-pool__tag">任务池</span><span class="flow-pool__note">六个环节像任务一样在池中排队、调度与流转</span></p>
+      <div class="flow" data-flow>
       <div class="flow__rail">
         <span class="flow__line" aria-hidden="true"></span>
         <ol class="flow__stops">
@@ -582,9 +583,16 @@
           </article>
         </div>
       </div>
+      </div>
     </div>
     <p class="story__note">六个环节各有主页，也由 Studio 编排成一条可复用、可人工介入、可核算成本的工作流。</p>
     <!-- STORY-STEPS:END -->
+
+    <section class="showcase" id="showcase" aria-label="重点产品">
+      <!-- CARDS-HERO:START 本区块由 sites.json 预渲染，供不执行 JS 的爬虫与首屏使用，JS 加载后重绘，请勿手改 -->
+      <article class="showcase__card" style="--accent:#0a7494"><div class="showcase__head"><div class="showcase__idline"><span class="showcase__name">HelpEnX Studio</span><span class="status-tag status-tag--design">设计中</span><span class="showcase__domain">studio.helpenx.com</span></div><a class="btn btn-primary" href="https://studio.helpenx.com" target="_blank" rel="noopener">立即体验 AIGC Studio <span class="btn__arrow" aria-hidden="true">→</span></a></div><div class="showcase__main"><div class="showcase__text"><span class="showcase__tagline">AIGC 创意工坊</span><p class="showcase__desc">从创意、剧本到成片的全链路多 Agent 编排：自动完成分集分场、分镜脚本、关键帧、视频片段与配音剪辑，并把角色、场景、道具、模型等数字资产统一沉淀为可复用资产库——换一部剧不必从零重画，跨镜头、跨集保持同一张脸、同一个空间。一致性记忆与自动质检把返工压到最低，整集可一键生成，也可以在任意节点人工介入、用对话直接改写——例如「把第 3 场第 2 镜改成仰拍，时长缩到 4 秒」。</p></div><a class="showcase__media" href="https://studio.helpenx.com" target="_blank" rel="noopener"><img src="./assets/studio-pipeline.svg" alt="HelpEnX Studio 生产链路示意"></a></div><div class="showcase__bands"><div class="card__flow"><span class="card__flow-step">创意 / 剧本</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">分集分场</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">分镜脚本</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">数字资产 · 角色 / 场景 / 模型</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">关键帧</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">视频片段</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">配音 · 口型 · BGM</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">剪辑合成</span></div><ul class="card__features"><li>角色 / 场景 / 模型资产库</li><li>多模型路由与降级</li><li>跨镜头跨集一致性</li><li>自动质检与返工</li><li>断点续跑与配额调度</li><li>Tool / MCP / API 开放</li><li>可用率与成本指标</li></ul></div></article>
+      <!-- CARDS-HERO:END -->
+    </section>
   </section>
 
   <section class="board" id="board" aria-live="polite">

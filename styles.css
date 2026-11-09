@@ -302,8 +302,8 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 /* ---------- AIGC Studio 定位与流水线 ---------- */
 .story { padding: 4px 0 46px; }
 .story[hidden] { display: none; }
-/* Studio 卡片嵌在定位引言与流水线之间 */
-.story > .showcase { padding: 0 0 38px; }
+/* 流水线在前，Studio 服务卡作为编排落点在其后 */
+.story > .showcase { padding: 34px 0 38px; }
 .story__head { max-width: 880px; margin-bottom: 26px; }
 .story__eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
@@ -323,6 +323,61 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   font-size: 14.5px; line-height: 1.85; color: var(--text-dim);
 }
 .story__lead:last-child { margin-bottom: 0; }
+
+/* ---------- NeoTask 任务池：水层在底，六段流水线浮在上层 ---------- */
+.flow-pool {
+  position: relative; isolation: isolate; overflow: hidden;
+  margin-top: 6px; padding: 16px 22px 20px;
+  border: 1px solid rgba(10, 116, 148, 0.16); border-radius: 22px;
+  background:
+    radial-gradient(120% 90% at 8% 0%, rgba(10, 116, 148, 0.07), transparent 55%),
+    radial-gradient(90% 110% at 100% 100%, rgba(109, 75, 240, 0.07), transparent 62%),
+    linear-gradient(180deg, #fbfdfe, #f3f8fb);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(15, 34, 67, 0.03);
+}
+.flow-pool__bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.flow-pool__wave {
+  position: absolute; left: -15%; width: 130%; height: 160px; bottom: -70px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(10, 116, 148, 0.08), transparent 68%);
+  filter: blur(8px);
+  animation: poolSway 19s ease-in-out infinite alternate;
+}
+.flow-pool__wave--b {
+  bottom: -95px; height: 190px; opacity: 0.75;
+  background: radial-gradient(ellipse at center, rgba(109, 75, 240, 0.07), transparent 68%);
+  animation-duration: 25s; animation-direction: alternate-reverse;
+}
+.flow-pool__monogram {
+  position: absolute; right: 6px; bottom: -42px;
+  font-family: var(--mono); font-size: 210px; font-weight: 700; line-height: 1;
+  color: rgba(109, 75, 240, 0.05); user-select: none;
+}
+.flow-pool__label {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 9px;
+  margin: 0 0 4px; min-height: 24px;
+}
+.flow-pool__tile {
+  width: 22px; height: 22px; border-radius: 7px;
+  display: grid; place-items: center;
+  font-family: var(--mono); font-size: 12px; font-weight: 700; color: #fff;
+  background: linear-gradient(135deg, #8b7cf6, #6d4bf0);
+  box-shadow: 0 4px 10px rgba(109, 75, 240, 0.25);
+}
+.flow-pool__name { font-size: 12.5px; font-weight: 650; letter-spacing: 0.02em; color: var(--text-dim); }
+.flow-pool__tag {
+  padding: 1px 8px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 600; color: var(--cyan);
+  background: rgba(10, 116, 148, 0.06); border: 1px solid rgba(10, 116, 148, 0.2);
+}
+.flow-pool__note { margin-left: auto; font-size: 11.5px; color: var(--text-faint); opacity: 0.85; }
+.flow { position: relative; z-index: 1; margin-top: 10px; }
+
+@keyframes poolSway {
+  from { transform: translateX(-3%); }
+  to { transform: translateX(3%) translateY(-8px); }
+}
 
 /* ---------- 横向流水线：上下交错节点 + 联动详情坞 ---------- */
 .flow__rail { position: relative; }
@@ -687,6 +742,8 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 1060px) {
+  .flow-pool { padding: 14px 14px 16px; border-radius: 18px; }
+  .flow-pool__note { display: none; }
   .flow__stops {
     display: flex; gap: 12px; height: auto;
     margin: 0 -2px; padding: 4px 2px 10px;
@@ -727,6 +784,9 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   .card__arrow { top: 22px; right: 20px; }
   .chips { gap: 18px; }
   .story { padding-bottom: 34px; }
+  .flow-pool { padding: 12px 10px 14px; border-radius: 16px; }
+  .flow-pool__label { gap: 7px; }
+  .flow-pool__monogram { font-size: 150px; bottom: -26px; }
   .flow__stop { flex-basis: 158px; }
   .flow__panel { padding: 15px 16px 17px; }
   .flow__visit { margin-left: 0; }

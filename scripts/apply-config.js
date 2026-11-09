@@ -326,7 +326,16 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   const flowPad = "    ";
   const flowLines = [];
   if (stages.length) {
-    flowLines.push(flowPad + '<div class="flow" data-flow>');
+    flowLines.push(flowPad + '<div class="flow-pool">');
+    flowLines.push(flowPad + '  <div class="flow-pool__bg" aria-hidden="true">');
+    flowLines.push(flowPad + '    <span class="flow-pool__wave flow-pool__wave--a"></span>');
+    flowLines.push(flowPad + '    <span class="flow-pool__wave flow-pool__wave--b"></span>');
+    flowLines.push(flowPad + '    <span class="flow-pool__monogram">N</span>');
+    flowLines.push(flowPad + "  </div>");
+    flowLines.push(flowPad + '  <p class="flow-pool__label"><span class="flow-pool__tile">N</span>' +
+      '<span class="flow-pool__name">NeoTask</span><span class="flow-pool__tag">任务池</span>' +
+      '<span class="flow-pool__note">六个环节像任务一样在池中排队、调度与流转</span></p>');
+    flowLines.push(flowPad + '  <div class="flow" data-flow>');
     flowLines.push(flowPad + '  <div class="flow__rail">');
     flowLines.push(flowPad + '    <span class="flow__line" aria-hidden="true"></span>');
     flowLines.push(flowPad + '    <ol class="flow__stops">');
@@ -371,6 +380,7 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
       flowLines.push(flowPad + "      </article>");
     });
     flowLines.push(flowPad + "    </div>");
+    flowLines.push(flowPad + "  </div>");
     flowLines.push(flowPad + "  </div>");
     flowLines.push(flowPad + "</div>");
     if (story.note) flowLines.push(flowPad + '<p class="story__note">' + esc(story.note) + "</p>");

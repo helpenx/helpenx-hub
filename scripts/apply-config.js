@@ -303,6 +303,7 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   const stages = story.stages || [];
 
   // 事件总线：把 from/to 转成总线位置百分比，并为目标节点生成到达闪光
+  // from === to 表示底座重试：光点驶出再返回原节点，表示 NeoTask 换模型后重新派发
   const stageIndex = {};
   stages.forEach((s, i) => { stageIndex[s.id] = i; });
   const lastIdx = Math.max(stages.length - 1, 1);
@@ -312,17 +313,22 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   (story.events || []).forEach((ev, g) => {
     const from = stageIndex[ev.from];
     if (from == null) return;
-    if (ev.label) eventCaptions.push(ev.label);
+    const kind = ev.kind || "wake";
+    if (ev.label) eventCaptions.push({ kind: kind, label: ev.label });
     (ev.to || []).forEach((id, k) => {
       const to = stageIndex[id];
       if (to == null) return;
+      const fromPct = +(from / lastIdx * 100).toFixed(2);
       const pair = {
-        kind: ev.kind || "wake",
-        from: +(from / lastIdx * 100).toFixed(2),
+        kind: kind,
+        from: fromPct,
         to: +(to / lastIdx * 100).toFixed(2),
+        toIdx: to,
         delay: +(g * 0.55 + k * 0.18).toFixed(2),
         dur: +(3.4 + g * 0.25).toFixed(2),
-        rev: to < from
+        rev: to < from,
+        loop: to === from,
+        mid: fromPct <= 80 ? fromPct + 9 : fromPct - 9
       };
       eventPairs.push(pair);
       (hitsByStage[id] = hitsByStage[id] || []).push(pair);
@@ -360,21 +366,33 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
     flowLines.push(flowPad + '    <span class="flow-pool__monogram">N</span>');
     flowLines.push(flowPad + "  </div>");
     flowLines.push(flowPad + '  <div class="flow-pool__head">');
-    flowLines.push(flowPad + '    <button class="flow-pool__label" type="button" aria-pressed="false">' +
+    flowLines.push(flowPad + '    <button class="flow-pool__label" type="button" aria-pressed="true">' +
       '<span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span>' +
       '<span class="flow-pool__tag">任务池</span>' +
       '<span class="flow-pool__bus">' + esc(story.busLabel || "DATA BUS") + "</span>" +
-      '<span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span>事件演示</span></button>');
+      '<span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span><span class="flow-pool__hinttext">暂停演示</span></span></button>');
     flowLines.push(flowPad + '    <span class="flow-pool__note" data-idle="' + esc(story.busNote || "") +
-      '" data-events="' + esc(eventCaptions.join("||")) + '">' + esc(story.busNote || "") + "</span>");
+      '" data-events="' + esc(JSON.stringify(eventCaptions)) + '">' + esc(story.busNote || "") + "</span>");
     flowLines.push(flowPad + "  </div>");
+    const kinds = story.kinds || [];
+    if (kinds.length) {
+      flowLines.push(flowPad + '  <div class="flow-legend" role="group" aria-label="事件类型，点击聚焦对应光点">');
+      kinds.forEach((k) => {
+        flowLines.push(flowPad + '    <button class="flow-legend__chip flow-legend__chip--' + esc(k.id) +
+          '" type="button" data-kind="' + esc(k.id) + '" aria-pressed="false">' +
+          '<span class="flow-legend__dot" aria-hidden="true"></span>' + esc(k.label) + "</button>");
+      });
+      flowLines.push(flowPad + "  </div>");
+    }
     flowLines.push(flowPad + '  <div class="flow" data-flow>');
     flowLines.push(flowPad + '  <div class="flow__rail">');
     flowLines.push(flowPad + '    <span class="flow__line" aria-hidden="true">');
     eventPairs.forEach((p) => {
       flowLines.push(flowPad + '      <span class="flow__bead flow__bead--' + p.kind +
-        (p.rev ? " flow__bead--rev" : "") +
-        '" style="--from:' + p.from + '%;--to:' + p.to + '%;--delay:' + p.delay + 's;--dur:' + p.dur + 's"></span>');
+        (p.rev ? " flow__bead--rev" : "") + (p.loop ? " flow__bead--loop" : "") +
+        '" data-to="' + p.toIdx + '" style="--from:' + p.from + '%;--to:' + p.to + '%;' +
+        (p.loop ? "--mid:" + p.mid + "%;" : "") +
+        '--delay:' + p.delay + 's;--dur:' + p.dur + 's"></span>');
     });
     flowLines.push(flowPad + '    </span>');
     flowLines.push(flowPad + '    <ol class="flow__stops">');

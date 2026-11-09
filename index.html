@@ -475,8 +475,8 @@
     <div class="story__head">
       <span class="story__eyebrow">HelpEnX Studio · 协作模型</span>
       <h2 class="story__title" id="story-title">六环不是流水线，是同一张时间线上的事件网络</h2>
-      <p class="story__lead">HelpEnX Studio 把剧本、分镜、画面、音频、剪辑与质检写进同一个 Project 时间线。六个环节围绕这份共享状态协作，而不是把素材一站站往下传。</p>
-      <p class="story__lead">任何一环的产出都会发出事件：PenShot 更新分镜，会唤醒 PenGen 与 PenDub；PenGen 出片，会触发 PenFix 质检；质检通过与音频时长变化，又会回流到 PenClip 和 PenShot。多对多，而非单向。</p>
+      <p class="story__lead">HelpEnX Studio 把剧本、分镜、画面、音频、剪辑与质检写进同一个 Project 时间线。六个环节围绕这份共享状态协作，而不是把素材一站站往下传。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。</p>
+      <p class="story__lead">任何一环的产出都会发出事件：分镜更新并行唤醒生成与配音，产出先过质检再落轨合成；异常被定点打回，修改沿级联刷新，剪辑可反向改剧本，失败由 NeoTask 换模型重试。多对多，而非单向。</p>
     </div>
     <!-- STORY-HEAD:END -->
 
@@ -488,20 +488,36 @@
         <span class="flow-pool__monogram">N</span>
       </div>
       <div class="flow-pool__head">
-        <button class="flow-pool__label" type="button" aria-pressed="false"><span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span><span class="flow-pool__tag">任务池</span><span class="flow-pool__bus">DATA BUS · 共享状态</span><span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span>事件演示</span></button>
-        <span class="flow-pool__note" data-idle="所有环节共享同一个 Project 时间线，变更以事件流转" data-events="PenShot 分镜更新 → 唤醒 PenGen、PenDub||PenGen 片段产出 → 唤醒 PenFix 质检||PenFix 通过 → PenClip 替换占位符||PenDub 时长变化 → 回调 PenShot、PenClip||PenFix 标准 → 覆盖画面与口型">所有环节共享同一个 Project 时间线，变更以事件流转</span>
+        <button class="flow-pool__label" type="button" aria-pressed="true"><span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span><span class="flow-pool__tag">任务池</span><span class="flow-pool__bus">DATA BUS · 共享状态</span><span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span><span class="flow-pool__hinttext">暂停演示</span></span></button>
+        <span class="flow-pool__note" data-idle="所有环节共享同一个 Project 时间线，变更以事件流转" data-events="[{&quot;kind&quot;:&quot;wake&quot;,&quot;label&quot;:&quot;PenPlot 剧本定稿 → PenShot 切分镜头&quot;},{&quot;kind&quot;:&quot;wake&quot;,&quot;label&quot;:&quot;PenShot 分镜更新 → 并行唤醒 PenGen、PenDub&quot;},{&quot;kind&quot;:&quot;wake&quot;,&quot;label&quot;:&quot;PenGen 片段产出 → PenFix 质检&quot;},{&quot;kind&quot;:&quot;wake&quot;,&quot;label&quot;:&quot;PenDub 音频产出 → PenFix 质检&quot;},{&quot;kind&quot;:&quot;wake&quot;,&quot;label&quot;:&quot;PenFix 通过 → PenClip 落轨合成&quot;},{&quot;kind&quot;:&quot;rework&quot;,&quot;label&quot;:&quot;PenFix 发现异常 → NeoTask 打回，定点重跑该镜头&quot;},{&quot;kind&quot;:&quot;cascade&quot;,&quot;label&quot;:&quot;PenShot 改分镜 → PenGen 刷新画面 → PenClip 局部重剪&quot;},{&quot;kind&quot;:&quot;cascade&quot;,&quot;label&quot;:&quot;PenShot 改台词 → PenDub 刷新音频 → PenClip 局部重剪&quot;},{&quot;kind&quot;:&quot;feedback&quot;,&quot;label&quot;:&quot;PenDub 时长不符 → PenShot 微调时长、PenClip 对齐轨道&quot;},{&quot;kind&quot;:&quot;reverse&quot;,&quot;label&quot;:&quot;PenClip 人工粗剪 → 反向修订 PenPlot、PenShot&quot;},{&quot;kind&quot;:&quot;retry&quot;,&quot;label&quot;:&quot;PenGen 调用失败 → NeoTask 切换备用模型重派&quot;},{&quot;kind&quot;:&quot;retry&quot;,&quot;label&quot;:&quot;PenDub 调用失败 → NeoTask 切换备用模型重派&quot;}]">所有环节共享同一个 Project 时间线，变更以事件流转</span>
+      </div>
+      <div class="flow-legend" role="group" aria-label="事件类型，点击聚焦对应光点">
+        <button class="flow-legend__chip flow-legend__chip--wake" type="button" data-kind="wake" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>标准顺流</button>
+        <button class="flow-legend__chip flow-legend__chip--rework" type="button" data-kind="rework" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>局部打回</button>
+        <button class="flow-legend__chip flow-legend__chip--cascade" type="button" data-kind="cascade" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>文本级联</button>
+        <button class="flow-legend__chip flow-legend__chip--feedback" type="button" data-kind="feedback" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>音频级联</button>
+        <button class="flow-legend__chip flow-legend__chip--reverse" type="button" data-kind="reverse" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>剪辑主导</button>
+        <button class="flow-legend__chip flow-legend__chip--retry" type="button" data-kind="retry" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>底座重试</button>
       </div>
       <div class="flow" data-flow>
       <div class="flow__rail">
         <span class="flow__line" aria-hidden="true">
-          <span class="flow__bead flow__bead--wake" style="--from:20%;--to:40%;--delay:0s;--dur:3.4s"></span>
-          <span class="flow__bead flow__bead--wake" style="--from:20%;--to:60%;--delay:0.18s;--dur:3.4s"></span>
-          <span class="flow__bead flow__bead--wake" style="--from:40%;--to:100%;--delay:0.55s;--dur:3.65s"></span>
-          <span class="flow__bead flow__bead--wake flow__bead--rev" style="--from:100%;--to:80%;--delay:1.1s;--dur:3.9s"></span>
-          <span class="flow__bead flow__bead--feedback flow__bead--rev" style="--from:60%;--to:20%;--delay:1.65s;--dur:4.15s"></span>
-          <span class="flow__bead flow__bead--feedback" style="--from:60%;--to:80%;--delay:1.83s;--dur:4.15s"></span>
-          <span class="flow__bead flow__bead--rule flow__bead--rev" style="--from:100%;--to:40%;--delay:2.2s;--dur:4.4s"></span>
-          <span class="flow__bead flow__bead--rule flow__bead--rev" style="--from:100%;--to:60%;--delay:2.38s;--dur:4.4s"></span>
+          <span class="flow__bead flow__bead--wake" data-to="1" style="--from:0%;--to:20%;--delay:0s;--dur:3.4s"></span>
+          <span class="flow__bead flow__bead--wake" data-to="2" style="--from:20%;--to:40%;--delay:0.55s;--dur:3.65s"></span>
+          <span class="flow__bead flow__bead--wake" data-to="3" style="--from:20%;--to:60%;--delay:0.73s;--dur:3.65s"></span>
+          <span class="flow__bead flow__bead--wake" data-to="5" style="--from:40%;--to:100%;--delay:1.1s;--dur:3.9s"></span>
+          <span class="flow__bead flow__bead--wake" data-to="5" style="--from:60%;--to:100%;--delay:1.65s;--dur:4.15s"></span>
+          <span class="flow__bead flow__bead--wake flow__bead--rev" data-to="4" style="--from:100%;--to:80%;--delay:2.2s;--dur:4.4s"></span>
+          <span class="flow__bead flow__bead--rework flow__bead--rev" data-to="2" style="--from:100%;--to:40%;--delay:2.75s;--dur:4.65s"></span>
+          <span class="flow__bead flow__bead--rework flow__bead--rev" data-to="3" style="--from:100%;--to:60%;--delay:2.93s;--dur:4.65s"></span>
+          <span class="flow__bead flow__bead--cascade" data-to="4" style="--from:40%;--to:80%;--delay:3.3s;--dur:4.9s"></span>
+          <span class="flow__bead flow__bead--cascade" data-to="4" style="--from:60%;--to:80%;--delay:3.85s;--dur:5.15s"></span>
+          <span class="flow__bead flow__bead--feedback flow__bead--rev" data-to="1" style="--from:60%;--to:20%;--delay:4.4s;--dur:5.4s"></span>
+          <span class="flow__bead flow__bead--feedback" data-to="4" style="--from:60%;--to:80%;--delay:4.58s;--dur:5.4s"></span>
+          <span class="flow__bead flow__bead--reverse flow__bead--rev" data-to="0" style="--from:80%;--to:0%;--delay:4.95s;--dur:5.65s"></span>
+          <span class="flow__bead flow__bead--reverse flow__bead--rev" data-to="1" style="--from:80%;--to:20%;--delay:5.13s;--dur:5.65s"></span>
+          <span class="flow__bead flow__bead--retry flow__bead--loop" data-to="2" style="--from:40%;--to:40%;--mid:49%;--delay:5.5s;--dur:5.9s"></span>
+          <span class="flow__bead flow__bead--retry flow__bead--loop" data-to="3" style="--from:60%;--to:60%;--mid:69%;--delay:6.05s;--dur:6.15s"></span>
         </span>
         <ol class="flow__stops">
           <li class="flow__stop flow__stop--up" style="--i:0">
@@ -511,7 +527,7 @@
               <span class="flow__hook">一句台词、一个画面，就能长出一整部戏。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--reverse" style="--delay:4.95s;--dur:5.65s"></span></span>
           </li>
           <li class="flow__stop flow__stop--down" style="--i:1">
             <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-penshot" data-flow-index="1">
@@ -520,7 +536,7 @@
               <span class="flow__hook">把「他推开门」翻译成看得见的镜头。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--feedback" style="--delay:1.65s;--dur:4.15s"></span></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0s;--dur:3.4s"></span><span class="flow__hit flow__hit--feedback" style="--delay:4.4s;--dur:5.4s"></span><span class="flow__hit flow__hit--reverse" style="--delay:5.13s;--dur:5.65s"></span></span>
           </li>
           <li class="flow__stop flow__stop--up" style="--i:2">
             <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-pengen" data-flow-index="2">
@@ -529,7 +545,7 @@
               <span class="flow__hook">图纸落地的瞬间，故事第一次开始播放。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0s;--dur:3.4s"></span><span class="flow__hit flow__hit--rule" style="--delay:2.2s;--dur:4.4s"></span></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0.55s;--dur:3.65s"></span><span class="flow__hit flow__hit--rework" style="--delay:2.75s;--dur:4.65s"></span><span class="flow__hit flow__hit--retry" style="--delay:5.5s;--dur:5.9s"></span></span>
           </li>
           <li class="flow__stop flow__stop--down" style="--i:3">
             <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-pendub" data-flow-index="3">
@@ -538,7 +554,7 @@
               <span class="flow__hook">让每句台词，都落在该落的那一秒。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0.18s;--dur:3.4s"></span><span class="flow__hit flow__hit--rule" style="--delay:2.38s;--dur:4.4s"></span></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0.73s;--dur:3.65s"></span><span class="flow__hit flow__hit--rework" style="--delay:2.93s;--dur:4.65s"></span><span class="flow__hit flow__hit--retry" style="--delay:6.05s;--dur:6.15s"></span></span>
           </li>
           <li class="flow__stop flow__stop--up" style="--i:4">
             <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-penclip" data-flow-index="4">
@@ -547,7 +563,7 @@
               <span class="flow__hook">同样的素材，剪法不同就是两部作品。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:1.1s;--dur:3.9s"></span><span class="flow__hit flow__hit--feedback" style="--delay:1.83s;--dur:4.15s"></span></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:2.2s;--dur:4.4s"></span><span class="flow__hit flow__hit--cascade" style="--delay:3.3s;--dur:4.9s"></span><span class="flow__hit flow__hit--cascade" style="--delay:3.85s;--dur:5.15s"></span><span class="flow__hit flow__hit--feedback" style="--delay:4.58s;--dur:5.4s"></span></span>
           </li>
           <li class="flow__stop flow__stop--down" style="--i:5">
             <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-penfix" data-flow-index="5">
@@ -556,7 +572,7 @@
               <span class="flow__hook">敢说「不」的环节，才让成片敢交出去。</span>
             </button>
             <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0.55s;--dur:3.65s"></span></span>
+            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:1.1s;--dur:3.9s"></span><span class="flow__hit flow__hit--wake" style="--delay:1.65s;--dur:4.15s"></span></span>
           </li>
         </ol>
       </div>
@@ -597,7 +613,7 @@
       </div>
       </div>
     </div>
-    <p class="story__note">所有环节共享同一个 Project 时间线；每次变更都是一次事件，由 NeoTask 接收、排序并唤醒相关环节。</p>
+    <p class="story__note">所有跨节点流转必须经过 NeoTask 调度：节点互不直接调用，只依靠状态变更事件驱动。</p>
     <!-- STORY-STEPS:END -->
 
     <section class="showcase" id="showcase" aria-label="重点产品">
@@ -702,17 +718,32 @@
     "eyebrow": "HelpEnX Studio · 协作模型",
     "title": "六环不是流水线，是同一张时间线上的事件网络",
     "lead": [
-      "HelpEnX Studio 把剧本、分镜、画面、音频、剪辑与质检写进同一个 Project 时间线。六个环节围绕这份共享状态协作，而不是把素材一站站往下传。",
-      "任何一环的产出都会发出事件：PenShot 更新分镜，会唤醒 PenGen 与 PenDub；PenGen 出片，会触发 PenFix 质检；质检通过与音频时长变化，又会回流到 PenClip 和 PenShot。多对多，而非单向。"
+      "HelpEnX Studio 把剧本、分镜、画面、音频、剪辑与质检写进同一个 Project 时间线。六个环节围绕这份共享状态协作，而不是把素材一站站往下传。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。",
+      "任何一环的产出都会发出事件：分镜更新并行唤醒生成与配音，产出先过质检再落轨合成；异常被定点打回，修改沿级联刷新，剪辑可反向改剧本，失败由 NeoTask 换模型重试。多对多，而非单向。"
     ],
     "busLabel": "DATA BUS · 共享状态",
     "busNote": "所有环节共享同一个 Project 时间线，变更以事件流转",
+    "kinds": [
+      { "id": "wake", "label": "标准顺流" },
+      { "id": "rework", "label": "局部打回" },
+      { "id": "cascade", "label": "文本级联" },
+      { "id": "feedback", "label": "音频级联" },
+      { "id": "reverse", "label": "剪辑主导" },
+      { "id": "retry", "label": "底座重试" }
+    ],
     "events": [
-      { "from": "penshot", "to": ["pengen", "pendub"], "kind": "wake", "label": "PenShot 分镜更新 → 唤醒 PenGen、PenDub" },
-      { "from": "pengen", "to": ["penfix"], "kind": "wake", "label": "PenGen 片段产出 → 唤醒 PenFix 质检" },
-      { "from": "penfix", "to": ["penclip"], "kind": "wake", "label": "PenFix 通过 → PenClip 替换占位符" },
-      { "from": "pendub", "to": ["penshot", "penclip"], "kind": "feedback", "label": "PenDub 时长变化 → 回调 PenShot、PenClip" },
-      { "from": "penfix", "to": ["pengen", "pendub"], "kind": "rule", "label": "PenFix 标准 → 覆盖画面与口型" }
+      { "from": "penplot", "to": ["penshot"], "kind": "wake", "label": "PenPlot 剧本定稿 → PenShot 切分镜头" },
+      { "from": "penshot", "to": ["pengen", "pendub"], "kind": "wake", "label": "PenShot 分镜更新 → 并行唤醒 PenGen、PenDub" },
+      { "from": "pengen", "to": ["penfix"], "kind": "wake", "label": "PenGen 片段产出 → PenFix 质检" },
+      { "from": "pendub", "to": ["penfix"], "kind": "wake", "label": "PenDub 音频产出 → PenFix 质检" },
+      { "from": "penfix", "to": ["penclip"], "kind": "wake", "label": "PenFix 通过 → PenClip 落轨合成" },
+      { "from": "penfix", "to": ["pengen", "pendub"], "kind": "rework", "label": "PenFix 发现异常 → NeoTask 打回，定点重跑该镜头" },
+      { "from": "pengen", "to": ["penclip"], "kind": "cascade", "label": "PenShot 改分镜 → PenGen 刷新画面 → PenClip 局部重剪" },
+      { "from": "pendub", "to": ["penclip"], "kind": "cascade", "label": "PenShot 改台词 → PenDub 刷新音频 → PenClip 局部重剪" },
+      { "from": "pendub", "to": ["penshot", "penclip"], "kind": "feedback", "label": "PenDub 时长不符 → PenShot 微调时长、PenClip 对齐轨道" },
+      { "from": "penclip", "to": ["penplot", "penshot"], "kind": "reverse", "label": "PenClip 人工粗剪 → 反向修订 PenPlot、PenShot" },
+      { "from": "pengen", "to": ["pengen"], "kind": "retry", "label": "PenGen 调用失败 → NeoTask 切换备用模型重派" },
+      { "from": "pendub", "to": ["pendub"], "kind": "retry", "label": "PenDub 调用失败 → NeoTask 切换备用模型重派" }
     ],
     "stages": [
       {
@@ -776,7 +807,7 @@
         "story": "「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。"
       }
     ],
-    "note": "所有环节共享同一个 Project 时间线；每次变更都是一次事件，由 NeoTask 接收、排序并唤醒相关环节。"
+    "note": "所有跨节点流转必须经过 NeoTask 调度：节点互不直接调用，只依靠状态变更事件驱动。"
   },
   "categories": [
     { "id": "studio", "name": "AIGC Studio", "shortName": "AIGC Studio" },

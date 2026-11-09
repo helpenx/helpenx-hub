@@ -327,6 +327,12 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 /* ---------- NeoTask 任务池：水层在底，六段流水线浮在上层 ---------- */
 .flow-pool {
   position: relative; isolation: isolate; overflow: hidden;
+  --kind-wake: 10, 116, 148;
+  --kind-rework: 214, 69, 65;
+  --kind-cascade: 8, 122, 67;
+  --kind-feedback: 224, 138, 30;
+  --kind-reverse: 109, 75, 240;
+  --kind-retry: 100, 116, 139;
   margin-top: 6px; padding: 16px 22px 20px;
   border: 1px solid rgba(10, 116, 148, 0.16); border-radius: 22px;
   background:
@@ -389,8 +395,13 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 .flow-pool__play {
+  width: 7px; height: 8px;
+  border-left: 2.5px solid currentColor;
+  border-right: 2.5px solid currentColor;
+}
+.flow-pool.is-paused .flow-pool__play {
   width: 0; height: 0;
-  border-left: 6px solid currentColor;
+  border-left: 6px solid currentColor; border-right: 0;
   border-top: 3.5px solid transparent;
   border-bottom: 3.5px solid transparent;
 }
@@ -398,7 +409,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .flow-pool__label:focus-visible .flow-pool__hint {
   color: var(--cyan); border-color: rgba(10, 116, 148, 0.35); background: #fff;
 }
-.flow-pool.is-demo .flow-pool__hint {
+.flow-pool:not(.is-paused) .flow-pool__hint {
   color: var(--cyan); border-color: rgba(10, 116, 148, 0.45); background: rgba(10, 116, 148, 0.07);
 }
 .flow-pool__note {
@@ -406,7 +417,34 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   font-size: 11.5px; line-height: 1.52; text-align: right;
   color: var(--text-faint); transition: color 0.18s ease;
 }
-.flow-pool.is-demo .flow-pool__note { color: var(--cyan); }
+.flow-pool:not(.is-paused) .flow-pool__note { color: var(--cyan); }
+/* 事件类型图例：点击聚焦对应光点，再次点击或 Esc 恢复全部 */
+.flow-legend {
+  position: relative; z-index: 1;
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;
+}
+.flow-legend__chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 9px; border-radius: 999px;
+  font: inherit; font-size: 10.5px; font-weight: 600; color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.6); border: 1px solid var(--border); cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+.flow-legend__dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(var(--bead), 0.9); box-shadow: 0 0 5px rgba(var(--bead), 0.45);
+}
+.flow-legend__chip:hover { border-color: rgba(var(--bead), 0.45); background: #fff; }
+.flow-legend__chip:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.flow-legend__chip[aria-pressed="true"] {
+  border-color: rgba(var(--bead), 0.55); background: rgba(var(--bead), 0.09);
+}
+.flow-legend__chip--wake { --bead: var(--kind-wake); }
+.flow-legend__chip--rework { --bead: var(--kind-rework); }
+.flow-legend__chip--cascade { --bead: var(--kind-cascade); }
+.flow-legend__chip--feedback { --bead: var(--kind-feedback); }
+.flow-legend__chip--reverse { --bead: var(--kind-reverse); }
+.flow-legend__chip--retry { --bead: var(--kind-retry); }
 .flow { position: relative; z-index: 1; margin-top: 10px; }
 
 @keyframes poolSway {
@@ -436,13 +474,15 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   box-shadow: 0 0 12px rgba(10, 116, 148, 0.3);
   transition: width 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-/* 事件光点：由 story.events 生成，在任意两个节点之间双向穿梭 */
+/* 事件光点：由 story.events 生成，默认自动在任意两个节点之间双向穿梭 */
 .flow__bead {
   position: absolute; top: 50%; left: 0; z-index: 2;
   width: 54px; height: 5px; margin-top: -2.5px; border-radius: 3px;
   opacity: 0; pointer-events: none;
-  --bead: 10, 116, 148;
+  --bead: var(--kind-wake);
   background: linear-gradient(90deg, transparent, rgba(var(--bead), 0.15) 45%, rgba(var(--bead), 0.9));
+  animation: busEvent var(--dur, 3.6s) linear infinite;
+  animation-delay: var(--delay, 0s);
 }
 .flow__bead::after {
   content: ""; position: absolute; top: 50%; right: -1px;
@@ -450,16 +490,25 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   background: #fff;
   box-shadow: 0 0 8px rgba(var(--bead), 0.8), 0 0 2px rgba(var(--bead), 0.9);
 }
-.flow__bead--feedback { --bead: 224, 138, 30; }
-.flow__bead--rule { --bead: 109, 75, 240; }
+.flow__bead--wake { --bead: var(--kind-wake); }
+.flow__bead--rework { --bead: var(--kind-rework); }
+.flow__bead--cascade { --bead: var(--kind-cascade); }
+.flow__bead--feedback { --bead: var(--kind-feedback); }
+.flow__bead--reverse { --bead: var(--kind-reverse); }
+.flow__bead--retry { --bead: var(--kind-retry); }
 .flow__bead--rev {
   background: linear-gradient(270deg, transparent, rgba(var(--bead), 0.15) 45%, rgba(var(--bead), 0.9));
 }
 .flow__bead--rev::after { right: auto; left: -1px; }
-.flow-pool.is-demo .flow__bead {
-  animation: busEvent var(--dur, 3.6s) linear infinite;
-  animation-delay: var(--delay, 0s);
+/* 底座重试：光点驶出再返回原节点，表示 NeoTask 换模型后重新派发 */
+.flow__bead--loop {
+  animation-name: busLoop;
+  background: linear-gradient(90deg, transparent, rgba(var(--bead), 0.55), transparent);
 }
+.flow__bead--loop::after { right: auto; left: 50%; margin-left: -3.5px; }
+.flow-pool.is-paused .flow__bead,
+.flow-pool.is-paused .flow__hit { animation-play-state: paused; }
+.flow__bead.is-dim, .flow__hit.is-dim { filter: opacity(0.1); }
 .flow__stops {
   position: relative; z-index: 1;
   display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0 12px;
@@ -474,7 +523,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid var(--border); border-radius: 12px;
   cursor: pointer;
-  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, translate 0.18s ease;
 }
 .flow__stop--up .flow__card { bottom: calc(50% + 30px); }
 .flow__stop--down .flow__card { top: calc(50% + 30px); }
@@ -487,6 +536,13 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   border-color: rgba(10, 116, 148, 0.55); background: var(--surface);
   box-shadow: 0 16px 34px rgba(10, 116, 148, 0.16);
   transform: translateY(-2px);
+}
+/* 事件到达：目标卡片按事件色点亮并轻微凸起，由光点 animationiteration 驱动 */
+.flow__stop.is-hit .flow__card {
+  border-color: rgba(var(--hit, 10, 116, 148), 0.55);
+  background: var(--surface);
+  box-shadow: 0 12px 26px rgba(var(--hit, 10, 116, 148), 0.18);
+  translate: 0 -3px;
 }
 .flow__meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .flow__num {
@@ -524,15 +580,17 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .flow__hit {
   position: absolute; inset: -3px; border-radius: 50%;
   opacity: 0; pointer-events: none;
-  --bead: 10, 116, 148;
+  --bead: var(--kind-wake);
   background: radial-gradient(circle, rgba(var(--bead), 0.95), rgba(var(--bead), 0) 72%);
-}
-.flow__hit--feedback { --bead: 224, 138, 30; }
-.flow__hit--rule { --bead: 109, 75, 240; }
-.flow-pool.is-demo .flow__hit {
   animation: busHit var(--dur, 3.6s) linear infinite;
   animation-delay: var(--delay, 0s);
 }
+.flow__hit--wake { --bead: var(--kind-wake); }
+.flow__hit--rework { --bead: var(--kind-rework); }
+.flow__hit--cascade { --bead: var(--kind-cascade); }
+.flow__hit--feedback { --bead: var(--kind-feedback); }
+.flow__hit--reverse { --bead: var(--kind-reverse); }
+.flow__hit--retry { --bead: var(--kind-retry); }
 .flow__dot.is-lit { border-color: var(--cyan); background: var(--cyan); }
 .flow__stop.is-active .flow__dot {
   background: var(--cyan); border-color: var(--cyan);
@@ -585,6 +643,14 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   7% { opacity: 0.95; }
   88% { opacity: 0.95; }
   100% { left: var(--to); opacity: 0; }
+}
+@keyframes busLoop {
+  0% { left: var(--from); opacity: 0; }
+  12% { opacity: 0.95; }
+  46% { left: var(--mid); opacity: 0.95; }
+  54% { left: var(--mid); opacity: 0.95; }
+  88% { opacity: 0.95; }
+  100% { left: var(--from); opacity: 0; }
 }
 @keyframes busHit {
   0%, 80% { opacity: 0; transform: scale(0.55); }
@@ -805,7 +871,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 /* ---------- 响应式 ---------- */
 @media (max-width: 1060px) {
   .flow-pool { padding: 14px 14px 16px; border-radius: 18px; }
-  .flow-pool__note, .flow-pool__hint, .flow-pool__bus { display: none; }
+  .flow-pool__note, .flow-pool__hint, .flow-pool__bus, .flow-legend { display: none; }
   .flow-pool__label { cursor: default; }
   .flow__stops {
     display: flex; gap: 12px; height: auto;

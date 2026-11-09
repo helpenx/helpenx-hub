@@ -26,16 +26,31 @@
     "title": "六环不是流水线，是同一张时间线上的事件网络",
     "lead": [
       "HelpEnX Studio 把剧本、分镜、画面、音频、剪辑与质检写进同一个 Project 时间线。六个环节围绕这份共享状态协作，而不是把素材一站站往下传。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。",
-      "任何一环的产出都会发出事件：PenShot 更新分镜，会唤醒 PenGen 与 PenDub；PenGen 出片，会触发 PenFix 质检；质检通过与音频时长变化，又会回流到 PenClip 和 PenShot。多对多，而非单向。"
+      "任何一环的产出都会发出事件：分镜更新并行唤醒生成与配音，产出先过质检再落轨合成；异常被定点打回，修改沿级联刷新，剪辑可反向改剧本，失败由 NeoTask 换模型重试。多对多，而非单向。"
     ],
     "busLabel": "DATA BUS · 共享状态",
     "busNote": "所有环节共享同一个 Project 时间线，变更以事件流转",
+    "kinds": [
+      { "id": "wake", "label": "标准顺流" },
+      { "id": "rework", "label": "局部打回" },
+      { "id": "cascade", "label": "文本级联" },
+      { "id": "feedback", "label": "音频级联" },
+      { "id": "reverse", "label": "剪辑主导" },
+      { "id": "retry", "label": "底座重试" }
+    ],
     "events": [
-      { "from": "penshot", "to": ["pengen", "pendub"], "kind": "wake", "label": "PenShot 分镜更新 → 唤醒 PenGen、PenDub" },
-      { "from": "pengen", "to": ["penfix"], "kind": "wake", "label": "PenGen 片段产出 → 唤醒 PenFix 质检" },
-      { "from": "penfix", "to": ["penclip"], "kind": "wake", "label": "PenFix 通过 → PenClip 替换占位符" },
-      { "from": "pendub", "to": ["penshot", "penclip"], "kind": "feedback", "label": "PenDub 时长变化 → 回调 PenShot、PenClip" },
-      { "from": "penfix", "to": ["pengen", "pendub"], "kind": "rule", "label": "PenFix 标准 → 覆盖画面与口型" }
+      { "from": "penplot", "to": ["penshot"], "kind": "wake", "label": "PenPlot 剧本定稿 → PenShot 切分镜头" },
+      { "from": "penshot", "to": ["pengen", "pendub"], "kind": "wake", "label": "PenShot 分镜更新 → 并行唤醒 PenGen、PenDub" },
+      { "from": "pengen", "to": ["penfix"], "kind": "wake", "label": "PenGen 片段产出 → PenFix 质检" },
+      { "from": "pendub", "to": ["penfix"], "kind": "wake", "label": "PenDub 音频产出 → PenFix 质检" },
+      { "from": "penfix", "to": ["penclip"], "kind": "wake", "label": "PenFix 通过 → PenClip 落轨合成" },
+      { "from": "penfix", "to": ["pengen", "pendub"], "kind": "rework", "label": "PenFix 发现异常 → NeoTask 打回，定点重跑该镜头" },
+      { "from": "pengen", "to": ["penclip"], "kind": "cascade", "label": "PenShot 改分镜 → PenGen 刷新画面 → PenClip 局部重剪" },
+      { "from": "pendub", "to": ["penclip"], "kind": "cascade", "label": "PenShot 改台词 → PenDub 刷新音频 → PenClip 局部重剪" },
+      { "from": "pendub", "to": ["penshot", "penclip"], "kind": "feedback", "label": "PenDub 时长不符 → PenShot 微调时长、PenClip 对齐轨道" },
+      { "from": "penclip", "to": ["penplot", "penshot"], "kind": "reverse", "label": "PenClip 人工粗剪 → 反向修订 PenPlot、PenShot" },
+      { "from": "pengen", "to": ["pengen"], "kind": "retry", "label": "PenGen 调用失败 → NeoTask 切换备用模型重派" },
+      { "from": "pendub", "to": ["pendub"], "kind": "retry", "label": "PenDub 调用失败 → NeoTask 切换备用模型重派" }
     ],
     "stages": [
       {
@@ -99,7 +114,7 @@
         "story": "「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。"
       }
     ],
-    "note": "所有环节共享同一个 Project 时间线；每次变更都是一次事件，由 NeoTask 接收、排序并唤醒相关环节。"
+    "note": "所有跨节点流转必须经过 NeoTask 调度：节点互不直接调用，只依靠状态变更事件驱动。"
   },
   "categories": [
     { "id": "studio", "name": "AIGC Studio", "shortName": "AIGC Studio" },

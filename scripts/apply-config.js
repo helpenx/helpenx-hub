@@ -321,41 +321,60 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   }
   writeBlock("<!-- STORY-HEAD:START", "<!-- STORY-HEAD:END -->", headPad, headLines);
 
-  // 六段流水线：顺序即 sites.json 中 story.stages 的顺序（plot → shot → gen → dub → clip → fix）
-  // 原生 details 折叠，默认收起；阶段与是否链出以 sites 中同 id 服务为准，未部署的地址不链出
-  const stepPad = "    ";
-  const stepLines = [];
+  // 六段流水线：横向蛇形轴，奇数环节在上、偶数在下；点击节点在下方详情坞联动展开
+  // 阶段与是否链出以 sites 中同 id 服务为准，未部署的地址不链出
+  const flowPad = "    ";
+  const flowLines = [];
   if (stages.length) {
-    stepLines.push(stepPad + '<ol class="story__steps">');
+    flowLines.push(flowPad + '<div class="flow" data-flow>');
+    flowLines.push(flowPad + '  <div class="flow__rail">');
+    flowLines.push(flowPad + '    <span class="flow__line" aria-hidden="true"></span>');
+    flowLines.push(flowPad + '    <ol class="flow__stops">');
+    stages.forEach((s, i) => {
+      const st = (sites.find((x) => x.id === s.id) || {}).status || s.status || "planned";
+      flowLines.push(flowPad + '      <li class="flow__stop flow__stop--' + (i % 2 === 0 ? "up" : "down") + '">');
+      flowLines.push(flowPad + '        <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-' +
+        esc(s.id) + '" data-flow-index="' + i + '">');
+      flowLines.push(flowPad + '          <span class="flow__meta"><span class="flow__num">' +
+        String(i + 1).padStart(2, "0") + "</span>" +
+        '<span class="status-tag status-tag--' + st + '">' + (STATUS_LABEL[st] || "") + "</span></span>");
+      flowLines.push(flowPad + '          <span class="flow__name">' + esc(s.name) +
+        '<span class="flow__cn">' + esc(s.cn || "") + "</span></span>");
+      if (s.hook) flowLines.push(flowPad + '          <span class="flow__hook">' + esc(s.hook) + "</span>");
+      flowLines.push(flowPad + "        </button>");
+      flowLines.push(flowPad + '        <span class="flow__stem" aria-hidden="true"></span>');
+      flowLines.push(flowPad + '        <span class="flow__dot" aria-hidden="true"></span>');
+      flowLines.push(flowPad + "      </li>");
+    });
+    flowLines.push(flowPad + "    </ol>");
+    flowLines.push(flowPad + "  </div>");
+    flowLines.push(flowPad + '  <div class="flow__dock" data-open="false">');
+    flowLines.push(flowPad + '    <p class="flow__hint"><span class="flow__hintdot" aria-hidden="true"></span>点选上方任一环节，展开这一环的故事与入口。</p>');
+    flowLines.push(flowPad + '    <div class="flow__panels">');
     stages.forEach((s, i) => {
       const site = sites.find((x) => x.id === s.id) || {};
       const st = site.status || s.status || "planned";
       const visit = s.url && site.deployed !== false
-        ? '<a class="step__visit" href="' + esc(s.url) + '" target="_blank" rel="noopener">进入 ' +
+        ? '<a class="flow__visit" href="' + esc(s.url) + '" target="_blank" rel="noopener">进入 ' +
           esc(s.name) + ' <span aria-hidden="true">↗</span></a>'
         : "";
-      stepLines.push(stepPad + '  <li class="step">');
-      stepLines.push(stepPad + '    <details class="step__details">');
-      stepLines.push(stepPad + '      <summary class="step__summary">');
-      stepLines.push(stepPad + '        <span class="step__num" aria-hidden="true">' +
-        String(i + 1).padStart(2, "0") + "</span>");
-      stepLines.push(stepPad + '        <span class="step__title">' +
-        '<span class="step__name">' + esc(s.name) + "</span>" +
-        '<span class="step__cn">' + esc(s.cn || "") + "</span>" +
-        '<span class="step__status step__status--' + st + '">' + (STATUS_LABEL[st] || "") + "</span></span>");
-      if (s.hook) stepLines.push(stepPad + '        <span class="step__hook">' + esc(s.hook) + "</span>");
-      stepLines.push(stepPad + '        <span class="step__chevron" aria-hidden="true"></span>');
-      stepLines.push(stepPad + "      </summary>");
-      stepLines.push(stepPad + '      <div class="step__body">' +
-        '<p class="step__tagline">' + esc(s.tagline || "") + "</p>" +
-        '<p class="step__story">' + esc(s.story || "") + "</p>" + visit + "</div>");
-      stepLines.push(stepPad + "    </details>");
-      stepLines.push(stepPad + "  </li>");
+      flowLines.push(flowPad + '      <article class="flow__panel" id="flow-panel-' + esc(s.id) + '" aria-hidden="true">');
+      flowLines.push(flowPad + '        <div class="flow__panel-head"><span class="flow__num">' +
+        String(i + 1).padStart(2, "0") + "</span>" +
+        '<span class="flow__panel-name">' + esc(s.name) + "</span>" +
+        '<span class="flow__cn">' + esc(s.cn || "") + "</span>" +
+        '<span class="status-tag status-tag--' + st + '">' + (STATUS_LABEL[st] || "") + "</span>" +
+        visit + "</div>");
+      flowLines.push(flowPad + '        <p class="flow__tagline">' + esc(s.tagline || "") + "</p>");
+      flowLines.push(flowPad + '        <p class="flow__story">' + esc(s.story || "") + "</p>");
+      flowLines.push(flowPad + "      </article>");
     });
-    stepLines.push(stepPad + "</ol>");
-    if (story.note) stepLines.push(stepPad + '<p class="story__note">' + esc(story.note) + "</p>");
+    flowLines.push(flowPad + "    </div>");
+    flowLines.push(flowPad + "  </div>");
+    flowLines.push(flowPad + "</div>");
+    if (story.note) flowLines.push(flowPad + '<p class="story__note">' + esc(story.note) + "</p>");
   }
-  writeBlock("<!-- STORY-STEPS:START", "<!-- STORY-STEPS:END -->", stepPad, stepLines);
+  writeBlock("<!-- STORY-STEPS:START", "<!-- STORY-STEPS:END -->", flowPad, flowLines);
 })();
 
 // 内嵌数据：file:// 直接打开时的回退

@@ -324,81 +324,151 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 }
 .story__lead:last-child { margin-bottom: 0; }
 
-.story__steps { list-style: none; margin: 0; padding: 0; }
-.step { border-top: 1px solid var(--border); }
-.step:last-child { border-bottom: 1px solid var(--border); }
-.step__details > summary { list-style: none; }
-.step__summary::-webkit-details-marker { display: none; }
-.step__summary {
-  display: grid;
-  grid-template-columns: 44px auto minmax(0, 1fr) 16px;
-  grid-template-areas: "num title hook chev";
-  align-items: center;
-  gap: 0 16px;
-  padding: 16px 0;
-  cursor: pointer;
+/* ---------- 横向流水线：上下交错节点 + 联动详情坞 ---------- */
+.flow__rail { position: relative; }
+.flow__line {
+  position: absolute; left: calc(100% / 12); right: calc(100% / 12); top: 50%;
+  height: 2px; border-radius: 2px;
+  background-image: linear-gradient(90deg, rgba(15, 34, 67, 0.16) 0 5px, transparent 5px 11px);
+  background-size: 11px 100%; background-repeat: repeat-x;
+  animation: flowDash 1.6s linear infinite;
 }
-.step__summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 8px; }
-.step__num {
-  grid-area: num;
-  font-family: var(--mono); font-size: 12.5px; font-weight: 600;
+/* 沿中轴向右流动的光点，指示流水方向 */
+.flow__line::before {
+  content: ""; position: absolute; top: -2px; left: -120px;
+  width: 120px; height: 5px; border-radius: 3px;
+  background: linear-gradient(90deg, transparent, rgba(10, 116, 148, 0.62), rgba(109, 75, 240, 0.45), transparent);
+  filter: blur(0.5px); z-index: 2; pointer-events: none; opacity: 0;
+  animation: flowRun 5.8s linear infinite;
+}
+.flow__line::after {
+  content: ""; position: absolute; inset: -1px auto -1px 0; z-index: 1;
+  width: var(--flow-lit, 0%); border-radius: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+  box-shadow: 0 0 12px rgba(10, 116, 148, 0.35);
+  transition: width 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.flow__stops {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0 12px;
+  height: 334px; margin: 0; padding: 0; list-style: none;
+}
+.flow__stop { position: relative; }
+.flow__card {
+  position: absolute; left: 0; right: 0;
+  display: flex; flex-direction: column; gap: 7px;
+  padding: 11px 10px 12px;
+  font: inherit; color: inherit; text-align: left;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--border); border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+.flow__stop--up .flow__card { bottom: calc(50% + 30px); }
+.flow__stop--down .flow__card { top: calc(50% + 30px); }
+.flow__card:hover {
+  border-color: rgba(10, 116, 148, 0.4); background: var(--surface);
+  box-shadow: 0 10px 26px rgba(15, 34, 67, 0.08);
+}
+.flow__card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.flow__stop.is-active .flow__card {
+  border-color: rgba(10, 116, 148, 0.55); background: var(--surface);
+  box-shadow: 0 16px 34px rgba(10, 116, 148, 0.16);
+  transform: translateY(-2px);
+}
+.flow__meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.flow__num {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 600;
   color: var(--text-faint); letter-spacing: 0.04em;
 }
-.step__title { grid-area: title; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
-.step__name {
-  font-size: 16.5px; font-weight: 650; letter-spacing: 0.01em;
-  color: var(--ink); text-decoration: none;
+.flow__card .status-tag { padding: 1px 8px; font-size: 10.5px; }
+.flow__name {
+  display: block; min-width: 0;
+  font-size: 15.5px; font-weight: 650; letter-spacing: 0.01em; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   transition: color 0.18s ease;
 }
-.step__summary:hover .step__name { color: var(--cyan); }
-.step__cn { font-size: 12.5px; font-weight: 600; color: var(--text-faint); }
-.step__status {
-  padding: 2px 9px; border-radius: 999px;
-  font-size: 11.5px; font-weight: 600; white-space: nowrap;
+.flow__cn { margin-left: 6px; font-size: 11.5px; font-weight: 600; color: var(--text-faint); }
+.flow__card:hover .flow__name,
+.flow__stop.is-active .flow__name { color: var(--cyan); }
+.flow__hook {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  font-size: 12px; line-height: 1.55; letter-spacing: 0.01em; color: var(--text-dim);
 }
-/* 分隔线上的钩子文案：折叠时也能读到一句故事 */
-.step__hook {
-  grid-area: hook;
-  justify-self: end; max-width: 100%; min-width: 0;
-  font-size: 14px; font-weight: 500; letter-spacing: 0.01em;
-  color: var(--text-dim);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.flow__hook::before { content: "“"; color: var(--cyan); font-weight: 700; }
+.flow__hook::after { content: "”"; color: var(--cyan); font-weight: 700; }
+
+/* 节点与中轴的连接：圆点 + 竖线，选中后沿轴点亮 */
+.flow__dot {
+  position: absolute; left: 50%; top: 50%; z-index: 2;
+  width: 9px; height: 9px; margin: -5px 0 0 -5px;
+  background: var(--surface); border: 2px solid rgba(15, 34, 67, 0.28); border-radius: 50%;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
-.step__hook::before { content: "“"; color: var(--cyan); font-weight: 700; }
-.step__hook::after { content: "”"; color: var(--cyan); font-weight: 700; }
-.step__chevron {
-  grid-area: chev;
-  width: 8px; height: 8px; margin-right: 3px;
-  border-right: 1.7px solid var(--text-faint);
-  border-bottom: 1.7px solid var(--text-faint);
-  transform: rotate(45deg) translateY(-2px);
-  transition: transform 0.22s ease;
+.flow__stem { position: absolute; left: 50%; z-index: 1; width: 1px; background: rgba(10, 116, 148, 0.25); }
+.flow__stop--up .flow__stem { bottom: 50%; height: 30px; }
+.flow__stop--down .flow__stem { top: 50%; height: 30px; }
+.flow__dot.is-lit { border-color: var(--cyan); background: var(--cyan); }
+.flow__stop.is-active .flow__dot {
+  background: var(--cyan); border-color: var(--cyan);
+  box-shadow: 0 0 0 4px rgba(10, 116, 148, 0.16);
+  animation: flowPulse 1.8s ease-out infinite;
 }
-.step__details[open] .step__chevron { transform: rotate(225deg) translateY(-2px); }
-.step__details[open] .step__summary { padding-bottom: 8px; }
-.step__body { padding: 0 0 18px 60px; }
-.step__status--planned { color: #64748b; background: rgba(100, 116, 139, 0.07); border: 1px solid rgba(100, 116, 139, 0.2); }
-.step__status--design { color: #a21caf; background: rgba(192, 38, 211, 0.07); border: 1px solid rgba(192, 38, 211, 0.22); }
-.step__status--dev { color: #1d4ed8; background: rgba(37, 99, 235, 0.07); border: 1px solid rgba(37, 99, 235, 0.2); }
-.step__status--test { color: #b45309; background: rgba(217, 119, 6, 0.08); border: 1px solid rgba(217, 119, 6, 0.22); }
-.step__status--live { color: var(--green); background: rgba(8, 122, 67, 0.08); border: 1px solid rgba(8, 122, 67, 0.2); }
-.step__status--iterating { color: var(--cyan); background: rgba(10, 116, 148, 0.07); border: 1px solid rgba(10, 116, 148, 0.2); }
-.step__status--archived { color: #8b98a9; background: rgba(139, 152, 169, 0.07); border: 1px solid rgba(139, 152, 169, 0.22); }
-.step__tagline {
-  margin: 0;
-  font-size: 14.5px; line-height: 1.72; color: var(--text);
+.flow__stop.is-active .flow__stem { background: var(--cyan); }
+
+/* 详情坞：选中节点后在此展开对应环节 */
+.flow__dock {
+  margin-top: 18px;
+  border: 1px solid var(--border); border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.6));
+  box-shadow: 0 1px 2px rgba(15, 34, 67, 0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.step__story {
-  margin: 7px 0 0; max-width: 110ch;
-  font-size: 13.5px; line-height: 1.85; color: var(--text-faint);
+.flow__dock[data-open="true"] {
+  border-color: rgba(10, 116, 148, 0.3);
+  box-shadow: 0 14px 36px rgba(15, 34, 67, 0.07);
 }
-.step__visit {
-  display: inline-flex; align-items: center; gap: 5px;
-  margin-top: 11px;
+.flow__hint {
+  display: flex; align-items: center; gap: 9px;
+  padding: 15px 18px; font-size: 13px; color: var(--text-faint);
+}
+.flow__hintdot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(10, 116, 148, 0.14);
+}
+.flow__dock[data-open="true"] .flow__hint { display: none; }
+.flow__panel { padding: 17px 20px 19px; }
+.flow__panel:not(.is-active) { display: none; }
+.flow__panel.is-active { display: block; animation: flowIn 0.24s ease; }
+.flow__panel-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.flow__panel-name { font-size: 15.5px; font-weight: 650; color: var(--ink); }
+.flow__visit {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 5px;
   font-size: 13px; font-weight: 600; color: var(--cyan); text-decoration: none;
 }
-.step__visit:hover { text-decoration: underline; text-underline-offset: 3px; }
-.step__visit:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+.flow__visit:hover { text-decoration: underline; text-underline-offset: 3px; }
+.flow__visit:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+.flow__tagline { margin: 0; font-size: 14.5px; line-height: 1.72; color: var(--text); }
+.flow__story { margin: 7px 0 0; max-width: 110ch; font-size: 13.5px; line-height: 1.85; color: var(--text-faint); }
+
+@keyframes flowDash {
+  to { background-position: 11px 0; }
+}
+@keyframes flowRun {
+  0% { left: -120px; opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+@keyframes flowPulse {
+  0% { box-shadow: 0 0 0 0 rgba(10, 116, 148, 0.3); }
+  70% { box-shadow: 0 0 0 8px rgba(10, 116, 148, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(10, 116, 148, 0); }
+}
+@keyframes flowIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: none; }
+}
 .story__note {
   margin: 20px 0 0;
   padding-left: 14px; border-left: 2px solid var(--border);
@@ -602,6 +672,20 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .site-footer__site { font-family: var(--mono); }
 
 /* ---------- 响应式 ---------- */
+@media (max-width: 1060px) {
+  .flow__stops {
+    display: flex; gap: 12px; height: auto;
+    margin: 0 -2px; padding: 4px 2px 10px;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: thin; scrollbar-color: rgba(15, 34, 67, 0.22) transparent;
+  }
+  .flow__stops::-webkit-scrollbar { height: 6px; }
+  .flow__stops::-webkit-scrollbar-thumb { background: rgba(15, 34, 67, 0.18); border-radius: 999px; }
+  .flow__stop { flex: 0 0 172px; scroll-snap-align: start; }
+  .flow__card { position: static; height: 100%; }
+  .flow__line, .flow__stem, .flow__dot { display: none; }
+  .flow__dock { margin-top: 14px; }
+}
 @media (max-width: 900px) {
   .hero { padding: 30px 0 26px; }
   .site-header { flex-wrap: wrap; row-gap: 10px; padding: 14px 24px; }
@@ -618,8 +702,6 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   .showcase__name { font-size: 21px; }
   .showcase__bands { gap: 14px; padding-top: 18px; }
   .ghlink span { display: none; }
-  .step__summary { grid-template-columns: 40px auto minmax(0, 1fr) 16px; gap: 0 14px; }
-  .step__body { padding-left: 54px; }
 }
 @media (max-width: 680px) {
   main { padding: 0 20px; }
@@ -631,19 +713,13 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   .card__arrow { top: 22px; right: 20px; }
   .chips { gap: 18px; }
   .story { padding-bottom: 34px; }
-  .step__summary {
-    grid-template-columns: 32px minmax(0, 1fr) 16px;
-    grid-template-areas:
-      "num title chev"
-      ". hook hook";
-    gap: 7px 12px;
-    padding: 15px 0;
-  }
-  .step__hook { justify-self: start; white-space: normal; overflow: visible; font-size: 13.5px; }
-  .step__body { padding: 0 0 16px 44px; }
+  .flow__stop { flex-basis: 158px; }
+  .flow__panel { padding: 15px 16px 17px; }
+  .flow__visit { margin-left: 0; }
+  .flow__dock { margin-top: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
   html { scroll-behavior: auto; }
 }

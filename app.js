@@ -675,6 +675,65 @@
     onScroll();
   }
 
+  /* 横向流水线：点选节点，详情坞联动展开对应环节；再次点击或 Esc 收起 */
+  function bindFlow() {
+    var flow = document.querySelector("[data-flow]");
+    if (!flow) return;
+    var cards = [].slice.call(flow.querySelectorAll(".flow__card"));
+    var stops = [].slice.call(flow.querySelectorAll(".flow__stop"));
+    var dots = [].slice.call(flow.querySelectorAll(".flow__dot"));
+    var panels = [].slice.call(flow.querySelectorAll(".flow__panel"));
+    var dock = flow.querySelector(".flow__dock");
+    var line = flow.querySelector(".flow__line");
+    var active = -1;
+
+    function select(i) {
+      active = i;
+      cards.forEach(function (card, k) {
+        card.setAttribute("aria-expanded", k === i ? "true" : "false");
+        stops[k].classList.toggle("is-active", k === i);
+        dots[k].classList.toggle("is-lit", k <= i);
+        panels[k].classList.toggle("is-active", k === i);
+        panels[k].setAttribute("aria-hidden", k === i ? "false" : "true");
+      });
+      dock.setAttribute("data-open", "true");
+      line.style.setProperty("--flow-lit", (i / (cards.length - 1)) * 100 + "%");
+    }
+
+    function collapse() {
+      active = -1;
+      cards.forEach(function (card, k) {
+        card.setAttribute("aria-expanded", "false");
+        stops[k].classList.remove("is-active");
+        dots[k].classList.remove("is-lit");
+        panels[k].classList.remove("is-active");
+        panels[k].setAttribute("aria-hidden", "true");
+      });
+      dock.setAttribute("data-open", "false");
+      line.style.setProperty("--flow-lit", "0%");
+    }
+
+    cards.forEach(function (card, i) {
+      card.addEventListener("click", function () {
+        if (active === i) { collapse(); return; }
+        select(i);
+        if (window.matchMedia("(max-width: 1060px)").matches) {
+          var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          setTimeout(function () {
+            dock.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+          }, 30);
+        }
+      });
+    });
+
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key !== "Escape" || active < 0 || !flow.contains(document.activeElement)) return;
+      var last = active;
+      collapse();
+      cards[last].focus();
+    });
+  }
+
   function bindHeader() {
     var brand = state.data.brand || {};
     var sites = state.data.sites || [];
@@ -691,6 +750,7 @@
     state.data = data;
     buildIndex();
     bindHeader();
+    bindFlow();
     renderChips();
     renderShowcase();
     renderGrid();

@@ -6,7 +6,7 @@
     "site": "helpenx.com",
     "github": "https://github.com/neopen",
     "cta": {
-      "primary": { "label": "体验 AIGC Studio", "url": "https://studio.helpenx.com" },
+      "primary": { "label": "HelpEnX Studio", "url": "https://studio.helpenx.com" },
       "secondary": { "label": "查看全部服务", "url": "#board" }
     }
   },

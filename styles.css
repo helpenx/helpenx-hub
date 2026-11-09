@@ -408,6 +408,14 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .flow__stem { position: absolute; left: 50%; z-index: 1; width: 1px; background: rgba(10, 116, 148, 0.25); }
 .flow__stop--up .flow__stem { bottom: 50%; height: 30px; }
 .flow__stop--down .flow__stem { top: 50%; height: 30px; }
+/* 光点经过时，节点同步亮一下：与 flowRun 同周期，按序号错峰 */
+.flow__dot::after {
+  content: ""; position: absolute; inset: -3px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(10, 116, 148, 0.95), rgba(10, 116, 148, 0) 72%);
+  opacity: 0; pointer-events: none;
+  animation: flowNodePass 5.8s linear infinite;
+  animation-delay: calc(0.36s + var(--i, 0) * 1.016s);
+}
 .flow__dot.is-lit { border-color: var(--cyan); background: var(--cyan); }
 .flow__stop.is-active .flow__dot {
   background: var(--cyan); border-color: var(--cyan);
@@ -453,6 +461,12 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 
 @keyframes flowDash {
   to { background-position: 11px 0; }
+}
+@keyframes flowNodePass {
+  0% { opacity: 0; transform: scale(0.5); box-shadow: 0 0 0 0 rgba(10, 116, 148, 0.45); }
+  3% { opacity: 0.95; transform: scale(1.05); }
+  18% { opacity: 0; transform: scale(2.1); box-shadow: 0 0 0 7px rgba(10, 116, 148, 0); }
+  100% { opacity: 0; }
 }
 @keyframes flowRun {
   0% { left: -120px; opacity: 0; }

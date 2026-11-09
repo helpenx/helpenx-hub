@@ -139,7 +139,7 @@ graph["@graph"][0].publisher = { "@id": url + "#org" };
 head.push("<script type=\"application/ld+json\">" + JSON.stringify(graph, null, 2) + "</script>");
 
 let html = read("index.html");
-const eol = html.indexOf("\r\n") !== -1 ? "\r\n" : "\n";
+const eol = "\n";
 
 // SEO 区块
 (function () {
@@ -332,7 +332,8 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
     flowLines.push(flowPad + '    <ol class="flow__stops">');
     stages.forEach((s, i) => {
       const st = (sites.find((x) => x.id === s.id) || {}).status || s.status || "planned";
-      flowLines.push(flowPad + '      <li class="flow__stop flow__stop--' + (i % 2 === 0 ? "up" : "down") + '">');
+      flowLines.push(flowPad + '      <li class="flow__stop flow__stop--' + (i % 2 === 0 ? "up" : "down") +
+        '" style="--i:' + i + '">');
       flowLines.push(flowPad + '        <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-' +
         esc(s.id) + '" data-flow-index="' + i + '">');
       flowLines.push(flowPad + '          <span class="flow__meta"><span class="flow__num">' +
@@ -384,7 +385,7 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   if (a === -1) throw new Error("缺少内嵌数据区块");
   const open = a + marker.length;
   const close = html.indexOf("</script>", open);
-  const body = read("sites.json").trim();
+  const body = read("sites.json").replace(/\r\n?/g, "\n").trim();
   html = html.slice(0, open) + eol + body.replace(/\n/g, eol) + eol + html.slice(close);
 })();
 

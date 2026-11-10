@@ -98,7 +98,7 @@
         "name": "PenClip",
         "cn": "视频剪辑",
         "url": "https://clip.helpenx.com",
-        "status": "dev",
+        "status": "design",
         "hook": "同样的素材，剪法不同就是两部作品。",
         "tagline": "按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。",
         "story": "素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。"
@@ -172,7 +172,7 @@
       "name": "PenShot",
       "url": "https://shot.helpenx.com",
       "category": "studio",
-      "status": "iterating",
+      "status": "test",
       "icon": "frames",
       "tagline": "剧本分镜 · 把文字翻译成镜头",
       "description": "将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。",

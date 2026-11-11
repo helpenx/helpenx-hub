@@ -675,116 +675,109 @@
     onScroll();
   }
 
-  /* 横向流水线：点选节点，详情坞联动展开对应环节；再次点击或 Esc 收起 */
+  /* 数据流：点选连线上的工具展开对应环节；图例聚焦某类连线；支持暂停 / 播放 */
   function bindFlow() {
     var flow = document.querySelector("[data-flow]");
     if (!flow) return;
-    var cards = [].slice.call(flow.querySelectorAll(".flow__card"));
-    var stops = [].slice.call(flow.querySelectorAll(".flow__stop"));
-    var dots = [].slice.call(flow.querySelectorAll(".flow__dot"));
+    var pool = flow.closest(".flow-pool") || flow;
+    var tools = [].slice.call(flow.querySelectorAll(".flow-tool"));
     var panels = [].slice.call(flow.querySelectorAll(".flow__panel"));
     var dock = flow.querySelector(".flow__dock");
-    var line = flow.querySelector(".flow__line");
-    var active = -1;
+    var edges = [].slice.call(flow.querySelectorAll(".flow__edge, .flow__pulse"));
+    var label = pool.querySelector(".flow-pool__label");
+    var hintText = pool.querySelector(".flow-pool__hinttext");
+    var note = pool.querySelector(".flow-pool__note");
+    var chips = [].slice.call(pool.querySelectorAll(".flow-legend__chip"));
+    var active = null;
+    var hoverTool = null;
+    var focusKind = null;
+    var paused = false;
+    var wasRunning = null;
+    var captionTimer = null;
+    var captionIndex = 0;
+    var idleNote = note ? note.getAttribute("data-idle") || note.textContent : "";
+    var captions = [];
+    if (note) {
+      try { captions = JSON.parse(note.getAttribute("data-captions") || "[]"); } catch (e) { captions = []; }
+    }
 
-    function select(i) {
-      active = i;
-      cards.forEach(function (card, k) {
-        card.setAttribute("aria-expanded", k === i ? "true" : "false");
-        stops[k].classList.toggle("is-active", k === i);
-        dots[k].classList.toggle("is-lit", k <= i);
-        panels[k].classList.toggle("is-active", k === i);
-        panels[k].setAttribute("aria-hidden", k === i ? "false" : "true");
+    function wide() { return !window.matchMedia("(max-width: 1060px)").matches; }
+
+    /* 单选焦点：图例聚焦某类连线时忽略工具焦点；选中工具时清掉图例焦点 */
+    function applyDim() {
+      var toolFocus = focusKind ? null : (active || hoverTool);
+      edges.forEach(function (edge) {
+        var kind = edge.getAttribute("data-kind");
+        var tool = edge.getAttribute("data-tool");
+        edge.classList.toggle("is-dim", !!((focusKind && kind !== focusKind) || (toolFocus && tool !== toolFocus)));
+      });
+    }
+
+    function clearKind() {
+      focusKind = null;
+      chips.forEach(function (chip) { chip.setAttribute("aria-pressed", "false"); });
+    }
+
+    function select(stageId) {
+      if (focusKind) clearKind();
+      active = stageId;
+      tools.forEach(function (tool) {
+        tool.setAttribute("aria-expanded", tool.getAttribute("data-stage") === stageId ? "true" : "false");
+      });
+      panels.forEach(function (panel) {
+        var on = panel.id === "flow-panel-" + stageId;
+        panel.classList.toggle("is-active", on);
+        panel.setAttribute("aria-hidden", on ? "false" : "true");
       });
       dock.setAttribute("data-open", "true");
-      line.style.setProperty("--flow-lit", (i / (cards.length - 1)) * 100 + "%");
+      applyDim();
+      stopCaptions();
+      if (wide() && !paused) startCaptions();
     }
 
     function collapse() {
-      active = -1;
-      cards.forEach(function (card, k) {
-        card.setAttribute("aria-expanded", "false");
-        stops[k].classList.remove("is-active");
-        dots[k].classList.remove("is-lit");
-        panels[k].classList.remove("is-active");
-        panels[k].setAttribute("aria-hidden", "true");
+      active = null;
+      tools.forEach(function (tool) { tool.setAttribute("aria-expanded", "false"); });
+      panels.forEach(function (panel) {
+        panel.classList.remove("is-active");
+        panel.setAttribute("aria-hidden", "true");
       });
       dock.setAttribute("data-open", "false");
-      line.style.setProperty("--flow-lit", "0%");
+      applyDim();
+      stopCaptions();
+      if (wide() && !paused) startCaptions();
     }
 
-    cards.forEach(function (card, i) {
-      card.addEventListener("click", function () {
-        if (active === i) { collapse(); return; }
-        select(i);
-        if (window.matchMedia("(max-width: 1060px)").matches) {
+    tools.forEach(function (tool) {
+      var stageId = tool.getAttribute("data-stage");
+      tool.addEventListener("click", function () {
+        if (active === stageId) { collapse(); return; }
+        select(stageId);
+        if (!wide()) {
           var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
           setTimeout(function () {
             dock.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
           }, 30);
         }
       });
+      tool.addEventListener("mouseenter", function () { hoverTool = stageId; applyDim(); });
+      tool.addEventListener("mouseleave", function () { hoverTool = null; applyDim(); });
+      tool.addEventListener("focus", function () { hoverTool = stageId; applyDim(); });
+      tool.addEventListener("blur", function () { hoverTool = null; applyDim(); });
     });
-
-    document.addEventListener("keydown", function (ev) {
-      if (ev.key !== "Escape" || active < 0 || !flow.contains(document.activeElement)) return;
-      var last = active;
-      collapse();
-      cards[last].focus();
-    });
-  }
-
-  /* NeoTask 事件演示：默认自动流转，点击标识暂停/继续；图例点击聚焦某一类事件光点 */
-  function bindFlowDemo() {
-    var pool = document.querySelector(".flow-pool");
-    if (!pool) return;
-    var label = pool.querySelector(".flow-pool__label");
-    if (!label) return;
-    var hintText = pool.querySelector(".flow-pool__hinttext");
-    var note = pool.querySelector(".flow-pool__note");
-    var beads = [].slice.call(pool.querySelectorAll(".flow__bead"));
-    var hits = [].slice.call(pool.querySelectorAll(".flow__hit"));
-    var chips = [].slice.call(pool.querySelectorAll(".flow-legend__chip"));
-    var idleNote = note ? note.getAttribute("data-idle") || note.textContent : "";
-    var captions = [];
-    if (note) {
-      try { captions = JSON.parse(note.getAttribute("data-events") || "[]"); } catch (e) { captions = []; }
-    }
-    var paused = false;
-    var focusKind = null;
-    var wasRunning = null;
-    var captionTimer = null;
-    var captionIndex = 0;
-
-    /* 光点每完成一次行程（含回流、重试往返），目标卡片按事件色点亮并轻微凸起；
-       用 animationiteration 对齐 CSS 时序，暂停时自然停发 */
-    var stops = [].slice.call(pool.querySelectorAll(".flow__stop"));
-    var hitTimers = [];
-    beads.forEach(function (bead) {
-      bead.addEventListener("animationiteration", function () {
-        if (bead.classList.contains("is-dim")) return;
-        var idx = +bead.getAttribute("data-to");
-        var stop = stops[idx];
-        if (!stop) return;
-        stop.style.setProperty("--hit", getComputedStyle(bead).getPropertyValue("--bead").trim() || "10, 116, 148");
-        stop.classList.add("is-hit");
-        clearTimeout(hitTimers[idx]);
-        hitTimers[idx] = setTimeout(function () { stop.classList.remove("is-hit"); }, 500);
-      });
-    });
-
-    function wide() { return !window.matchMedia("(max-width: 1060px)").matches; }
 
     function startCaptions() {
       if (!note || captionTimer) return;
-      var list = captions.filter(function (c) { return !focusKind || c.kind === focusKind; });
-      if (!list.length) return;
+      var list = captions.filter(function (c) {
+        return (!focusKind || c.kind === focusKind) && (!active || c.tool === active);
+      });
+      if (!list.length) { note.textContent = idleNote; return; }
       captionIndex = 0;
       note.textContent = list[0].label;
       captionTimer = setInterval(function () {
         captionIndex = (captionIndex + 1) % list.length;
         note.textContent = list[captionIndex].label;
-      }, 2600);
+      }, 3000);
     }
 
     function stopCaptions() {
@@ -795,7 +788,7 @@
     function sync() {
       var running = wide() && !paused;
       pool.classList.toggle("is-paused", !running);
-      label.setAttribute("aria-pressed", running ? "true" : "false");
+      if (label) label.setAttribute("aria-pressed", running ? "true" : "false");
       if (hintText) hintText.textContent = running ? "暂停演示" : "播放演示";
       if (running === wasRunning) return;
       wasRunning = running;
@@ -803,36 +796,47 @@
       if (running) startCaptions();
     }
 
-    function setFocus(kind) {
-      focusKind = kind;
-      chips.forEach(function (chip) {
-        chip.setAttribute("aria-pressed", chip.getAttribute("data-kind") === kind ? "true" : "false");
+    if (label) {
+      label.addEventListener("click", function () {
+        if (!wide()) return;
+        paused = !paused;
+        sync();
       });
-      beads.forEach(function (bead) {
-        bead.classList.toggle("is-dim", !!kind && !bead.classList.contains("flow__bead--" + kind));
-      });
-      hits.forEach(function (hit) {
-        hit.classList.toggle("is-dim", !!kind && !hit.classList.contains("flow__hit--" + kind));
-      });
-      stopCaptions();
-      if (wide() && !paused) startCaptions();
     }
 
-    label.addEventListener("click", function () {
-      if (!wide()) return;
-      paused = !paused;
-      sync();
-    });
     chips.forEach(function (chip) {
       chip.addEventListener("click", function () {
         var kind = chip.getAttribute("data-kind");
-        setFocus(focusKind === kind ? null : kind);
+        var next = focusKind === kind ? null : kind;
+        if (active) collapse();
+        focusKind = next;
+        chips.forEach(function (c) {
+          c.setAttribute("aria-pressed", c.getAttribute("data-kind") === focusKind ? "true" : "false");
+        });
+        applyDim();
+        stopCaptions();
+        if (wide() && !paused) startCaptions();
       });
     });
+
     document.addEventListener("keydown", function (ev) {
-      if (ev.key === "Escape" && focusKind) setFocus(null);
+      if (ev.key !== "Escape") return;
+      if (active && flow.contains(document.activeElement)) {
+        var last = tools.filter(function (t) { return t.getAttribute("data-stage") === active; })[0];
+        collapse();
+        if (last) last.focus();
+        return;
+      }
+      if (focusKind) {
+        clearKind();
+        applyDim();
+        stopCaptions();
+        if (wide() && !paused) startCaptions();
+      }
     });
+
     window.addEventListener("resize", sync);
+    applyDim();
     sync();
   }
 
@@ -853,7 +857,6 @@
     buildIndex();
     bindHeader();
     bindFlow();
-    bindFlowDemo();
     renderChips();
     renderShowcase();
     renderGrid();

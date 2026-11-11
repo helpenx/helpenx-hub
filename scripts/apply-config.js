@@ -302,38 +302,80 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   const story = cfg.story || {};
   const stages = story.stages || [];
 
-  // 事件总线：把 from/to 转成总线位置百分比，并为目标节点生成到达闪光
-  // from === to 表示底座重试：光点驶出再返回原节点，表示 NeoTask 换模型后重新派发
-  const stageIndex = {};
-  stages.forEach((s, i) => { stageIndex[s.id] = i; });
-  const lastIdx = Math.max(stages.length - 1, 1);
-  const eventPairs = [];
-  const hitsByStage = {};
-  const eventCaptions = [];
-  (story.events || []).forEach((ev, g) => {
-    const from = stageIndex[ev.from];
-    if (from == null) return;
-    const kind = ev.kind || "wake";
-    if (ev.label) eventCaptions.push({ kind: kind, label: ev.label });
-    (ev.to || []).forEach((id, k) => {
-      const to = stageIndex[id];
-      if (to == null) return;
-      const fromPct = +(from / lastIdx * 100).toFixed(2);
-      const pair = {
-        kind: kind,
-        from: fromPct,
-        to: +(to / lastIdx * 100).toFixed(2),
-        toIdx: to,
-        delay: +(g * 0.55 + k * 0.18).toFixed(2),
-        dur: +(3.4 + g * 0.25).toFixed(2),
-        rev: to < from,
-        loop: to === from,
-        mid: fromPct <= 80 ? fromPct + 9 : fromPct - 9
-      };
-      eventPairs.push(pair);
-      (hitsByStage[id] = hitsByStage[id] || []).push(pair);
+  // 数据流图：数据是节点，工具是连线。画布固定 6 列，节点按 col / lane 落到网格上，
+  // 连线由 from / to 的包围盒计算；route:over 的连线绕到画布顶部，表示不合格回退。
+  const stageMap = {};
+  stages.forEach((s, i) => { stageMap[s.id] = { stage: s, index: i }; });
+  const graph = story.graph || {};
+  const NODE_W = 112, MID_H = 96, SIDE_H = 88, GAP = 57;
+  const LANE_Y = { top: 104, mid: 250, bottom: 396 };
+  const BOARD_W = 960, BOARD_H = 456, REWORK_Y = 20;
+  const KIND_COLOR = { flow: "#0a7494", branch: "#6d4bf0", gate: "#96650a", merge: "#087a43", rework: "#b91c1c" };
+
+  const boxes = {};
+  const graphNodes = (graph.nodes || []).map((n) => {
+    const h = n.lane === "mid" ? MID_H : SIDE_H;
+    const x = (n.col || 0) * (NODE_W + GAP);
+    const y = (LANE_Y[n.lane] || LANE_Y.mid) - h / 2;
+    const box = Object.assign({}, n, {
+      x: x, y: y, w: NODE_W, h: h,
+      right: x + NODE_W, cx: x + NODE_W / 2, cy: y + h / 2
     });
+    boxes[n.id] = box;
+    return box;
   });
+
+  function edgeGeometry(edge) {
+    const a = boxes[edge.from], b = boxes[edge.to];
+    if (!a || !b) return null;
+    if (edge.route === "over") {
+      return {
+        d: "M" + a.cx + " " + a.y + "V" + REWORK_Y + "H" + b.cx + "V" + b.y,
+        lx: (a.cx + b.cx) / 2,
+        ly: REWORK_Y
+      };
+    }
+    if (a.cy === b.cy) {
+      return {
+        d: "M" + a.right + " " + a.cy + "H" + b.x,
+        lx: (a.right + b.x) / 2,
+        ly: a.cy - 22
+      };
+    }
+    const c1 = a.right + (b.x - a.right) * 0.5;
+    const c2 = b.x - (b.x - a.right) * 0.5;
+    return {
+      d: "M" + a.right + " " + a.cy + "C" + c1 + " " + a.cy + " " + c2 + " " + b.cy + " " + b.x + " " + b.cy,
+      lx: (a.right + b.x) / 2,
+      ly: (a.cy + b.cy) / 2
+    };
+  }
+
+  const graphEdges = (graph.edges || []).map((edge, i) => {
+    const geo = edgeGeometry(edge);
+    if (!geo) return null;
+    const entry = stageMap[edge.tool] || {};
+    const stage = entry.stage || {};
+    const kind = edge.kind || "flow";
+    return {
+      edge: edge,
+      geo: geo,
+      index: i,
+      kind: kind,
+      label: edge.label || stage.name || edge.tool,
+      cn: stage.cn || "",
+      tool: edge.tool,
+      color: KIND_COLOR[kind] || KIND_COLOR.flow,
+      dur: +(3 + i * 0.18).toFixed(2),
+      delay: +(i * 0.37).toFixed(2)
+    };
+  }).filter(Boolean);
+
+  const edgeCaptions = graphEdges.map((row) => ({
+    kind: row.kind,
+    tool: row.tool,
+    label: row.edge.caption || row.label
+  }));
 
   function writeBlock(startMarker, endMarker, pad, lines) {
     const a = html.indexOf(startMarker), b = html.indexOf(endMarker);
@@ -354,11 +396,12 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   }
   writeBlock("<!-- STORY-HEAD:START", "<!-- STORY-HEAD:END -->", headPad, headLines);
 
-  // 六段流水线：横向蛇形轴，奇数环节在上、偶数在下；点击节点在下方详情坞联动展开
-  // 阶段与是否链出以 sites 中同 id 服务为准，未部署的地址不链出
+  // 数据流图：左侧自然语言与 JSON 契约，中段分叉出视频 / 音频，过审后再汇入时间线
+  // 工具是连线上的按钮，点击打开对应环节的详情；数据节点只展示契约，不可点击
   const flowPad = "    ";
   const flowLines = [];
-  if (stages.length) {
+  if (graphNodes.length) {
+    const kinds = story.kinds || [];
     flowLines.push(flowPad + '<div class="flow-pool">');
     flowLines.push(flowPad + '  <div class="flow-pool__bg" aria-hidden="true">');
     flowLines.push(flowPad + '    <span class="flow-pool__wave flow-pool__wave--a"></span>');
@@ -368,15 +411,14 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
     flowLines.push(flowPad + '  <div class="flow-pool__head">');
     flowLines.push(flowPad + '    <button class="flow-pool__label" type="button" aria-pressed="true">' +
       '<span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span>' +
-      '<span class="flow-pool__tag">任务池</span>' +
-      '<span class="flow-pool__bus">' + esc(story.busLabel || "DATA BUS") + "</span>" +
+      '<span class="flow-pool__tag">数据流</span>' +
+      '<span class="flow-pool__bus">' + esc(story.busLabel || "DATA FLOW") + "</span>" +
       '<span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span><span class="flow-pool__hinttext">暂停演示</span></span></button>');
     flowLines.push(flowPad + '    <span class="flow-pool__note" data-idle="' + esc(story.busNote || "") +
-      '" data-events="' + esc(JSON.stringify(eventCaptions)) + '">' + esc(story.busNote || "") + "</span>");
+      '" data-captions="' + esc(JSON.stringify(edgeCaptions)) + '">' + esc(story.busNote || "") + "</span>");
     flowLines.push(flowPad + "  </div>");
-    const kinds = story.kinds || [];
     if (kinds.length) {
-      flowLines.push(flowPad + '  <div class="flow-legend" role="group" aria-label="事件类型，点击聚焦对应光点">');
+      flowLines.push(flowPad + '  <div class="flow-legend" role="group" aria-label="数据流类型，点击聚焦对应连线">');
       kinds.forEach((k) => {
         flowLines.push(flowPad + '    <button class="flow-legend__chip flow-legend__chip--' + esc(k.id) +
           '" type="button" data-kind="' + esc(k.id) + '" aria-pressed="false">' +
@@ -384,42 +426,54 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
       });
       flowLines.push(flowPad + "  </div>");
     }
+
     flowLines.push(flowPad + '  <div class="flow" data-flow>');
-    flowLines.push(flowPad + '  <div class="flow__rail">');
-    flowLines.push(flowPad + '    <span class="flow__line" aria-hidden="true">');
-    eventPairs.forEach((p) => {
-      flowLines.push(flowPad + '      <span class="flow__bead flow__bead--' + p.kind +
-        (p.rev ? " flow__bead--rev" : "") + (p.loop ? " flow__bead--loop" : "") +
-        '" data-to="' + p.toIdx + '" style="--from:' + p.from + '%;--to:' + p.to + '%;' +
-        (p.loop ? "--mid:" + p.mid + "%;" : "") +
-        '--delay:' + p.delay + 's;--dur:' + p.dur + 's"></span>');
+    flowLines.push(flowPad + '    <div class="flow__scroll">');
+    flowLines.push(flowPad + '      <div class="flow__board" data-flow-board role="group" aria-label="短剧数据流：原始创意经 PenPlot、PenShot 变成分镜，分叉出视频与音频，经 PenFix 审核后由 PenClip 汇入时间线" style="width:' + BOARD_W + 'px;height:' + BOARD_H + 'px">');
+    flowLines.push(flowPad + '        <svg class="flow__edges" viewBox="0 0 ' + BOARD_W + ' ' + BOARD_H + '" aria-hidden="true" focusable="false">');
+    flowLines.push(flowPad + "          <defs>");
+    kinds.forEach((k) => {
+      flowLines.push(flowPad + '            <marker id="flow-arrow-' + esc(k.id) +
+        '" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">' +
+        '<path d="M0 0 8 4 0 8z" fill="' + (KIND_COLOR[k.id] || KIND_COLOR.flow) + '"/></marker>');
     });
-    flowLines.push(flowPad + '    </span>');
-    flowLines.push(flowPad + '    <ol class="flow__stops">');
-    stages.forEach((s, i) => {
-      const st = (sites.find((x) => x.id === s.id) || {}).status || s.status || "planned";
-      flowLines.push(flowPad + '      <li class="flow__stop flow__stop--' + (i % 2 === 0 ? "up" : "down") +
-        '" style="--i:' + i + '">');
-      flowLines.push(flowPad + '        <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-' +
-        esc(s.id) + '" data-flow-index="' + i + '">');
-      flowLines.push(flowPad + '          <span class="flow__meta"><span class="flow__num">' +
-        String(i + 1).padStart(2, "0") + "</span>" +
-        '<span class="status-tag status-tag--' + st + '">' + (STATUS_LABEL[st] || "") + "</span></span>");
-      flowLines.push(flowPad + '          <span class="flow__name">' + esc(s.name) +
-        '<span class="flow__cn">' + esc(s.cn || "") + "</span></span>");
-      if (s.hook) flowLines.push(flowPad + '          <span class="flow__hook">' + esc(s.hook) + "</span>");
-      flowLines.push(flowPad + "        </button>");
-      flowLines.push(flowPad + '        <span class="flow__stem" aria-hidden="true"></span>');
-      const hits = (hitsByStage[s.id] || []).map((h) =>
-        '<span class="flow__hit flow__hit--' + h.kind + '" style="--delay:' + h.delay + 's;--dur:' + h.dur + 's"></span>').join("");
-      flowLines.push(flowPad + '        <span class="flow__dot" aria-hidden="true">' + hits + "</span>");
-      flowLines.push(flowPad + "      </li>");
+    flowLines.push(flowPad + "          </defs>");
+    graphEdges.forEach((row) => {
+      flowLines.push(flowPad + '          <path class="flow__edge flow__edge--' + esc(row.kind) +
+        '" data-kind="' + esc(row.kind) + '" data-tool="' + esc(row.tool) + '" d="' + row.geo.d +
+        '" marker-end="url(#flow-arrow-' + esc(row.kind) + ')"></path>');
     });
-    flowLines.push(flowPad + "    </ol>");
-    flowLines.push(flowPad + "  </div>");
-    flowLines.push(flowPad + '  <div class="flow__dock" data-open="false">');
-    flowLines.push(flowPad + '    <p class="flow__hint"><span class="flow__hintdot" aria-hidden="true"></span>点选上方任一环节，展开这一环的故事与入口。</p>');
-    flowLines.push(flowPad + '    <div class="flow__panels">');
+    graphEdges.forEach((row) => {
+      flowLines.push(flowPad + '          <path class="flow__pulse flow__pulse--' + esc(row.kind) +
+        '" data-kind="' + esc(row.kind) + '" data-tool="' + esc(row.tool) + '" d="' + row.geo.d +
+        '" style="--dur:' + row.dur + 's;--delay:-' + row.delay + 's"></path>');
+    });
+    flowLines.push(flowPad + "        </svg>");
+    graphNodes.forEach((n) => {
+      flowLines.push(flowPad + '        <div class="flow-node flow-node--' + esc(n.kind || "data") +
+        '" style="left:' + n.x + "px;top:" + n.y + "px;width:" + n.w + "px;height:" + n.h + 'px">');
+      flowLines.push(flowPad + '          <span class="flow-node__meta">' + esc(n.meta || "") + "</span>");
+      flowLines.push(flowPad + '          <span class="flow-node__label">' + esc(n.label || "") + "</span>");
+      if (n.sub) flowLines.push(flowPad + '          <span class="flow-node__sub">' + esc(n.sub) + "</span>");
+      flowLines.push(flowPad + "        </div>");
+    });
+    graphEdges.forEach((row) => {
+      const tip = row.label + (row.cn ? " · " + row.cn : "");
+      flowLines.push(flowPad + '        <button class="flow-tool flow-tool--' + esc(row.kind) +
+        '" type="button" data-stage="' + esc(row.tool) + '" data-tool="' + esc(row.tool) +
+        '" aria-expanded="false" aria-controls="flow-panel-' + esc(row.tool) +
+        '" aria-label="' + esc(tip + "，点击查看环节详情") +
+        '" title="' + esc(tip + "，点击查看环节详情") +
+        '" style="left:' + (+row.geo.lx.toFixed(1)) + "px;top:" + (+row.geo.ly.toFixed(1)) +
+        "px;--tool-dot:" + row.color + '"><span class="flow-tool__dot" aria-hidden="true"></span>' +
+        esc(row.label) + "</button>");
+    });
+    flowLines.push(flowPad + "      </div>");
+    flowLines.push(flowPad + "    </div>");
+    flowLines.push(flowPad + '    <p class="flow__scrollhint">← 横向滑动查看完整数据流 →</p>');
+    flowLines.push(flowPad + '    <div class="flow__dock" data-open="false">');
+    flowLines.push(flowPad + '      <p class="flow__hint"><span class="flow__hintdot" aria-hidden="true"></span>点选连线上的工具，展开该环节的做法、故事与入口。</p>');
+    flowLines.push(flowPad + '      <div class="flow__panels">');
     stages.forEach((s, i) => {
       const site = sites.find((x) => x.id === s.id) || {};
       const st = site.status || s.status || "planned";
@@ -427,19 +481,19 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
         ? '<a class="flow__visit" href="' + esc(s.url) + '" target="_blank" rel="noopener">进入 ' +
           esc(s.name) + ' <span aria-hidden="true">↗</span></a>'
         : "";
-      flowLines.push(flowPad + '      <article class="flow__panel" id="flow-panel-' + esc(s.id) + '" aria-hidden="true">');
-      flowLines.push(flowPad + '        <div class="flow__panel-head"><span class="flow__num">' +
+      flowLines.push(flowPad + '        <article class="flow__panel" id="flow-panel-' + esc(s.id) + '" aria-hidden="true">');
+      flowLines.push(flowPad + '          <div class="flow__panel-head"><span class="flow__num">' +
         String(i + 1).padStart(2, "0") + "</span>" +
         '<span class="flow__panel-name">' + esc(s.name) + "</span>" +
         '<span class="flow__cn">' + esc(s.cn || "") + "</span>" +
         '<span class="status-tag status-tag--' + st + '">' + (STATUS_LABEL[st] || "") + "</span>" +
         visit + "</div>");
-      flowLines.push(flowPad + '        <p class="flow__tagline">' + esc(s.tagline || "") + "</p>");
-      flowLines.push(flowPad + '        <p class="flow__story">' + esc(s.story || "") + "</p>");
-      flowLines.push(flowPad + "      </article>");
+      flowLines.push(flowPad + '          <p class="flow__tagline">' + esc(s.tagline || "") + "</p>");
+      flowLines.push(flowPad + '          <p class="flow__story">' + esc(s.story || "") + "</p>");
+      flowLines.push(flowPad + "        </article>");
     });
+    flowLines.push(flowPad + "      </div>");
     flowLines.push(flowPad + "    </div>");
-    flowLines.push(flowPad + "  </div>");
     flowLines.push(flowPad + "  </div>");
     flowLines.push(flowPad + "</div>");
     if (story.note) flowLines.push(flowPad + '<p class="story__note">' + esc(story.note) + "</p>");

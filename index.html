@@ -473,10 +473,10 @@
   <section class="story" id="story" aria-labelledby="story-title">
     <!-- STORY-HEAD:START 本区块由 sites.json 的 story 生成，改配置后运行 node scripts/apply-config.js，请勿手改 -->
     <div class="story__head">
-      <span class="story__eyebrow">HelpEnX Studio · 协作模型</span>
-      <h2 class="story__title" id="story-title">六环不是流水线，是同一张时间线上的事件网络</h2>
-      <p class="story__lead">HelpEnX Studio 把剧本、分镜、画面、音频、剪辑与质检写进同一个 Project 时间线。六个环节围绕这份共享状态协作，而不是把素材一站站往下传。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。</p>
-      <p class="story__lead">任何一环的产出都会发出事件：分镜更新并行唤醒生成与配音，产出先过质检再落轨合成；异常被定点打回，修改沿级联刷新，剪辑可反向改剧本，失败由 NeoTask 换模型重试。多对多，而非单向。</p>
+      <span class="story__eyebrow">HelpEnX Studio · 数据流模型</span>
+      <h2 class="story__title" id="story-title">不是一条直线：数据分叉、过审、回退，最后汇成时间线</h2>
+      <p class="story__lead">HelpEnX Studio 的协作单位不是「步骤」，而是数据。一句自然语言先被写成结构化剧本 JSON，再切成一条条 Fragment 分镜：每一条都带着视觉 Prompt、音频参数与时长，成为后面所有环节共享的契约。</p>
+      <p class="story__lead">分镜之后流程分叉：PenGen 把同一条 Fragment 渲染成 MP4，PenDub 同步出 WAV，两条支线并行推进；PenFix 在落轨前逐条把关，不合格的片段沿虚线退回分镜重做。只有过审的视频与音频，才由 PenClip 汇进同一条时间线，输出 Timeline JSON 或最终 MP4。</p>
     </div>
     <!-- STORY-HEAD:END -->
 
@@ -488,132 +488,136 @@
         <span class="flow-pool__monogram">N</span>
       </div>
       <div class="flow-pool__head">
-        <button class="flow-pool__label" type="button" aria-pressed="true"><span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span><span class="flow-pool__tag">任务池</span><span class="flow-pool__bus">DATA BUS · 共享状态</span><span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span><span class="flow-pool__hinttext">暂停演示</span></span></button>
-        <span class="flow-pool__note" data-idle="所有环节共享同一个 Project 时间线，变更以事件流转" data-events="[{&quot;kind&quot;:&quot;wake&quot;,&quot;label&quot;:&quot;PenPlot 剧本定稿 → PenShot 切分镜头&quot;},{&quot;kind&quot;:&quot;wake&quot;,&quot;label&quot;:&quot;PenShot 分镜更新 → 并行唤醒 PenGen、PenDub&quot;},{&quot;kind&quot;:&quot;wake&quot;,&quot;label&quot;:&quot;PenGen 片段产出 → PenFix 质检&quot;},{&quot;kind&quot;:&quot;wake&quot;,&quot;label&quot;:&quot;PenDub 音频产出 → PenFix 质检&quot;},{&quot;kind&quot;:&quot;wake&quot;,&quot;label&quot;:&quot;PenFix 通过 → PenClip 落轨合成&quot;},{&quot;kind&quot;:&quot;rework&quot;,&quot;label&quot;:&quot;PenFix 发现异常 → NeoTask 打回，定点重跑该镜头&quot;},{&quot;kind&quot;:&quot;cascade&quot;,&quot;label&quot;:&quot;PenShot 改分镜 → PenGen 刷新画面 → PenClip 局部重剪&quot;},{&quot;kind&quot;:&quot;cascade&quot;,&quot;label&quot;:&quot;PenShot 改台词 → PenDub 刷新音频 → PenClip 局部重剪&quot;},{&quot;kind&quot;:&quot;feedback&quot;,&quot;label&quot;:&quot;PenDub 时长不符 → PenShot 微调时长、PenClip 对齐轨道&quot;},{&quot;kind&quot;:&quot;reverse&quot;,&quot;label&quot;:&quot;PenClip 人工粗剪 → 反向修订 PenPlot、PenShot&quot;},{&quot;kind&quot;:&quot;retry&quot;,&quot;label&quot;:&quot;PenGen 调用失败 → NeoTask 切换备用模型重派&quot;},{&quot;kind&quot;:&quot;retry&quot;,&quot;label&quot;:&quot;PenDub 调用失败 → NeoTask 切换备用模型重派&quot;}]">所有环节共享同一个 Project 时间线，变更以事件流转</span>
+        <button class="flow-pool__label" type="button" aria-pressed="true"><span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span><span class="flow-pool__tag">数据流</span><span class="flow-pool__bus">DATA FLOW · 数据契约</span><span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span><span class="flow-pool__hinttext">暂停演示</span></span></button>
+        <span class="flow-pool__note" data-idle="JSON 契约在环节间流转：分镜分叉出视频与音频，过审后汇入同一条时间线" data-captions="[{&quot;kind&quot;:&quot;flow&quot;,&quot;tool&quot;:&quot;penplot&quot;,&quot;label&quot;:&quot;PenPlot 把原始创意写成结构化剧本 JSON&quot;},{&quot;kind&quot;:&quot;flow&quot;,&quot;tool&quot;:&quot;penshot&quot;,&quot;label&quot;:&quot;PenShot 把剧本切成带 Prompt 与时长的分镜列表&quot;},{&quot;kind&quot;:&quot;branch&quot;,&quot;tool&quot;:&quot;pengen&quot;,&quot;label&quot;:&quot;PenGen 消费分镜，逐镜渲染视频 MP4&quot;},{&quot;kind&quot;:&quot;branch&quot;,&quot;tool&quot;:&quot;pendub&quot;,&quot;label&quot;:&quot;PenDub 读取同一份分镜，同步生成音频 WAV&quot;},{&quot;kind&quot;:&quot;gate&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 审核画面一致性与技术指标，通过才放行&quot;},{&quot;kind&quot;:&quot;gate&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 审核音画同步与音频指标，通过才放行&quot;},{&quot;kind&quot;:&quot;merge&quot;,&quot;tool&quot;:&quot;penclip&quot;,&quot;label&quot;:&quot;PenClip 把合格视频按时间线落轨&quot;},{&quot;kind&quot;:&quot;merge&quot;,&quot;tool&quot;:&quot;penclip&quot;,&quot;label&quot;:&quot;PenClip 把合格音频对齐到同一条时间线&quot;},{&quot;kind&quot;:&quot;rework&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 判定不合格时，片段沿虚线退回分镜，定点重做该 Fragment&quot;}]">JSON 契约在环节间流转：分镜分叉出视频与音频，过审后汇入同一条时间线</span>
       </div>
-      <div class="flow-legend" role="group" aria-label="事件类型，点击聚焦对应光点">
-        <button class="flow-legend__chip flow-legend__chip--wake" type="button" data-kind="wake" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>标准顺流</button>
-        <button class="flow-legend__chip flow-legend__chip--rework" type="button" data-kind="rework" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>局部打回</button>
-        <button class="flow-legend__chip flow-legend__chip--cascade" type="button" data-kind="cascade" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>文本级联</button>
-        <button class="flow-legend__chip flow-legend__chip--feedback" type="button" data-kind="feedback" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>音频级联</button>
-        <button class="flow-legend__chip flow-legend__chip--reverse" type="button" data-kind="reverse" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>剪辑主导</button>
-        <button class="flow-legend__chip flow-legend__chip--retry" type="button" data-kind="retry" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>底座重试</button>
+      <div class="flow-legend" role="group" aria-label="数据流类型，点击聚焦对应连线">
+        <button class="flow-legend__chip flow-legend__chip--flow" type="button" data-kind="flow" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>数据顺流</button>
+        <button class="flow-legend__chip flow-legend__chip--branch" type="button" data-kind="branch" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>并行分支</button>
+        <button class="flow-legend__chip flow-legend__chip--gate" type="button" data-kind="gate" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>审核门</button>
+        <button class="flow-legend__chip flow-legend__chip--merge" type="button" data-kind="merge" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>落轨合成</button>
+        <button class="flow-legend__chip flow-legend__chip--rework" type="button" data-kind="rework" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>不合格回退</button>
       </div>
       <div class="flow" data-flow>
-      <div class="flow__rail">
-        <span class="flow__line" aria-hidden="true">
-          <span class="flow__bead flow__bead--wake" data-to="1" style="--from:0%;--to:20%;--delay:0s;--dur:3.4s"></span>
-          <span class="flow__bead flow__bead--wake" data-to="2" style="--from:20%;--to:40%;--delay:0.55s;--dur:3.65s"></span>
-          <span class="flow__bead flow__bead--wake" data-to="3" style="--from:20%;--to:60%;--delay:0.73s;--dur:3.65s"></span>
-          <span class="flow__bead flow__bead--wake" data-to="5" style="--from:40%;--to:100%;--delay:1.1s;--dur:3.9s"></span>
-          <span class="flow__bead flow__bead--wake" data-to="5" style="--from:60%;--to:100%;--delay:1.65s;--dur:4.15s"></span>
-          <span class="flow__bead flow__bead--wake flow__bead--rev" data-to="4" style="--from:100%;--to:80%;--delay:2.2s;--dur:4.4s"></span>
-          <span class="flow__bead flow__bead--rework flow__bead--rev" data-to="2" style="--from:100%;--to:40%;--delay:2.75s;--dur:4.65s"></span>
-          <span class="flow__bead flow__bead--rework flow__bead--rev" data-to="3" style="--from:100%;--to:60%;--delay:2.93s;--dur:4.65s"></span>
-          <span class="flow__bead flow__bead--cascade" data-to="4" style="--from:40%;--to:80%;--delay:3.3s;--dur:4.9s"></span>
-          <span class="flow__bead flow__bead--cascade" data-to="4" style="--from:60%;--to:80%;--delay:3.85s;--dur:5.15s"></span>
-          <span class="flow__bead flow__bead--feedback flow__bead--rev" data-to="1" style="--from:60%;--to:20%;--delay:4.4s;--dur:5.4s"></span>
-          <span class="flow__bead flow__bead--feedback" data-to="4" style="--from:60%;--to:80%;--delay:4.58s;--dur:5.4s"></span>
-          <span class="flow__bead flow__bead--reverse flow__bead--rev" data-to="0" style="--from:80%;--to:0%;--delay:4.95s;--dur:5.65s"></span>
-          <span class="flow__bead flow__bead--reverse flow__bead--rev" data-to="1" style="--from:80%;--to:20%;--delay:5.13s;--dur:5.65s"></span>
-          <span class="flow__bead flow__bead--retry flow__bead--loop" data-to="2" style="--from:40%;--to:40%;--mid:49%;--delay:5.5s;--dur:5.9s"></span>
-          <span class="flow__bead flow__bead--retry flow__bead--loop" data-to="3" style="--from:60%;--to:60%;--mid:69%;--delay:6.05s;--dur:6.15s"></span>
-        </span>
-        <ol class="flow__stops">
-          <li class="flow__stop flow__stop--up" style="--i:0">
-            <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-penplot" data-flow-index="0">
-              <span class="flow__meta"><span class="flow__num">01</span><span class="status-tag status-tag--planned">规划中</span></span>
-              <span class="flow__name">PenPlot<span class="flow__cn">剧情创作</span></span>
-              <span class="flow__hook">一句台词、一个画面，就能长出一整部戏。</span>
-            </button>
-            <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--reverse" style="--delay:4.95s;--dur:5.65s"></span></span>
-          </li>
-          <li class="flow__stop flow__stop--down" style="--i:1">
-            <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-penshot" data-flow-index="1">
-              <span class="flow__meta"><span class="flow__num">02</span><span class="status-tag status-tag--iterating">迭代中</span></span>
-              <span class="flow__name">PenShot<span class="flow__cn">剧本分镜</span></span>
-              <span class="flow__hook">把「他推开门」翻译成看得见的镜头。</span>
-            </button>
-            <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0s;--dur:3.4s"></span><span class="flow__hit flow__hit--feedback" style="--delay:4.4s;--dur:5.4s"></span><span class="flow__hit flow__hit--reverse" style="--delay:5.13s;--dur:5.65s"></span></span>
-          </li>
-          <li class="flow__stop flow__stop--up" style="--i:2">
-            <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-pengen" data-flow-index="2">
-              <span class="flow__meta"><span class="flow__num">03</span><span class="status-tag status-tag--design">设计中</span></span>
-              <span class="flow__name">PenGen<span class="flow__cn">视频生成</span></span>
-              <span class="flow__hook">图纸落地的瞬间，故事第一次开始播放。</span>
-            </button>
-            <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0.55s;--dur:3.65s"></span><span class="flow__hit flow__hit--rework" style="--delay:2.75s;--dur:4.65s"></span><span class="flow__hit flow__hit--retry" style="--delay:5.5s;--dur:5.9s"></span></span>
-          </li>
-          <li class="flow__stop flow__stop--down" style="--i:3">
-            <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-pendub" data-flow-index="3">
-              <span class="flow__meta"><span class="flow__num">04</span><span class="status-tag status-tag--planned">规划中</span></span>
-              <span class="flow__name">PenDub<span class="flow__cn">音频同步</span></span>
-              <span class="flow__hook">让每句台词，都落在该落的那一秒。</span>
-            </button>
-            <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:0.73s;--dur:3.65s"></span><span class="flow__hit flow__hit--rework" style="--delay:2.93s;--dur:4.65s"></span><span class="flow__hit flow__hit--retry" style="--delay:6.05s;--dur:6.15s"></span></span>
-          </li>
-          <li class="flow__stop flow__stop--up" style="--i:4">
-            <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-penclip" data-flow-index="4">
-              <span class="flow__meta"><span class="flow__num">05</span><span class="status-tag status-tag--dev">开发中</span></span>
-              <span class="flow__name">PenClip<span class="flow__cn">视频剪辑</span></span>
-              <span class="flow__hook">同样的素材，剪法不同就是两部作品。</span>
-            </button>
-            <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:2.2s;--dur:4.4s"></span><span class="flow__hit flow__hit--cascade" style="--delay:3.3s;--dur:4.9s"></span><span class="flow__hit flow__hit--cascade" style="--delay:3.85s;--dur:5.15s"></span><span class="flow__hit flow__hit--feedback" style="--delay:4.58s;--dur:5.4s"></span></span>
-          </li>
-          <li class="flow__stop flow__stop--down" style="--i:5">
-            <button class="flow__card" type="button" aria-expanded="false" aria-controls="flow-panel-penfix" data-flow-index="5">
-              <span class="flow__meta"><span class="flow__num">06</span><span class="status-tag status-tag--planned">规划中</span></span>
-              <span class="flow__name">PenFix<span class="flow__cn">质量审核</span></span>
-              <span class="flow__hook">敢说「不」的环节，才让成片敢交出去。</span>
-            </button>
-            <span class="flow__stem" aria-hidden="true"></span>
-            <span class="flow__dot" aria-hidden="true"><span class="flow__hit flow__hit--wake" style="--delay:1.1s;--dur:3.9s"></span><span class="flow__hit flow__hit--wake" style="--delay:1.65s;--dur:4.15s"></span></span>
-          </li>
-        </ol>
-      </div>
-      <div class="flow__dock" data-open="false">
-        <p class="flow__hint"><span class="flow__hintdot" aria-hidden="true"></span>点选上方任一环节，展开这一环的故事与入口。</p>
-        <div class="flow__panels">
-          <article class="flow__panel" id="flow-panel-penplot" aria-hidden="true">
-            <div class="flow__panel-head"><span class="flow__num">01</span><span class="flow__panel-name">PenPlot</span><span class="flow__cn">剧情创作</span><span class="status-tag status-tag--planned">规划中</span></div>
-            <p class="flow__tagline">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架。</p>
-            <p class="flow__story">每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。</p>
-          </article>
-          <article class="flow__panel" id="flow-panel-penshot" aria-hidden="true">
-            <div class="flow__panel-head"><span class="flow__num">02</span><span class="flow__panel-name">PenShot</span><span class="flow__cn">剧本分镜</span><span class="status-tag status-tag--iterating">迭代中</span><a class="flow__visit" href="https://shot.helpenx.com" target="_blank" rel="noopener">进入 PenShot <span aria-hidden="true">↗</span></a></div>
-            <p class="flow__tagline">识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表。</p>
-            <p class="flow__story">剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。</p>
-          </article>
-          <article class="flow__panel" id="flow-panel-pengen" aria-hidden="true">
-            <div class="flow__panel-head"><span class="flow__num">03</span><span class="flow__panel-name">PenGen</span><span class="flow__cn">视频生成</span><span class="status-tag status-tag--design">设计中</span></div>
-            <p class="flow__tagline">承接分镜表，驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环。</p>
-            <p class="flow__story">分镜表再精细，也只是图纸。PenGen 把图纸变成会动的画面：每个 shot 在这里被生成、被渲染，被赋予光影和运动。故事写完了、镜头切好了，到这里才第一次开始播放。</p>
-          </article>
-          <article class="flow__panel" id="flow-panel-pendub" aria-hidden="true">
-            <div class="flow__panel-head"><span class="flow__num">04</span><span class="flow__panel-name">PenDub</span><span class="flow__cn">音频同步</span><span class="status-tag status-tag--planned">规划中</span></div>
-            <p class="flow__tagline">配音、音效与背景音乐对齐视频时间线，让每句台词落在该落的画面上。</p>
-            <p class="flow__story">画面会动之后，视频还是哑的。音频与画面的同步最容易被忽略，又最影响观感：差半秒，观众就觉得「哪里不对」——PenDub 的工作就是让这半秒不存在。</p>
-          </article>
-          <article class="flow__panel" id="flow-panel-penclip" aria-hidden="true">
-            <div class="flow__panel-head"><span class="flow__num">05</span><span class="flow__panel-name">PenClip</span><span class="flow__cn">视频剪辑</span><span class="status-tag status-tag--dev">开发中</span><a class="flow__visit" href="https://clip.helpenx.com" target="_blank" rel="noopener">进入 PenClip <span aria-hidden="true">↗</span></a></div>
-            <p class="flow__tagline">按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。</p>
-            <p class="flow__story">素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。</p>
-          </article>
-          <article class="flow__panel" id="flow-panel-penfix" aria-hidden="true">
-            <div class="flow__panel-head"><span class="flow__num">06</span><span class="flow__panel-name">PenFix</span><span class="flow__cn">质量审核</span><span class="status-tag status-tag--planned">规划中</span></div>
-            <p class="flow__tagline">检查画面一致性、音画同步、内容合规与技术指标，标记问题并给出修复建议。</p>
-            <p class="flow__story">「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。</p>
-          </article>
+        <div class="flow__scroll">
+          <div class="flow__board" data-flow-board role="group" aria-label="短剧数据流：原始创意经 PenPlot、PenShot 变成分镜，分叉出视频与音频，经 PenFix 审核后由 PenClip 汇入时间线" style="width:960px;height:456px">
+            <svg class="flow__edges" viewBox="0 0 960 456" aria-hidden="true" focusable="false">
+              <defs>
+                <marker id="flow-arrow-flow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" fill="#0a7494"/></marker>
+                <marker id="flow-arrow-branch" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" fill="#6d4bf0"/></marker>
+                <marker id="flow-arrow-gate" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" fill="#96650a"/></marker>
+                <marker id="flow-arrow-merge" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" fill="#087a43"/></marker>
+                <marker id="flow-arrow-rework" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" fill="#b91c1c"/></marker>
+              </defs>
+              <path class="flow__edge flow__edge--flow" data-kind="flow" data-tool="penplot" d="M112 250H169" marker-end="url(#flow-arrow-flow)"></path>
+              <path class="flow__edge flow__edge--flow" data-kind="flow" data-tool="penshot" d="M281 250H338" marker-end="url(#flow-arrow-flow)"></path>
+              <path class="flow__edge flow__edge--branch" data-kind="branch" data-tool="pengen" d="M450 250C478.5 250 478.5 104 507 104" marker-end="url(#flow-arrow-branch)"></path>
+              <path class="flow__edge flow__edge--branch" data-kind="branch" data-tool="pendub" d="M450 250C478.5 250 478.5 396 507 396" marker-end="url(#flow-arrow-branch)"></path>
+              <path class="flow__edge flow__edge--gate" data-kind="gate" data-tool="penfix" d="M619 104H676" marker-end="url(#flow-arrow-gate)"></path>
+              <path class="flow__edge flow__edge--gate" data-kind="gate" data-tool="penfix" d="M619 396H676" marker-end="url(#flow-arrow-gate)"></path>
+              <path class="flow__edge flow__edge--merge" data-kind="merge" data-tool="penclip" d="M788 104C816.5 104 816.5 250 845 250" marker-end="url(#flow-arrow-merge)"></path>
+              <path class="flow__edge flow__edge--merge" data-kind="merge" data-tool="penclip" d="M788 396C816.5 396 816.5 250 845 250" marker-end="url(#flow-arrow-merge)"></path>
+              <path class="flow__edge flow__edge--rework" data-kind="rework" data-tool="penfix" d="M732 60V20H394V202" marker-end="url(#flow-arrow-rework)"></path>
+              <path class="flow__pulse flow__pulse--flow" data-kind="flow" data-tool="penplot" d="M112 250H169" style="--dur:3s;--delay:-0s"></path>
+              <path class="flow__pulse flow__pulse--flow" data-kind="flow" data-tool="penshot" d="M281 250H338" style="--dur:3.18s;--delay:-0.37s"></path>
+              <path class="flow__pulse flow__pulse--branch" data-kind="branch" data-tool="pengen" d="M450 250C478.5 250 478.5 104 507 104" style="--dur:3.36s;--delay:-0.74s"></path>
+              <path class="flow__pulse flow__pulse--branch" data-kind="branch" data-tool="pendub" d="M450 250C478.5 250 478.5 396 507 396" style="--dur:3.54s;--delay:-1.11s"></path>
+              <path class="flow__pulse flow__pulse--gate" data-kind="gate" data-tool="penfix" d="M619 104H676" style="--dur:3.72s;--delay:-1.48s"></path>
+              <path class="flow__pulse flow__pulse--gate" data-kind="gate" data-tool="penfix" d="M619 396H676" style="--dur:3.9s;--delay:-1.85s"></path>
+              <path class="flow__pulse flow__pulse--merge" data-kind="merge" data-tool="penclip" d="M788 104C816.5 104 816.5 250 845 250" style="--dur:4.08s;--delay:-2.22s"></path>
+              <path class="flow__pulse flow__pulse--merge" data-kind="merge" data-tool="penclip" d="M788 396C816.5 396 816.5 250 845 250" style="--dur:4.26s;--delay:-2.59s"></path>
+              <path class="flow__pulse flow__pulse--rework" data-kind="rework" data-tool="penfix" d="M732 60V20H394V202" style="--dur:4.44s;--delay:-2.96s"></path>
+            </svg>
+            <div class="flow-node flow-node--input" style="left:0px;top:202px;width:112px;height:96px">
+              <span class="flow-node__meta">INPUT · 自然语言</span>
+              <span class="flow-node__label">原始创意</span>
+              <span class="flow-node__sub">一句台词、一个画面、一个情绪</span>
+            </div>
+            <div class="flow-node flow-node--data" style="left:169px;top:202px;width:112px;height:96px">
+              <span class="flow-node__meta">SCRIPT · JSON</span>
+              <span class="flow-node__label">结构化剧本</span>
+              <span class="flow-node__sub">人物 / 场景 / 对白</span>
+            </div>
+            <div class="flow-node flow-node--data" style="left:338px;top:202px;width:112px;height:96px">
+              <span class="flow-node__meta">FRAGMENT · JSON</span>
+              <span class="flow-node__label">分镜列表</span>
+              <span class="flow-node__sub">视觉 Prompt / 音频参数 / 时长</span>
+            </div>
+            <div class="flow-node flow-node--media" style="left:507px;top:60px;width:112px;height:88px">
+              <span class="flow-node__meta">MEDIA · MP4</span>
+              <span class="flow-node__label">视频片段</span>
+              <span class="flow-node__sub">逐镜渲染的画面</span>
+            </div>
+            <div class="flow-node flow-node--media" style="left:507px;top:352px;width:112px;height:88px">
+              <span class="flow-node__meta">MEDIA · WAV</span>
+              <span class="flow-node__label">音频片段</span>
+              <span class="flow-node__sub">配音 / 音效 / BGM</span>
+            </div>
+            <div class="flow-node flow-node--safe" style="left:676px;top:60px;width:112px;height:88px">
+              <span class="flow-node__meta">PASS · 已过审</span>
+              <span class="flow-node__label">合格视频</span>
+              <span class="flow-node__sub">画面 / 技术达标</span>
+            </div>
+            <div class="flow-node flow-node--safe" style="left:676px;top:352px;width:112px;height:88px">
+              <span class="flow-node__meta">PASS · 已过审</span>
+              <span class="flow-node__label">合格音频</span>
+              <span class="flow-node__sub">音画 / 指标达标</span>
+            </div>
+            <div class="flow-node flow-node--output" style="left:845px;top:202px;width:112px;height:96px">
+              <span class="flow-node__meta">OUTPUT · TIMELINE</span>
+              <span class="flow-node__label">时间线 / 成片</span>
+              <span class="flow-node__sub">Timeline JSON / MP4</span>
+            </div>
+            <button class="flow-tool flow-tool--flow" type="button" data-stage="penplot" data-tool="penplot" aria-expanded="false" aria-controls="flow-panel-penplot" aria-label="PenPlot · 剧情创作，点击查看环节详情" title="PenPlot · 剧情创作，点击查看环节详情" style="left:140.5px;top:228px;--tool-dot:#0a7494"><span class="flow-tool__dot" aria-hidden="true"></span>PenPlot</button>
+            <button class="flow-tool flow-tool--flow" type="button" data-stage="penshot" data-tool="penshot" aria-expanded="false" aria-controls="flow-panel-penshot" aria-label="PenShot · 剧本分镜，点击查看环节详情" title="PenShot · 剧本分镜，点击查看环节详情" style="left:309.5px;top:228px;--tool-dot:#0a7494"><span class="flow-tool__dot" aria-hidden="true"></span>PenShot</button>
+            <button class="flow-tool flow-tool--branch" type="button" data-stage="pengen" data-tool="pengen" aria-expanded="false" aria-controls="flow-panel-pengen" aria-label="PenGen · 视频生成，点击查看环节详情" title="PenGen · 视频生成，点击查看环节详情" style="left:478.5px;top:177px;--tool-dot:#6d4bf0"><span class="flow-tool__dot" aria-hidden="true"></span>PenGen</button>
+            <button class="flow-tool flow-tool--branch" type="button" data-stage="pendub" data-tool="pendub" aria-expanded="false" aria-controls="flow-panel-pendub" aria-label="PenDub · 音频同步，点击查看环节详情" title="PenDub · 音频同步，点击查看环节详情" style="left:478.5px;top:323px;--tool-dot:#6d4bf0"><span class="flow-tool__dot" aria-hidden="true"></span>PenDub</button>
+            <button class="flow-tool flow-tool--gate" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="PenFix · 质量审核，点击查看环节详情" title="PenFix · 质量审核，点击查看环节详情" style="left:647.5px;top:82px;--tool-dot:#96650a"><span class="flow-tool__dot" aria-hidden="true"></span>PenFix</button>
+            <button class="flow-tool flow-tool--gate" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="PenFix · 质量审核，点击查看环节详情" title="PenFix · 质量审核，点击查看环节详情" style="left:647.5px;top:374px;--tool-dot:#96650a"><span class="flow-tool__dot" aria-hidden="true"></span>PenFix</button>
+            <button class="flow-tool flow-tool--merge" type="button" data-stage="penclip" data-tool="penclip" aria-expanded="false" aria-controls="flow-panel-penclip" aria-label="PenClip · 视频剪辑，点击查看环节详情" title="PenClip · 视频剪辑，点击查看环节详情" style="left:816.5px;top:177px;--tool-dot:#087a43"><span class="flow-tool__dot" aria-hidden="true"></span>PenClip</button>
+            <button class="flow-tool flow-tool--merge" type="button" data-stage="penclip" data-tool="penclip" aria-expanded="false" aria-controls="flow-panel-penclip" aria-label="PenClip · 视频剪辑，点击查看环节详情" title="PenClip · 视频剪辑，点击查看环节详情" style="left:816.5px;top:323px;--tool-dot:#087a43"><span class="flow-tool__dot" aria-hidden="true"></span>PenClip</button>
+            <button class="flow-tool flow-tool--rework" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="不合格退回 · 质量审核，点击查看环节详情" title="不合格退回 · 质量审核，点击查看环节详情" style="left:563px;top:20px;--tool-dot:#b91c1c"><span class="flow-tool__dot" aria-hidden="true"></span>不合格退回</button>
+          </div>
+        </div>
+        <p class="flow__scrollhint">← 横向滑动查看完整数据流 →</p>
+        <div class="flow__dock" data-open="false">
+          <p class="flow__hint"><span class="flow__hintdot" aria-hidden="true"></span>点选连线上的工具，展开该环节的做法、故事与入口。</p>
+          <div class="flow__panels">
+            <article class="flow__panel" id="flow-panel-penplot" aria-hidden="true">
+              <div class="flow__panel-head"><span class="flow__num">01</span><span class="flow__panel-name">PenPlot</span><span class="flow__cn">剧情创作</span><span class="status-tag status-tag--planned">规划中</span></div>
+              <p class="flow__tagline">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架。</p>
+              <p class="flow__story">每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。</p>
+            </article>
+            <article class="flow__panel" id="flow-panel-penshot" aria-hidden="true">
+              <div class="flow__panel-head"><span class="flow__num">02</span><span class="flow__panel-name">PenShot</span><span class="flow__cn">剧本分镜</span><span class="status-tag status-tag--test">测试中</span><a class="flow__visit" href="https://shot.helpenx.com" target="_blank" rel="noopener">进入 PenShot <span aria-hidden="true">↗</span></a></div>
+              <p class="flow__tagline">识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表。</p>
+              <p class="flow__story">剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。</p>
+            </article>
+            <article class="flow__panel" id="flow-panel-pengen" aria-hidden="true">
+              <div class="flow__panel-head"><span class="flow__num">03</span><span class="flow__panel-name">PenGen</span><span class="flow__cn">视频生成</span><span class="status-tag status-tag--design">设计中</span></div>
+              <p class="flow__tagline">承接分镜表，驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环。</p>
+              <p class="flow__story">分镜表再精细，也只是图纸。PenGen 把图纸变成会动的画面：每个 shot 在这里被生成、被渲染，被赋予光影和运动。故事写完了、镜头切好了，到这里才第一次开始播放。</p>
+            </article>
+            <article class="flow__panel" id="flow-panel-pendub" aria-hidden="true">
+              <div class="flow__panel-head"><span class="flow__num">04</span><span class="flow__panel-name">PenDub</span><span class="flow__cn">音频同步</span><span class="status-tag status-tag--planned">规划中</span></div>
+              <p class="flow__tagline">配音、音效与背景音乐对齐视频时间线，让每句台词落在该落的画面上。</p>
+              <p class="flow__story">画面会动之后，视频还是哑的。音频与画面的同步最容易被忽略，又最影响观感：差半秒，观众就觉得「哪里不对」——PenDub 的工作就是让这半秒不存在。</p>
+            </article>
+            <article class="flow__panel" id="flow-panel-penfix" aria-hidden="true">
+              <div class="flow__panel-head"><span class="flow__num">05</span><span class="flow__panel-name">PenFix</span><span class="flow__cn">质量审核</span><span class="status-tag status-tag--planned">规划中</span></div>
+              <p class="flow__tagline">在落轨前逐条检查画面一致性、音画同步、内容合规与技术指标，不合格的片段打回分镜重做。</p>
+              <p class="flow__story">「生成完了」不等于「能用」。PenFix 是落轨前唯一一个说「不」的环节：它逐条检查画面、音频与合规，把不合格的片段沿虚线退回分镜；也正因为有它，PenClip 拿到的每一条素材才敢直接上时间线。</p>
+            </article>
+            <article class="flow__panel" id="flow-panel-penclip" aria-hidden="true">
+              <div class="flow__panel-head"><span class="flow__num">06</span><span class="flow__panel-name">PenClip</span><span class="flow__cn">视频剪辑</span><span class="status-tag status-tag--dev">开发中</span><a class="flow__visit" href="https://clip.helpenx.com" target="_blank" rel="noopener">进入 PenClip <span aria-hidden="true">↗</span></a></div>
+              <p class="flow__tagline">按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。</p>
+              <p class="flow__story">素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。</p>
+            </article>
+          </div>
         </div>
       </div>
-      </div>
     </div>
-    <p class="story__note">所有跨节点流转必须经过 NeoTask 调度：节点互不直接调用，只依靠状态变更事件驱动。</p>
+    <p class="story__note">所有跨节点流转仍由 NeoTask 调度：节点不直接互调，只订阅 Project 的状态变更；生成或配音失败时自动换模型重试。</p>
     <!-- STORY-STEPS:END -->
 
     <section class="showcase" id="showcase" aria-label="重点产品">
@@ -638,7 +642,7 @@
       <!-- CARDS-GRID:START 本区块由 sites.json 预渲染，供不执行 JS 的爬虫与首屏使用，JS 加载后重绘，请勿手改 -->
       <a class="card card--wide" href="https://task.helpenx.com" target="_blank" rel="noopener" style="--accent:#6d4bf0"><div class="card__lead"><div class="card__id"><span class="card__icon" aria-hidden="true">N</span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">NeoTask</span><span class="status-tag status-tag--iterating">迭代中</span></span><span class="card__domain">task.helpenx.com</span></span></div><span class="card__thumb"><img src="./assets/neotask-queue.svg" alt="NeoTask 异步任务队列示意：业务代码投递任务、优先级队列、多 Worker 消费与失败退避重试" decoding="async"></span></div><div class="card__main"><span class="card__tagline">Python 异步任务队列</span><p class="card__desc">先用纯 Python 把后台任务跑起来，需要分布式时再切到 Redis 共享队列——不必从第一天就部署中间件。优先级插队、延迟与 Cron 定时、多 Worker 并发、失败自动重试，任务状态可落在内存、SQLite 或 Redis，并带生命周期事件、进度上报与失败任务回收，适合 AI 生成、视频转码、批量抓取这类长任务。</p><ul class="card__features"><li>优先级插队</li><li>Cron / 延迟任务</li><li>多 Worker 并发</li><li>失败自动重试</li><li>内存 / SQLite / Redis</li><li>分布式锁与节点心跳</li><li>进度与事件上报</li></ul><span class="card__repo">源码仓库</span></div><span class="card__arrow" aria-hidden="true">↗</span></a>
       <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-pen"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenPlot</span><span class="status-tag status-tag--planned">规划中</span></span><span class="card__domain">plot.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">剧情创作 · 从念头到故事线</span><p class="card__desc">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架，让一个模糊的想法变成一条能往下走的故事线。</p><ul class="card__features"><li>故事线梳理</li><li>情节节点打磨</li><li>结构化剧本骨架</li><li>起承转合设计</li></ul></div></div>
-      <a class="card" href="https://shot.helpenx.com" target="_blank" rel="noopener" style="--accent:#0a7494"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-frames"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenShot</span><span class="status-tag status-tag--iterating">迭代中</span></span><span class="card__domain">shot.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">剧本分镜 · 把文字翻译成镜头</span><p class="card__desc">将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。</p><ul class="card__features"><li>多 Agent 流水线</li><li>一致性记忆</li><li>模型适配</li><li>SDK &amp; API</li></ul><span class="card__repo">源码仓库</span></div><span class="card__arrow" aria-hidden="true">↗</span></a>
+      <a class="card" href="https://shot.helpenx.com" target="_blank" rel="noopener" style="--accent:#0a7494"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-frames"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenShot</span><span class="status-tag status-tag--test">测试中</span></span><span class="card__domain">shot.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">剧本分镜 · 把文字翻译成镜头</span><p class="card__desc">将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。</p><ul class="card__features"><li>多 Agent 流水线</li><li>一致性记忆</li><li>模型适配</li><li>SDK &amp; API</li></ul><span class="card__repo">源码仓库</span></div><span class="card__arrow" aria-hidden="true">↗</span></a>
       <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-play"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenGen</span><span class="status-tag status-tag--design">设计中</span></span><span class="card__domain">gen.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">视频生成 · 把分镜变成画面</span><p class="card__desc">承接分镜表驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环：每个 shot 在这里被生成、渲染，被赋予光影与运动。</p><ul class="card__features"><li>多模型路由</li><li>关键帧生成</li><li>镜头级重生成</li><li>跨镜头一致性</li></ul></div></div>
       <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-wave"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenDub</span><span class="status-tag status-tag--planned">规划中</span></span><span class="card__domain">dub.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">音频同步 · 让画面开口说话</span><p class="card__desc">负责视频的听觉层：配音、音效与背景音乐对齐视频时间线，确保每句台词落在该落的画面上，每个音效踩在该踩的节点上。</p><ul class="card__features"><li>AI 配音</li><li>音效与 BGM</li><li>音画时间线对齐</li><li>口型同步</li></ul></div></div>
       <a class="card" href="https://clip.helpenx.com" target="_blank" rel="noopener" style="--accent:#0a7494"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-scissors"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenClip</span><span class="status-tag status-tag--dev">开发中</span></span><span class="card__domain">clip.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">视频剪辑 · 按叙事节奏成片</span><p class="card__desc">把生成的视频片段与同步好的音频按叙事节奏组装成完整作品，处理转场、节奏、时长与镜头顺序，输出可发布的成片。</p><ul class="card__features"><li>叙事节奏剪辑</li><li>转场与调色</li><li>镜头顺序编排</li><li>成片导出</li></ul></div><span class="card__arrow" aria-hidden="true">↗</span></a>
@@ -715,36 +719,44 @@
     "language": "zh-CN"
   },
   "story": {
-    "eyebrow": "HelpEnX Studio · 协作模型",
-    "title": "六环不是流水线，是同一张时间线上的事件网络",
+    "eyebrow": "HelpEnX Studio · 数据流模型",
+    "title": "不是一条直线：数据分叉、过审、回退，最后汇成时间线",
     "lead": [
-      "HelpEnX Studio 把剧本、分镜、画面、音频、剪辑与质检写进同一个 Project 时间线。六个环节围绕这份共享状态协作，而不是把素材一站站往下传。走通一次的分镜、资产与模板会沉淀下来，让下一部戏不必从零开始。",
-      "任何一环的产出都会发出事件：分镜更新并行唤醒生成与配音，产出先过质检再落轨合成；异常被定点打回，修改沿级联刷新，剪辑可反向改剧本，失败由 NeoTask 换模型重试。多对多，而非单向。"
+      "HelpEnX Studio 的协作单位不是「步骤」，而是数据。一句自然语言先被写成结构化剧本 JSON，再切成一条条 Fragment 分镜：每一条都带着视觉 Prompt、音频参数与时长，成为后面所有环节共享的契约。",
+      "分镜之后流程分叉：PenGen 把同一条 Fragment 渲染成 MP4，PenDub 同步出 WAV，两条支线并行推进；PenFix 在落轨前逐条把关，不合格的片段沿虚线退回分镜重做。只有过审的视频与音频，才由 PenClip 汇进同一条时间线，输出 Timeline JSON 或最终 MP4。"
     ],
-    "busLabel": "DATA BUS · 共享状态",
-    "busNote": "所有环节共享同一个 Project 时间线，变更以事件流转",
+    "busLabel": "DATA FLOW · 数据契约",
+    "busNote": "JSON 契约在环节间流转：分镜分叉出视频与音频，过审后汇入同一条时间线",
     "kinds": [
-      { "id": "wake", "label": "标准顺流" },
-      { "id": "rework", "label": "局部打回" },
-      { "id": "cascade", "label": "文本级联" },
-      { "id": "feedback", "label": "音频级联" },
-      { "id": "reverse", "label": "剪辑主导" },
-      { "id": "retry", "label": "底座重试" }
+      { "id": "flow", "label": "数据顺流" },
+      { "id": "branch", "label": "并行分支" },
+      { "id": "gate", "label": "审核门" },
+      { "id": "merge", "label": "落轨合成" },
+      { "id": "rework", "label": "不合格回退" }
     ],
-    "events": [
-      { "from": "penplot", "to": ["penshot"], "kind": "wake", "label": "PenPlot 剧本定稿 → PenShot 切分镜头" },
-      { "from": "penshot", "to": ["pengen", "pendub"], "kind": "wake", "label": "PenShot 分镜更新 → 并行唤醒 PenGen、PenDub" },
-      { "from": "pengen", "to": ["penfix"], "kind": "wake", "label": "PenGen 片段产出 → PenFix 质检" },
-      { "from": "pendub", "to": ["penfix"], "kind": "wake", "label": "PenDub 音频产出 → PenFix 质检" },
-      { "from": "penfix", "to": ["penclip"], "kind": "wake", "label": "PenFix 通过 → PenClip 落轨合成" },
-      { "from": "penfix", "to": ["pengen", "pendub"], "kind": "rework", "label": "PenFix 发现异常 → NeoTask 打回，定点重跑该镜头" },
-      { "from": "pengen", "to": ["penclip"], "kind": "cascade", "label": "PenShot 改分镜 → PenGen 刷新画面 → PenClip 局部重剪" },
-      { "from": "pendub", "to": ["penclip"], "kind": "cascade", "label": "PenShot 改台词 → PenDub 刷新音频 → PenClip 局部重剪" },
-      { "from": "pendub", "to": ["penshot", "penclip"], "kind": "feedback", "label": "PenDub 时长不符 → PenShot 微调时长、PenClip 对齐轨道" },
-      { "from": "penclip", "to": ["penplot", "penshot"], "kind": "reverse", "label": "PenClip 人工粗剪 → 反向修订 PenPlot、PenShot" },
-      { "from": "pengen", "to": ["pengen"], "kind": "retry", "label": "PenGen 调用失败 → NeoTask 切换备用模型重派" },
-      { "from": "pendub", "to": ["pendub"], "kind": "retry", "label": "PenDub 调用失败 → NeoTask 切换备用模型重派" }
-    ],
+    "graph": {
+      "nodes": [
+        { "id": "idea", "col": 0, "lane": "mid", "kind": "input", "meta": "INPUT · 自然语言", "label": "原始创意", "sub": "一句台词、一个画面、一个情绪" },
+        { "id": "script", "col": 1, "lane": "mid", "kind": "data", "meta": "SCRIPT · JSON", "label": "结构化剧本", "sub": "人物 / 场景 / 对白" },
+        { "id": "shots", "col": 2, "lane": "mid", "kind": "data", "meta": "FRAGMENT · JSON", "label": "分镜列表", "sub": "视觉 Prompt / 音频参数 / 时长" },
+        { "id": "video", "col": 3, "lane": "top", "kind": "media", "meta": "MEDIA · MP4", "label": "视频片段", "sub": "逐镜渲染的画面" },
+        { "id": "audio", "col": 3, "lane": "bottom", "kind": "media", "meta": "MEDIA · WAV", "label": "音频片段", "sub": "配音 / 音效 / BGM" },
+        { "id": "video-ok", "col": 4, "lane": "top", "kind": "safe", "meta": "PASS · 已过审", "label": "合格视频", "sub": "画面 / 技术达标" },
+        { "id": "audio-ok", "col": 4, "lane": "bottom", "kind": "safe", "meta": "PASS · 已过审", "label": "合格音频", "sub": "音画 / 指标达标" },
+        { "id": "timeline", "col": 5, "lane": "mid", "kind": "output", "meta": "OUTPUT · TIMELINE", "label": "时间线 / 成片", "sub": "Timeline JSON / MP4" }
+      ],
+      "edges": [
+        { "from": "idea", "to": "script", "tool": "penplot", "kind": "flow", "caption": "PenPlot 把原始创意写成结构化剧本 JSON" },
+        { "from": "script", "to": "shots", "tool": "penshot", "kind": "flow", "caption": "PenShot 把剧本切成带 Prompt 与时长的分镜列表" },
+        { "from": "shots", "to": "video", "tool": "pengen", "kind": "branch", "caption": "PenGen 消费分镜，逐镜渲染视频 MP4" },
+        { "from": "shots", "to": "audio", "tool": "pendub", "kind": "branch", "caption": "PenDub 读取同一份分镜，同步生成音频 WAV" },
+        { "from": "video", "to": "video-ok", "tool": "penfix", "kind": "gate", "caption": "PenFix 审核画面一致性与技术指标，通过才放行" },
+        { "from": "audio", "to": "audio-ok", "tool": "penfix", "kind": "gate", "caption": "PenFix 审核音画同步与音频指标，通过才放行" },
+        { "from": "video-ok", "to": "timeline", "tool": "penclip", "kind": "merge", "caption": "PenClip 把合格视频按时间线落轨" },
+        { "from": "audio-ok", "to": "timeline", "tool": "penclip", "kind": "merge", "caption": "PenClip 把合格音频对齐到同一条时间线" },
+        { "from": "video-ok", "to": "shots", "tool": "penfix", "kind": "rework", "route": "over", "label": "不合格退回", "caption": "PenFix 判定不合格时，片段沿虚线退回分镜，定点重做该 Fragment" }
+      ]
+    },
     "stages": [
       {
         "id": "penplot",
@@ -787,27 +799,27 @@
         "story": "画面会动之后，视频还是哑的。音频与画面的同步最容易被忽略，又最影响观感：差半秒，观众就觉得「哪里不对」——PenDub 的工作就是让这半秒不存在。"
       },
       {
-        "id": "penclip",
-        "name": "PenClip",
-        "cn": "视频剪辑",
-        "url": "https://clip.helpenx.com",
-        "status": "dev",
-        "hook": "同样的素材，剪法不同就是两部作品。",
-        "tagline": "按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。",
-        "story": "素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。"
-      },
-      {
         "id": "penfix",
         "name": "PenFix",
         "cn": "质量审核",
         "url": "https://fix.helpenx.com",
         "status": "planned",
         "hook": "敢说「不」的环节，才让成片敢交出去。",
-        "tagline": "检查画面一致性、音画同步、内容合规与技术指标，标记问题并给出修复建议。",
-        "story": "「完成」不等于「能发」。它是整条线唯一一个说「不」的环节，也正因为有它，前面五个环节的产出才敢交到观众手里。"
+        "tagline": "在落轨前逐条检查画面一致性、音画同步、内容合规与技术指标，不合格的片段打回分镜重做。",
+        "story": "「生成完了」不等于「能用」。PenFix 是落轨前唯一一个说「不」的环节：它逐条检查画面、音频与合规，把不合格的片段沿虚线退回分镜；也正因为有它，PenClip 拿到的每一条素材才敢直接上时间线。"
+      },
+      {
+        "id": "penclip",
+        "name": "PenClip",
+        "cn": "视频剪辑",
+        "url": "https://clip.helpenx.com",
+        "status": "design",
+        "hook": "同样的素材，剪法不同就是两部作品。",
+        "tagline": "按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。",
+        "story": "素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。"
       }
     ],
-    "note": "所有跨节点流转必须经过 NeoTask 调度：节点互不直接调用，只依靠状态变更事件驱动。"
+    "note": "所有跨节点流转仍由 NeoTask 调度：节点不直接互调，只订阅 Project 的状态变更；生成或配音失败时自动换模型重试。"
   },
   "categories": [
     { "id": "studio", "name": "AIGC Studio", "shortName": "AIGC Studio" },
@@ -865,7 +877,7 @@
       "name": "PenShot",
       "url": "https://shot.helpenx.com",
       "category": "studio",
-      "status": "iterating",
+      "status": "test",
       "icon": "frames",
       "tagline": "剧本分镜 · 把文字翻译成镜头",
       "description": "将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。",

@@ -327,12 +327,11 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 /* ---------- NeoTask 任务池：水层在底，六段流水线浮在上层 ---------- */
 .flow-pool {
   position: relative; isolation: isolate; overflow: hidden;
-  --kind-wake: 10, 116, 148;
-  --kind-rework: 214, 69, 65;
-  --kind-cascade: 8, 122, 67;
-  --kind-feedback: 224, 138, 30;
-  --kind-reverse: 109, 75, 240;
-  --kind-retry: 100, 116, 139;
+  --kind-flow: 10, 116, 148;
+  --kind-branch: 109, 75, 240;
+  --kind-gate: 150, 101, 10;
+  --kind-merge: 8, 122, 67;
+  --kind-rework: 185, 28, 28;
   margin-top: 6px; padding: 16px 22px 20px;
   border: 1px solid rgba(10, 116, 148, 0.16); border-radius: 22px;
   background:
@@ -439,165 +438,133 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .flow-legend__chip[aria-pressed="true"] {
   border-color: rgba(var(--bead), 0.55); background: rgba(var(--bead), 0.09);
 }
-.flow-legend__chip--wake { --bead: var(--kind-wake); }
+.flow-legend__chip--flow { --bead: var(--kind-flow); }
+.flow-legend__chip--branch { --bead: var(--kind-branch); }
+.flow-legend__chip--gate { --bead: var(--kind-gate); }
+.flow-legend__chip--merge { --bead: var(--kind-merge); }
 .flow-legend__chip--rework { --bead: var(--kind-rework); }
-.flow-legend__chip--cascade { --bead: var(--kind-cascade); }
-.flow-legend__chip--feedback { --bead: var(--kind-feedback); }
-.flow-legend__chip--reverse { --bead: var(--kind-reverse); }
-.flow-legend__chip--retry { --bead: var(--kind-retry); }
-.flow { position: relative; z-index: 1; margin-top: 10px; }
+.flow { position: relative; z-index: 1; margin-top: 8px; }
 
 @keyframes poolSway {
   from { transform: translateX(-3%); }
   to { transform: translateX(3%) translateY(-8px); }
 }
 
-/* ---------- 横向流水线：上下交错节点 + 联动详情坞 ---------- */
-.flow__rail { position: relative; }
-/* 数据总线：上下双轨 + 中心虚线，静态承载事件，而不是单向传送带 */
-.flow__line {
-  position: absolute; left: calc(100% / 12); right: calc(100% / 12); top: 50%;
-  height: 6px; margin-top: -3px;
-  background-image:
-    repeating-linear-gradient(90deg, rgba(15, 34, 67, 0.14) 0 5px, transparent 5px 11px),
-    linear-gradient(rgba(15, 34, 67, 0.14), rgba(15, 34, 67, 0.14)),
-    linear-gradient(rgba(15, 34, 67, 0.14), rgba(15, 34, 67, 0.14));
-  background-position: 0 50%, 0 0, 0 100%;
-  background-size: 11px 1px, 100% 1px, 100% 1px;
-  background-repeat: repeat-x, no-repeat, no-repeat;
-  animation: busIdle 7s ease-in-out infinite;
+/* ---------- 数据流图：数据节点 + 工具连线 ---------- */
+.flow__scroll {
+  overflow-x: auto; overflow-y: hidden;
+  margin: 0 -6px; padding: 0 6px 8px;
+  scrollbar-width: thin; scrollbar-color: rgba(15, 34, 67, 0.22) transparent;
 }
-.flow__line::after {
-  content: ""; position: absolute; inset: 1px auto 1px 0; z-index: 1;
-  width: var(--flow-lit, 0%); border-radius: 2px;
-  background: linear-gradient(90deg, var(--cyan), var(--violet));
-  box-shadow: 0 0 12px rgba(10, 116, 148, 0.3);
-  transition: width 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-/* 事件光点：由 story.events 生成，默认自动在任意两个节点之间双向穿梭 */
-.flow__bead {
-  position: absolute; top: 50%; left: 0; z-index: 2;
-  width: 54px; height: 5px; margin-top: -2.5px; border-radius: 3px;
-  opacity: 0; pointer-events: none;
-  --bead: var(--kind-wake);
-  background: linear-gradient(90deg, transparent, rgba(var(--bead), 0.15) 45%, rgba(var(--bead), 0.9));
-  animation: busEvent var(--dur, 3.6s) linear infinite;
-  animation-delay: var(--delay, 0s);
-}
-.flow__bead::after {
-  content: ""; position: absolute; top: 50%; right: -1px;
-  width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 8px rgba(var(--bead), 0.8), 0 0 2px rgba(var(--bead), 0.9);
-}
-.flow__bead--wake { --bead: var(--kind-wake); }
-.flow__bead--rework { --bead: var(--kind-rework); }
-.flow__bead--cascade { --bead: var(--kind-cascade); }
-.flow__bead--feedback { --bead: var(--kind-feedback); }
-.flow__bead--reverse { --bead: var(--kind-reverse); }
-.flow__bead--retry { --bead: var(--kind-retry); }
-.flow__bead--rev {
-  background: linear-gradient(270deg, transparent, rgba(var(--bead), 0.15) 45%, rgba(var(--bead), 0.9));
-}
-.flow__bead--rev::after { right: auto; left: -1px; }
-/* 底座重试：光点驶出再返回原节点，表示 NeoTask 换模型后重新派发 */
-.flow__bead--loop {
-  animation-name: busLoop;
-  background: linear-gradient(90deg, transparent, rgba(var(--bead), 0.55), transparent);
-}
-.flow__bead--loop::after { right: auto; left: 50%; margin-left: -3.5px; }
-.flow-pool.is-paused .flow__bead,
-.flow-pool.is-paused .flow__hit { animation-play-state: paused; }
-.flow__bead.is-dim, .flow__hit.is-dim { filter: opacity(0.1); }
-.flow__stops {
-  position: relative; z-index: 1;
-  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0 12px;
-  height: 334px; margin: 0; padding: 0; list-style: none;
-}
-.flow__stop { position: relative; }
-.flow__card {
-  position: absolute; left: 0; right: 0;
-  display: flex; flex-direction: column; gap: 7px;
-  padding: 11px 10px 12px;
-  font: inherit; color: inherit; text-align: left;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid var(--border); border-radius: 12px;
-  cursor: pointer;
-  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, translate 0.18s ease;
-}
-.flow__stop--up .flow__card { bottom: calc(50% + 30px); }
-.flow__stop--down .flow__card { top: calc(50% + 30px); }
-.flow__card:hover {
-  border-color: rgba(10, 116, 148, 0.4); background: var(--surface);
-  box-shadow: 0 10px 26px rgba(15, 34, 67, 0.08);
-}
-.flow__card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
-.flow__stop.is-active .flow__card {
-  border-color: rgba(10, 116, 148, 0.55); background: var(--surface);
-  box-shadow: 0 16px 34px rgba(10, 116, 148, 0.16);
-  transform: translateY(-2px);
-}
-/* 事件到达：目标卡片按事件色点亮并轻微凸起，由光点 animationiteration 驱动 */
-.flow__stop.is-hit .flow__card {
-  border-color: rgba(var(--hit, 10, 116, 148), 0.55);
-  background: var(--surface);
-  box-shadow: 0 12px 26px rgba(var(--hit, 10, 116, 148), 0.18);
-  translate: 0 -3px;
-}
-.flow__meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.flow__num {
-  font-family: var(--mono); font-size: 11.5px; font-weight: 600;
-  color: var(--text-faint); letter-spacing: 0.04em;
-}
-.flow__card .status-tag { padding: 1px 8px; font-size: 10.5px; }
-.flow__name {
-  display: block; min-width: 0;
-  font-size: 15.5px; font-weight: 650; letter-spacing: 0.01em; color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  transition: color 0.18s ease;
-}
-.flow__cn { margin-left: 6px; font-size: 11.5px; font-weight: 600; color: var(--text-faint); }
-.flow__card:hover .flow__name,
-.flow__stop.is-active .flow__name { color: var(--cyan); }
-.flow__hook {
-  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
-  font-size: 12px; line-height: 1.55; letter-spacing: 0.01em; color: var(--text-dim);
-}
-.flow__hook::before { content: "“"; color: var(--cyan); font-weight: 700; }
-.flow__hook::after { content: "”"; color: var(--cyan); font-weight: 700; }
+.flow__scroll::-webkit-scrollbar { height: 6px; }
+.flow__scroll::-webkit-scrollbar-thumb { background: rgba(15, 34, 67, 0.18); border-radius: 999px; }
+.flow__board { position: relative; margin: 0 auto; }
+.flow__edges { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 
-/* 节点与中轴的连接：圆点 + 竖线，选中后沿轴点亮 */
-.flow__dot {
-  position: absolute; left: 50%; top: 50%; z-index: 2;
-  width: 9px; height: 9px; margin: -5px 0 0 -5px;
-  background: var(--surface); border: 2px solid rgba(15, 34, 67, 0.28); border-radius: 50%;
-  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-.flow__stem { position: absolute; left: 50%; z-index: 1; width: 1px; background: rgba(10, 116, 148, 0.25); }
-.flow__stop--up .flow__stem { bottom: 50%; height: 30px; }
-.flow__stop--down .flow__stem { top: 50%; height: 30px; }
-/* 事件到达时点亮目标节点，与对应事件光点同延迟、同周期 */
-.flow__hit {
-  position: absolute; inset: -3px; border-radius: 50%;
-  opacity: 0; pointer-events: none;
-  --bead: var(--kind-wake);
-  background: radial-gradient(circle, rgba(var(--bead), 0.95), rgba(var(--bead), 0) 72%);
-  animation: busHit var(--dur, 3.6s) linear infinite;
+/* 连线分四类：顺流 / 分支 / 审核门 / 合成，回退用红色虚线 */
+.flow__edge { fill: none; stroke-width: 1.5; stroke-linecap: round; opacity: 0.55; transition: opacity 0.2s ease; }
+.flow__edge--flow { stroke: rgba(var(--kind-flow), 0.8); }
+.flow__edge--branch { stroke: rgba(var(--kind-branch), 0.75); }
+.flow__edge--gate { stroke: rgba(var(--kind-gate), 0.75); }
+.flow__edge--merge { stroke: rgba(var(--kind-merge), 0.75); }
+.flow__edge--rework { stroke: rgba(var(--kind-rework), 0.75); stroke-dasharray: 6 6; opacity: 0.9; }
+.flow__pulse {
+  fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 3 20;
+  opacity: 0.9; animation: flowDash var(--dur, 3s) linear infinite;
   animation-delay: var(--delay, 0s);
 }
-.flow__hit--wake { --bead: var(--kind-wake); }
-.flow__hit--rework { --bead: var(--kind-rework); }
-.flow__hit--cascade { --bead: var(--kind-cascade); }
-.flow__hit--feedback { --bead: var(--kind-feedback); }
-.flow__hit--reverse { --bead: var(--kind-reverse); }
-.flow__hit--retry { --bead: var(--kind-retry); }
-.flow__dot.is-lit { border-color: var(--cyan); background: var(--cyan); }
-.flow__stop.is-active .flow__dot {
-  background: var(--cyan); border-color: var(--cyan);
-  box-shadow: 0 0 0 4px rgba(10, 116, 148, 0.16);
-  animation: flowPulse 1.8s ease-out infinite;
+.flow__pulse--flow { stroke: var(--cyan); }
+.flow__pulse--branch { stroke: var(--violet); }
+.flow__pulse--gate { stroke: var(--amber); }
+.flow__pulse--merge { stroke: var(--green); }
+.flow__pulse--rework { stroke: #b91c1c; }
+.flow__edge.is-dim, .flow__pulse.is-dim { opacity: 0.08; }
+.flow-pool.is-paused .flow__pulse { animation-play-state: paused; }
+
+/* 数据节点：只读契约，不承担点击 */
+.flow-node {
+  position: absolute; z-index: 2;
+  display: flex; flex-direction: column; justify-content: center; gap: 2px;
+  padding: 9px 9px 9px 13px; overflow: hidden;
+  background: #fff; border: 1px solid var(--border); border-radius: 11px;
+  box-shadow: 0 2px 7px rgba(15, 34, 67, 0.05);
+  --node-accent: var(--cyan);
 }
-.flow__stop.is-active .flow__stem { background: var(--cyan); }
+.flow-node::before {
+  content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 3px;
+  border-radius: 0 3px 3px 0; background: var(--node-accent); opacity: 0.6;
+}
+.flow-node--input { --node-accent: var(--violet); border-style: dashed; background: linear-gradient(180deg, #fff, #fbfaff); }
+.flow-node--media { --node-accent: var(--violet); }
+.flow-node--safe { --node-accent: var(--green); border-color: rgba(8, 122, 67, 0.28); background: linear-gradient(180deg, #fff, #f4fbf7); }
+.flow-node--safe::after {
+  content: "✓"; position: absolute; top: 7px; right: 8px;
+  width: 13px; height: 13px; display: grid; place-items: center;
+  font-size: 9px; font-weight: 700; line-height: 1; color: #fff;
+  background: var(--green); border-radius: 50%;
+}
+.flow-node--output {
+  --node-accent: var(--cyan);
+  border-color: rgba(10, 116, 148, 0.32);
+  background: linear-gradient(135deg, rgba(10, 116, 148, 0.06), rgba(109, 75, 240, 0.07)), #fff;
+  box-shadow: 0 6px 16px rgba(10, 116, 148, 0.08);
+}
+.flow-node__meta {
+  font-family: var(--mono); font-size: 8px; font-weight: 600; letter-spacing: 0.06em;
+  color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.flow-node__label {
+  font-size: 13px; font-weight: 650; letter-spacing: 0.01em; line-height: 1.3;
+  color: var(--ink); white-space: nowrap;
+}
+.flow-node__sub {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  font-size: 10px; line-height: 1.42; color: var(--text-dim);
+}
+
+/* 工具按钮：压在连线上，既是标签也是环节入口 */
+.flow-tool {
+  position: absolute; z-index: 4; transform: translate(-50%, -50%);
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 20px; padding: 0 7px; border-radius: 999px;
+  font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--text-dim); white-space: nowrap;
+  background: #fff; border: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(15, 34, 67, 0.08);
+  cursor: pointer;
+  transition: color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+.flow-tool:hover, .flow-tool:focus-visible, .flow-tool[aria-expanded="true"] {
+  color: var(--cyan); border-color: rgba(10, 116, 148, 0.5);
+  box-shadow: 0 4px 12px rgba(10, 116, 148, 0.16);
+  transform: translate(-50%, calc(-50% - 1px));
+}
+.flow-tool:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.flow-tool__dot {
+  flex: none; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--tool-dot, var(--cyan));
+  box-shadow: 0 0 0 2px rgba(15, 34, 67, 0.06);
+}
+.flow-tool--rework {
+  color: var(--amber); border-style: dashed; border-color: rgba(var(--kind-rework), 0.5);
+  background: #fffaf6;
+}
+.flow-tool--gate { color: var(--amber); }
+.flow-tool--branch { color: #5b3fd6; }
+.flow-tool--merge { color: var(--green); }
+.flow-tool--rework:hover, .flow-tool--rework:focus-visible, .flow-tool--rework[aria-expanded="true"] {
+  color: #b91c1c; border-color: rgba(var(--kind-rework), 0.65);
+  box-shadow: 0 4px 12px rgba(var(--kind-rework), 0.16);
+}
+.flow__scrollhint {
+  display: none; margin: 4px 0 0; text-align: center;
+  font-size: 11px; color: var(--text-faint);
+}
+
+@keyframes flowDash {
+  from { stroke-dashoffset: 46; }
+  to { stroke-dashoffset: 0; }
+}
 
 /* 详情坞：选中节点后在此展开对应环节 */
 .flow__dock {
@@ -634,34 +601,6 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .flow__tagline { margin: 0; font-size: 14.5px; line-height: 1.72; color: var(--text); }
 .flow__story { margin: 7px 0 0; max-width: 110ch; font-size: 13.5px; line-height: 1.85; color: var(--text-faint); }
 
-@keyframes busIdle {
-  0%, 100% { opacity: 0.72; }
-  50% { opacity: 1; }
-}
-@keyframes busEvent {
-  0% { left: var(--from); opacity: 0; }
-  7% { opacity: 0.95; }
-  88% { opacity: 0.95; }
-  100% { left: var(--to); opacity: 0; }
-}
-@keyframes busLoop {
-  0% { left: var(--from); opacity: 0; }
-  12% { opacity: 0.95; }
-  46% { left: var(--mid); opacity: 0.95; }
-  54% { left: var(--mid); opacity: 0.95; }
-  88% { opacity: 0.95; }
-  100% { left: var(--from); opacity: 0; }
-}
-@keyframes busHit {
-  0%, 80% { opacity: 0; transform: scale(0.55); }
-  88% { opacity: 0.9; transform: scale(1.05); }
-  100% { opacity: 0; transform: scale(2.1); }
-}
-@keyframes flowPulse {
-  0% { box-shadow: 0 0 0 0 rgba(10, 116, 148, 0.3); }
-  70% { box-shadow: 0 0 0 8px rgba(10, 116, 148, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(10, 116, 148, 0); }
-}
 @keyframes flowIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: none; }
@@ -873,17 +812,9 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   .flow-pool { padding: 14px 14px 16px; border-radius: 18px; }
   .flow-pool__note, .flow-pool__hint, .flow-pool__bus, .flow-legend { display: none; }
   .flow-pool__label { cursor: default; }
-  .flow__stops {
-    display: flex; gap: 12px; height: auto;
-    margin: 0 -2px; padding: 4px 2px 10px;
-    overflow-x: auto; scroll-snap-type: x mandatory;
-    scrollbar-width: thin; scrollbar-color: rgba(15, 34, 67, 0.22) transparent;
-  }
-  .flow__stops::-webkit-scrollbar { height: 6px; }
-  .flow__stops::-webkit-scrollbar-thumb { background: rgba(15, 34, 67, 0.18); border-radius: 999px; }
-  .flow__stop { flex: 0 0 172px; scroll-snap-align: start; }
-  .flow__card { position: static; height: 100%; }
-  .flow__line, .flow__stem, .flow__dot { display: none; }
+  .flow__scroll { margin: 0 -4px; padding-bottom: 10px; }
+  .flow__board { margin: 0; }
+  .flow__scrollhint { display: block; }
   .flow__dock { margin-top: 14px; }
 }
 @media (max-width: 900px) {
@@ -916,7 +847,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   .flow-pool { padding: 12px 10px 14px; border-radius: 16px; }
   .flow-pool__label { gap: 7px; }
   .flow-pool__monogram { font-size: 150px; bottom: -26px; }
-  .flow__stop { flex-basis: 158px; }
+  .flow__scroll { margin: 0 -2px; }
   .flow__panel { padding: 15px 16px 17px; }
   .flow__visit { margin-left: 0; }
   .flow__dock { margin-top: 12px; }

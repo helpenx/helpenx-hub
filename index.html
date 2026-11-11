@@ -625,6 +625,161 @@
       <article class="showcase__card" style="--accent:#0a7494"><div class="showcase__head"><div class="showcase__idline"><span class="showcase__name">HelpEnX Studio</span><span class="status-tag status-tag--design">设计中</span><span class="showcase__domain">studio.helpenx.com</span></div><a class="btn btn-primary" href="https://studio.helpenx.com" target="_blank" rel="noopener">立即体验 AIGC Studio <span class="btn__arrow" aria-hidden="true">→</span></a></div><div class="showcase__main"><div class="showcase__text"><span class="showcase__tagline">AIGC 创意工坊</span><p class="showcase__desc">从创意、剧本到成片的全链路多 Agent 编排：自动完成分集分场、分镜脚本、关键帧、视频片段与配音剪辑，并把角色、场景、道具、模型等数字资产统一沉淀为可复用资产库——换一部剧不必从零重画，跨镜头、跨集保持同一张脸、同一个空间。一致性记忆与自动质检把返工压到最低，整集可一键生成，也可以在任意节点人工介入、用对话直接改写——例如「把第 3 场第 2 镜改成仰拍，时长缩到 4 秒」。</p></div><a class="showcase__media" href="https://studio.helpenx.com" target="_blank" rel="noopener"><img src="./assets/studio-pipeline.svg" alt="HelpEnX Studio 生产链路示意"></a></div><div class="showcase__bands"><div class="card__flow"><span class="card__flow-step">创意 / 剧本</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">分集分场</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">分镜脚本</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">数字资产 · 角色 / 场景 / 模型</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">关键帧</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">视频片段</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">配音 · 口型 · BGM</span><span class="card__flow-sep" aria-hidden="true">→</span><span class="card__flow-step">剪辑合成</span></div><ul class="card__features"><li>角色 / 场景 / 模型资产库</li><li>多模型路由与降级</li><li>跨镜头跨集一致性</li><li>自动质检与返工</li><li>断点续跑与配额调度</li><li>Tool / MCP / API 开放</li><li>可用率与成本指标</li></ul></div></article>
       <!-- CARDS-HERO:END -->
     </section>
+
+    <!-- 系统架构：静态区块，按需手工维护；与上方数据流共用 Studio 叙事 -->
+    <section class="arch" id="architecture" aria-labelledby="arch-title">
+      <div class="arch__head">
+        <span class="arch__eyebrow">HelpEnX Studio · 系统架构</span>
+        <h2 class="arch__title" id="arch-title">四层架构，两条总线：控制面编排，数据面执行，模型层统一出网</h2>
+        <p class="arch__lead">创作者只接触业务 API；NeoTask 在控制面把整集拆成 DAG，调度六个智能体；Redis 承载任务状态与事件，AI Gateway 收敛所有模型请求。六环之间只交换 JSON 契约，不互相调用。</p>
+      </div>
+
+      <div class="arch-board" role="group" aria-label="HelpEnX Studio 四层系统架构">
+        <div class="arch-layer arch-layer--access">
+          <div class="arch-layer__rail">
+            <span class="arch-layer__num">LAYER 01</span>
+            <span class="arch-layer__name">接入与业务网关</span>
+            <span class="arch-layer__note">创作者只和业务 API 打交道</span>
+          </div>
+          <div class="arch-layer__body">
+            <div class="arch-node arch-node--user">
+              <span class="arch-node__meta">CREATOR</span>
+              <span class="arch-node__name">创作者 / 导演</span>
+              <span class="arch-node__sub">Web / App</span>
+            </div>
+            <span class="arch-arrow arch-arrow--bi" aria-hidden="true"><em>Web / UI</em></span>
+            <div class="arch-node arch-node--gateway">
+              <span class="arch-node__meta">BUSINESS API</span>
+              <span class="arch-node__name">业务 API 服务</span>
+              <span class="arch-node__sub">鉴权 · 资产 · 计费</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-drop" aria-hidden="true"><span class="arch-drop__stem"></span><span class="arch-drop__label">提交整集生成任务</span></div>
+
+        <div class="arch-layer arch-layer--control">
+          <div class="arch-layer__rail">
+            <span class="arch-layer__num">LAYER 02</span>
+            <span class="arch-layer__name">调度与状态</span>
+            <span class="arch-layer__note">控制面：只编排，不跑推理</span>
+          </div>
+          <div class="arch-layer__body">
+            <div class="arch-node arch-node--neotask">
+              <span class="arch-node__meta">CONTROL PLANE</span>
+              <span class="arch-node__name">NeoTask Core</span>
+              <span class="arch-node__sub">任务池 / 优先级 / 重试</span>
+            </div>
+            <span class="arch-arrow arch-arrow--bi" aria-hidden="true"><em>DAG 编排</em></span>
+            <div class="arch-node arch-node--neotask">
+              <span class="arch-node__meta">CONTROL PLANE</span>
+              <span class="arch-node__name">NeoTask Flow</span>
+              <span class="arch-node__sub">条件分支 / 断点续跑</span>
+            </div>
+            <div class="arch-node arch-node--vdb">
+              <span class="arch-node__meta">MEMORY</span>
+              <span class="arch-node__name">向量数据库</span>
+              <span class="arch-node__sub">Chroma / Milvus · 供 01 / 02 检索</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-bus arch-bus--redis">
+          <span class="arch-bus__name">Redis · 状态总线</span>
+          <span class="arch-bus__note">任务队列 / 缓存 / 状态事件</span>
+          <span class="arch-bus__meta">CONTROL ⇅ DATA</span>
+        </div>
+
+        <div class="arch-layer arch-layer--agents">
+          <div class="arch-layer__rail">
+            <span class="arch-layer__num">LAYER 03</span>
+            <span class="arch-layer__name">智能体执行</span>
+            <span class="arch-layer__note">数据面：六环只交换 JSON 契约</span>
+          </div>
+          <div class="arch-layer__body arch-agents">
+            <div class="arch-agent">
+              <span class="arch-agent__num">01</span>
+              <span class="arch-agent__name">PenPlot</span>
+              <span class="arch-agent__sub">剧情创作</span>
+            </div>
+            <span class="arch-arrow" aria-hidden="true"><em>剧本 JSON</em></span>
+            <div class="arch-agent">
+              <span class="arch-agent__num">02</span>
+              <span class="arch-agent__name">PenShot</span>
+              <span class="arch-agent__sub">剧本分镜</span>
+            </div>
+            <span class="arch-arrow" aria-hidden="true"><em>分镜 / 台词</em></span>
+            <div class="arch-branch">
+              <div class="arch-agent">
+                <span class="arch-agent__num">03</span>
+                <span class="arch-agent__name">PenGen</span>
+                <span class="arch-agent__sub">视频生成</span>
+              </div>
+              <div class="arch-agent">
+                <span class="arch-agent__num">04</span>
+                <span class="arch-agent__name">PenDub</span>
+                <span class="arch-agent__sub">音频同步</span>
+              </div>
+            </div>
+            <span class="arch-arrow arch-arrow--warm" aria-hidden="true"><em>视频 · 音频</em></span>
+            <div class="arch-agent arch-agent--fix">
+              <span class="arch-agent__num">05</span>
+              <span class="arch-agent__name">PenFix</span>
+              <span class="arch-agent__sub">质量审核</span>
+            </div>
+            <span class="arch-arrow arch-arrow--clip" aria-hidden="true"><em>过审片段</em></span>
+            <div class="arch-agent arch-agent--clip">
+              <span class="arch-agent__num">06</span>
+              <span class="arch-agent__name">PenClip</span>
+              <span class="arch-agent__sub">视频剪辑</span>
+            </div>
+            <div class="arch-rework">
+              <span aria-hidden="true">↩</span>
+              <span>质检不合格 → 打回 PenGen / PenDub 重绘，状态经 Redis 回到分镜</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-bus arch-bus--gateway">
+          <span class="arch-bus__name">AI Gateway · 统一模型出口</span>
+          <span class="arch-bus__note">鉴权 / 计费 / 限流 / 路由 / 降级</span>
+          <span class="arch-bus__meta">DATA → MODELS</span>
+        </div>
+
+        <div class="arch-layer arch-layer--models">
+          <div class="arch-layer__rail">
+            <span class="arch-layer__num">LAYER 04</span>
+            <span class="arch-layer__name">基础设施与模型</span>
+            <span class="arch-layer__note">模型可替换，接口不穿透</span>
+          </div>
+          <div class="arch-layer__body">
+            <div class="arch-model">
+              <span class="arch-model__name">LLM</span>
+              <span class="arch-model__sub">GPT / Claude / Qwen</span>
+            </div>
+            <div class="arch-model">
+              <span class="arch-model__name">图像生成</span>
+              <span class="arch-model__sub">MJ / SD / DALL·E</span>
+            </div>
+            <div class="arch-model">
+              <span class="arch-model__name">视频生成</span>
+              <span class="arch-model__sub">Sora / Kling / Vidu</span>
+            </div>
+            <div class="arch-model">
+              <span class="arch-model__name">TTS / 音频</span>
+              <span class="arch-model__sub">ElevenLabs / MiniMax</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="arch-notes">
+        <li><span class="arch-notes__dot arch-notes__dot--control" aria-hidden="true"></span><strong>控制面不跑推理</strong><span>Core 管任务池与重试，Flow 管 DAG 与条件分支；智能体只订阅状态，不互相调用。</span></li>
+        <li><span class="arch-notes__dot arch-notes__dot--state" aria-hidden="true"></span><strong>状态与记忆分离</strong><span>Redis 存热状态、队列与事件；向量库存世界观与长文本记忆，供 PenPlot、PenShot 检索。</span></li>
+        <li><span class="arch-notes__dot arch-notes__dot--data" aria-hidden="true"></span><strong>数据面只传契约</strong><span>分镜分叉给 PenGen 与 PenDub，PenFix 过审后由 PenClip 落轨；不合格沿虚线打回。</span></li>
+        <li><span class="arch-notes__dot arch-notes__dot--model" aria-hidden="true"></span><strong>模型统一出网</strong><span>AI Gateway 收敛鉴权、计费、限流与路由；调用失败由 NeoTask 换模型重试。</span></li>
+      </ul>
+    </section>
   </section>
 
   <section class="board" id="board" aria-live="polite">

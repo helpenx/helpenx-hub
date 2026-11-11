@@ -26,10 +26,10 @@
     "title": "不是一条直线：数据分叉、三处质检、按层回退",
     "lead": [
       "HelpEnX Studio 的协作单位不是「步骤」，而是数据。一句自然语言先被写成结构化剧本 JSON，再切成一条条 Fragment 分镜：每一条都带着视觉 Prompt、音频参数与时长，成为后面所有环节共享的契约。",
-      "分镜之后流程分叉：PenGen 把同一条 Fragment 渲染成 MP4，PenDub 同步出 WAV，两条支线并行推进；两支产出都先过 PenFix 质检，不合格退回分镜重做；PenClip 把合格素材汇进同一条时间线剪出初版，再由 PenFix 终审，不合格则退回 PenGen / PenDub 重新生成。"
+      "分镜之后流程分叉：PenGen 把同一条 Fragment 渲染成 MP4，PenDub 同步出 WAV，两条支线并行推进；两支产出都先过 PenFix 质检，不合格退回分镜调整构图与提示词重做；PenClip 把合格素材汇进同一条时间线剪出初版，再由 PenFix 终审——合成层问题（节奏、转场、混音、字幕）回 PenClip 重剪，具体镜头的素材问题则按镜头回 PenGen / PenDub 重生成。"
     ],
     "busLabel": "DATA FLOW · 数据契约",
-    "busNote": "JSON 契约在环节间流转：分叉后逐段质检，不合格按层回退",
+    "busNote": "JSON 契约在环节间流转：分叉后逐段质检；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成",
     "kinds": [
       { "id": "flow", "label": "数据顺流" },
       { "id": "branch", "label": "并行分支" },
@@ -59,8 +59,9 @@
         { "from": "video-ok", "to": "cut", "tool": "penclip", "kind": "merge", "caption": "PenClip 把合格视频按时间线落轨" },
         { "from": "audio-ok", "to": "cut", "tool": "penclip", "kind": "merge", "caption": "PenClip 把合格音频对齐到同一条时间线" },
         { "from": "cut", "to": "final", "tool": "penfix", "kind": "gate", "caption": "PenFix 终审初剪时间线，画面 / 音画 / 合规通过才放行" },
-        { "from": "video-ok", "to": "shots", "tool": "penfix", "kind": "rework", "route": "over", "label": "Gen/Dub 退回分镜", "caption": "PenGen 或 PenDub 的输出未通过 PenFix 时，退回分镜重做该 Fragment" },
-        { "from": "final", "to": "video", "tool": "penfix", "kind": "rework", "route": "over", "routeY": 42, "label": "Clip 退回 Gen/Dub", "caption": "PenClip 初剪未通过 PenFix 时，退回 PenGen / PenDub 重新生成，再重新落轨" }
+        { "from": "final", "to": "cut", "tool": "penclip", "kind": "rework", "route": "under", "label": "合成问题 · 回 PenClip", "caption": "PenFix 终审判定为合成层问题（节奏、转场、混音、字幕、编码）时，退回 PenClip 重新剪辑与混音，不重新生成素材" },
+        { "from": "video-ok", "to": "shots", "tool": "penfix", "kind": "rework", "route": "over", "label": "Gen/Dub 退回分镜", "caption": "PenGen 或 PenDub 的输出未通过 PenFix 时，退回分镜调整构图与提示词，再重新生成该 Fragment" },
+        { "from": "final", "to": "video", "tool": "penfix", "kind": "rework", "route": "over", "routeY": 42, "label": "素材问题 · 回 Gen/Dub", "caption": "PenFix 终审判定为素材层问题（镜头画面崩坏、角色不一致、口型或配音错误）时，按镜头退回 PenGen / PenDub 重新生成，再由 PenClip 自动重新落轨" }
       ]
     },
     "stages": [
@@ -112,7 +113,7 @@
         "status": "design",
         "hook": "同样的素材，剪法不同就是两部作品。",
         "tagline": "按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出初版时间线。",
-        "story": "素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质；剪完的初版时间线，再交给 PenFix 终审。"
+        "story": "素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质；剪完的初版时间线交给 PenFix 终审，如果只是节奏、转场或混音没剪好，会回到这里重剪，不必重生成素材。"
       },
       {
         "id": "penfix",
@@ -121,8 +122,8 @@
         "url": "https://fix.helpenx.com",
         "status": "planned",
         "hook": "敢说「不」的环节，才让成片敢交出去。",
-        "tagline": "在视频、音频与初剪三个节点后各设一道质检：画面一致性、音画同步、内容合规与技术指标，不合格的按层退回分镜或重新生成。",
-        "story": "质量审核不是最后一步，而是三道关。PenGen 交出视频、PenDub 交出音频，各自先过 PenFix：画面不一致、音画不同步的片段被打回分镜重做；PenClip 落轨成初剪后还要再过一次终审，不合格就退回 PenGen / PenDub 重新生成。它是整条链上唯一敢说「不」的环节，也只有每一道关都点头，成片才敢交付。"
+        "tagline": "三道质检门挂在视频、音频与初剪之后：Gen / Dub 关查画面与音画，Clip 关查成片与合规；不合格先改分镜与提示词，Clip 终审再按根因分流——合成问题回 PenClip 重剪，素材问题回 PenGen / PenDub 重生成。",
+        "story": "质量审核不是最后一步，而是三道关。PenGen 交出视频、PenDub 交出音频，各自先过 PenFix：画面不一致、音画不同步的片段被打回分镜，调整构图与提示词后重做。PenClip 落轨成初剪后还要再过一次终审，这一关要先判断根因：如果素材本身没问题，只是节奏、转场、混音或字幕没剪好，退回 PenClip 重剪即可，成本最低；只有当具体镜头的画面崩坏、角色不一致、口型或配音出错时，才按镜头退回 PenGen 或 PenDub 重生成，再由 PenClip 自动重新落轨。连续两次重剪仍不过，也升级为按镜头重生成。它是整条链上唯一敢说「不」的环节，也只有每一道关都点头，成片才敢交付。"
       }
     ],
     "note": "所有跨节点流转仍由 NeoTask 调度：节点不直接互调，只订阅 Project 的状态变更；生成或配音失败时自动换模型重试。"
@@ -238,8 +239,8 @@
       "deployed": false,
       "icon": "checkbadge",
       "tagline": "质量审核 · 三处质检门",
-      "description": "在视频、音频与初剪三个节点后各设一道质检：逐项检查画面一致性、音画同步、内容合规与技术指标（分辨率、码率、时长），不合格时按层退回分镜重做或重新生成，确保产出达到可发布标准。",
-      "features": ["三处质检门", "画面一致性检查", "音画同步校验", "内容合规审查", "技术指标检测", "按层回退返工"],
+      "description": "在视频、音频与初剪三个节点后各设一道质检：逐项检查画面一致性、音画同步、内容合规与技术指标（分辨率、码率、时长）。Gen / Dub 不合格退回分镜调整构图与提示词；Clip 终审按根因分流——合成问题回 PenClip 重剪，镜头素材问题回 PenGen / PenDub 重生成，确保产出达到可发布标准。",
+      "features": ["三处质检门", "画面一致性检查", "音画同步校验", "内容合规审查", "技术指标检测", "根因分流回退", "重剪 / 重生成分级"],
       "keywords": ["视频审核", "内容合规", "画质检测", "音画同步校验", "质量把关", "AI 质检"]
     },
     {

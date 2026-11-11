@@ -6,7 +6,7 @@
     "site": "helpenx.com",
     "github": "https://github.com/neopen",
     "cta": {
-      "primary": { "label": "HelpEnX Studio", "url": "https://studio.helpenx.com" },
+      "primary": { "label": "HelpEnX Studio（演示版）", "url": "https://studio.helpenx.com" },
       "secondary": { "label": "查看全部服务", "url": "#board" }
     }
   },
@@ -144,7 +144,7 @@
       "size": "hero",
       "status": "design",
       "image": "./assets/studio-pipeline.svg",
-      "ctaLabel": "立即体验 AIGC Studio",
+      "ctaLabel": "立即体验 AIGC Studio（演示版）",
       "tagline": "AIGC 创意工坊",
       "description": "从创意、剧本到成片的全链路多 Agent 编排：自动完成分集分场、分镜脚本、关键帧、视频片段与配音剪辑，并把角色、场景、道具、模型等数字资产统一沉淀为可复用资产库——换一部剧不必从零重画，跨镜头、跨集保持同一张脸、同一个空间。一致性记忆与自动质检把返工压到最低，整集可一键生成，也可以在任意节点人工介入、用对话直接改写——例如「把第 3 场第 2 镜改成仰拍，时长缩到 4 秒」。",
       "pipeline": ["创意 / 剧本", "分集分场", "分镜脚本", "数字资产 · 角色 / 场景 / 模型", "关键帧", "视频片段", "配音 · 口型 · BGM", "分段质检", "剪辑合成", "终审 / 成片"],

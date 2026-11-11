@@ -453,7 +453,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 /* ---------- 数据流图：数据节点 + 工具连线 ---------- */
 .flow__scroll {
   overflow-x: auto; overflow-y: hidden;
-  margin: 0 -6px; padding: 0 6px 8px;
+  margin: 0 -6px; padding: 0 0 8px;
   scrollbar-width: thin; scrollbar-color: rgba(15, 34, 67, 0.22) transparent;
 }
 .flow__scroll::-webkit-scrollbar { height: 6px; }
@@ -485,7 +485,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .flow-node {
   position: absolute; z-index: 2;
   display: flex; flex-direction: column; justify-content: center; gap: 2px;
-  padding: 9px 9px 9px 13px; overflow: hidden;
+  padding: 9px 8px 9px 12px; overflow: hidden;
   background: #fff; border: 1px solid var(--border); border-radius: 11px;
   box-shadow: 0 2px 7px rgba(15, 34, 67, 0.05);
   --node-accent: var(--cyan);
@@ -510,7 +510,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   box-shadow: 0 6px 16px rgba(10, 116, 148, 0.08);
 }
 .flow-node__meta {
-  font-family: var(--mono); font-size: 8px; font-weight: 600; letter-spacing: 0.06em;
+  font-family: var(--mono); font-size: 8px; font-weight: 600; letter-spacing: 0.04em;
   color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .flow-node__label {
@@ -730,8 +730,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   background-repeat: no-repeat;
   animation: archSweep 3.8s linear infinite;
 }
-.arch-agents .arch-arrow--warm { --arrow-to: rgba(202, 138, 4, 0.78); }
-.arch-agents .arch-arrow--clip { --arrow-from: rgba(202, 138, 4, 0.62); --arrow-to: rgba(22, 163, 74, 0.75); }
+.arch-agents .arch-arrow--merge { --arrow-to: rgba(22, 163, 74, 0.75); }
 .arch-agents .arch-arrow:nth-of-type(1) { animation-delay: 0s; }
 .arch-agents .arch-arrow:nth-of-type(2) { animation-delay: 0.45s; }
 .arch-agents .arch-arrow:nth-of-type(3) { animation-delay: 0.9s; }
@@ -824,8 +823,6 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 }
 .arch-agent__name { font-size: 12px; font-weight: 650; color: var(--ink); white-space: nowrap; }
 .arch-agent__sub { font-size: 10px; color: var(--text-dim); white-space: nowrap; }
-.arch-agent--fix { border-color: rgba(202, 138, 4, 0.28); border-left-color: #ca8a04; }
-.arch-agent--fix .arch-agent__num { color: #ca8a04; }
 .arch-agent--clip { border-color: rgba(8, 122, 67, 0.25); border-left-color: var(--green); }
 .arch-agent--clip .arch-agent__num { color: var(--green); }
 .arch-branch { display: flex; flex-direction: column; gap: 5px; }
@@ -837,6 +834,37 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   font-size: 10.5px; line-height: 1.5; color: #9f1239;
 }
 .arch-rework span:first-child { flex: none; font-size: 13px; }
+
+/* PenFix 不占独立产线：一条横向质检栏挂在 Gen / Dub / Clip 之后 */
+.arch-qa {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 7px 14px;
+  margin-top: 8px; padding: 8px 12px;
+  border: 1px solid rgba(202, 138, 4, 0.26); border-left: 3px solid #ca8a04;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fff, #fffdf6);
+  box-shadow: 0 1px 3px rgba(15, 34, 67, 0.04);
+  --halo: rgba(202, 138, 4, 0.24);
+  --halo-strong: rgba(202, 138, 4, 0.48);
+}
+.arch-qa__head { flex: 0 0 auto; display: flex; align-items: baseline; gap: 6px; }
+.arch-qa__num {
+  font-family: var(--mono); font-size: 8px; font-weight: 600;
+  letter-spacing: 0.08em; color: #ca8a04;
+}
+.arch-qa__name { font-size: 12px; font-weight: 650; color: var(--ink); white-space: nowrap; }
+.arch-qa__sub { font-size: 10px; color: var(--text-dim); white-space: nowrap; }
+.arch-qa__checks { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.arch-qa__check {
+  flex: 1 1 0; justify-content: center;
+  display: inline-flex; align-items: baseline; gap: 5px;
+  padding: 3px 8px; border-radius: 7px;
+  border: 1px solid rgba(202, 138, 4, 0.26);
+  background: rgba(202, 138, 4, 0.05);
+  font-size: 10px; line-height: 1.5; color: var(--text-dim); white-space: nowrap;
+}
+.arch-qa__check b { font-weight: 650; color: #96650a; }
+.arch-qa__returns { flex: 1 1 auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 8px; }
+.arch-qa .arch-rework { flex-basis: auto; margin-top: 0; padding: 4px 9px; font-size: 9.5px; white-space: nowrap; }
 .arch-layer--models .arch-layer__body {
   display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: stretch;
@@ -870,7 +898,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .arch-notes li > span:last-child { flex: 1 1 auto; min-width: 0; }
 
 /* 悬停追踪：只保留当前节点与其一跳上下游 */
-.arch-node, .arch-agent, .arch-model, .arch-arrow, .arch-drop, .arch-rework, .arch-bus {
+.arch-node, .arch-agent, .arch-model, .arch-arrow, .arch-drop, .arch-rework, .arch-bus, .arch-qa, .arch-qa__check {
   transition: opacity 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
 }
 .arch-board.is-tracing .arch-node,
@@ -878,17 +906,26 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .arch-board.is-tracing .arch-model,
 .arch-board.is-tracing .arch-arrow,
 .arch-board.is-tracing .arch-drop,
-.arch-board.is-tracing .arch-rework {
+.arch-board.is-tracing .arch-rework,
+.arch-board.is-tracing .arch-qa,
+.arch-board.is-tracing .arch-qa__check {
   opacity: 0.28; filter: saturate(0.5);
 }
 .arch-board.is-tracing .arch-bus { opacity: 0.55; }
 .arch-board.is-tracing .is-related { opacity: 1; filter: none; }
 .arch-board.is-tracing .arch-node.is-related,
-.arch-board.is-tracing .arch-agent.is-related {
+.arch-board.is-tracing .arch-agent.is-related,
+.arch-board.is-tracing .arch-qa.is-related {
   box-shadow: 0 0 0 2px var(--halo, rgba(2, 132, 199, 0.22)), 0 4px 12px rgba(15, 34, 67, 0.08);
 }
 .arch-board.is-tracing .is-focus {
   box-shadow: 0 0 0 2px var(--halo-strong, rgba(2, 132, 199, 0.45)), 0 8px 20px rgba(15, 34, 67, 0.12);
+}
+/* 质检栏自身相关时，未命中的质检点保持可读但退到二线 */
+.arch-board.is-tracing .arch-qa.is-related .arch-qa__check { opacity: 0.55; filter: none; }
+.arch-board.is-tracing .arch-qa__check.is-related {
+  opacity: 1; filter: none;
+  border-color: rgba(202, 138, 4, 0.5); background: rgba(202, 138, 4, 0.1);
 }
 .arch-board.is-tracing .arch-arrow.is-related em { color: var(--text); font-weight: 600; }
 
@@ -1149,12 +1186,19 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   .arch-layer__body { gap: 6px; }
   .arch-runtime { padding: 17px 7px 9px; }
   .arch-runtime__tag { left: 9px; font-size: 8px; }
+  .arch-qa { flex-direction: column; align-items: stretch; gap: 7px; padding: 9px 10px; }
+  .arch-qa__head { flex-wrap: wrap; row-gap: 1px; }
+  .arch-qa__returns { justify-content: flex-start; }
+  .arch-qa__checks { flex-direction: column; }
+  .arch-qa__check { flex: 0 0 auto; justify-content: flex-start; white-space: normal; }
   .arch-drop { margin: 2px 14px; }
   .arch-drop__label { transform: translate(12px, -50%); font-size: 9px; }
   .arch-node { flex: 1 1 44%; min-width: 0; }
   .arch-node__name, .arch-node__sub { white-space: normal; }
-  .arch-agent { flex: 1 1 44%; min-width: 0; }
-  .arch-branch { flex: 1 1 44%; }
+  .arch-agents { flex-direction: column; align-items: stretch; }
+  .arch-agent { flex: 1 1 auto; min-width: 0; }
+  .arch-branch { flex: 1 1 auto; flex-direction: row; }
+  .arch-branch .arch-agent { flex: 1 1 0; }
   .arch-layer--models .arch-layer__body { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .arch-bus { padding: 9px 12px; gap: 6px 10px; }
   .arch-bus__meta { margin-left: 0; }

@@ -689,6 +689,7 @@
     var note = pool.querySelector(".flow-pool__note");
     var chips = [].slice.call(pool.querySelectorAll(".flow-legend__chip"));
     var active = null;
+    var activeTool = null;
     var hoverTool = null;
     var focusKind = null;
     var paused = false;
@@ -737,6 +738,7 @@
 
     function collapse() {
       active = null;
+      activeTool = null;
       tools.forEach(function (tool) { tool.setAttribute("aria-expanded", "false"); });
       panels.forEach(function (panel) {
         panel.classList.remove("is-active");
@@ -751,7 +753,8 @@
     tools.forEach(function (tool) {
       var stageId = tool.getAttribute("data-stage");
       tool.addEventListener("click", function () {
-        if (active === stageId) { collapse(); return; }
+        if (active === stageId && activeTool === tool) { collapse(); return; }
+        activeTool = tool;
         select(stageId);
         if (!wide()) {
           var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -883,7 +886,7 @@
         });
         wire.classList.toggle("is-related", hit);
       });
-      if (runtime) runtime.classList.toggle("is-related", !!runtime.querySelector(".arch-agent.is-related"));
+      if (runtime) runtime.classList.toggle("is-related", !!runtime.querySelector("[data-node].is-related"));
     }
 
     function clear() {

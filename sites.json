@@ -23,18 +23,18 @@
   },
   "story": {
     "eyebrow": "HelpEnX Studio · 数据流模型",
-    "title": "不是一条直线：数据分叉、过审、回退，最后汇成时间线",
+    "title": "不是一条直线：数据分叉、三处质检、按层回退",
     "lead": [
       "HelpEnX Studio 的协作单位不是「步骤」，而是数据。一句自然语言先被写成结构化剧本 JSON，再切成一条条 Fragment 分镜：每一条都带着视觉 Prompt、音频参数与时长，成为后面所有环节共享的契约。",
-      "分镜之后流程分叉：PenGen 把同一条 Fragment 渲染成 MP4，PenDub 同步出 WAV，两条支线并行推进；PenFix 在落轨前逐条把关，不合格的片段沿虚线退回分镜重做。只有过审的视频与音频，才由 PenClip 汇进同一条时间线，输出 Timeline JSON 或最终 MP4。"
+      "分镜之后流程分叉：PenGen 把同一条 Fragment 渲染成 MP4，PenDub 同步出 WAV，两条支线并行推进；两支产出都先过 PenFix 质检，不合格退回分镜重做；PenClip 把合格素材汇进同一条时间线剪出初版，再由 PenFix 终审，不合格则退回 PenGen / PenDub 重新生成。"
     ],
     "busLabel": "DATA FLOW · 数据契约",
-    "busNote": "JSON 契约在环节间流转：分镜分叉出视频与音频，过审后汇入同一条时间线",
+    "busNote": "JSON 契约在环节间流转：分叉后逐段质检，不合格按层回退",
     "kinds": [
       { "id": "flow", "label": "数据顺流" },
       { "id": "branch", "label": "并行分支" },
-      { "id": "gate", "label": "审核门" },
       { "id": "merge", "label": "落轨合成" },
+      { "id": "gate", "label": "质检门" },
       { "id": "rework", "label": "不合格回退" }
     ],
     "graph": {
@@ -44,9 +44,10 @@
         { "id": "shots", "col": 2, "lane": "mid", "kind": "data", "meta": "FRAGMENT · JSON", "label": "分镜列表", "sub": "视觉 Prompt / 音频参数 / 时长" },
         { "id": "video", "col": 3, "lane": "top", "kind": "media", "meta": "MEDIA · MP4", "label": "视频片段", "sub": "逐镜渲染的画面" },
         { "id": "audio", "col": 3, "lane": "bottom", "kind": "media", "meta": "MEDIA · WAV", "label": "音频片段", "sub": "配音 / 音效 / BGM" },
-        { "id": "video-ok", "col": 4, "lane": "top", "kind": "safe", "meta": "PASS · 已过审", "label": "合格视频", "sub": "画面 / 技术达标" },
-        { "id": "audio-ok", "col": 4, "lane": "bottom", "kind": "safe", "meta": "PASS · 已过审", "label": "合格音频", "sub": "音画 / 指标达标" },
-        { "id": "timeline", "col": 5, "lane": "mid", "kind": "output", "meta": "OUTPUT · TIMELINE", "label": "时间线 / 成片", "sub": "Timeline JSON / MP4" }
+        { "id": "video-ok", "col": 4, "lane": "top", "kind": "safe", "meta": "PASS · 视频质检", "label": "合格视频", "sub": "画面 / 技术达标" },
+        { "id": "audio-ok", "col": 4, "lane": "bottom", "kind": "safe", "meta": "PASS · 音频质检", "label": "合格音频", "sub": "音画 / 指标达标" },
+        { "id": "cut", "col": 5, "lane": "mid", "kind": "output", "meta": "TIMELINE · JSON", "label": "初剪时间线", "sub": "视频 / 音频已落轨" },
+        { "id": "final", "col": 6, "lane": "mid", "kind": "safe", "meta": "PASS · 终审通过", "label": "终审成片", "sub": "可发布 / 可交付" }
       ],
       "edges": [
         { "from": "idea", "to": "script", "tool": "penplot", "kind": "flow", "caption": "PenPlot 把原始创意写成结构化剧本 JSON" },
@@ -55,9 +56,11 @@
         { "from": "shots", "to": "audio", "tool": "pendub", "kind": "branch", "caption": "PenDub 读取同一份分镜，同步生成音频 WAV" },
         { "from": "video", "to": "video-ok", "tool": "penfix", "kind": "gate", "caption": "PenFix 审核画面一致性与技术指标，通过才放行" },
         { "from": "audio", "to": "audio-ok", "tool": "penfix", "kind": "gate", "caption": "PenFix 审核音画同步与音频指标，通过才放行" },
-        { "from": "video-ok", "to": "timeline", "tool": "penclip", "kind": "merge", "caption": "PenClip 把合格视频按时间线落轨" },
-        { "from": "audio-ok", "to": "timeline", "tool": "penclip", "kind": "merge", "caption": "PenClip 把合格音频对齐到同一条时间线" },
-        { "from": "video-ok", "to": "shots", "tool": "penfix", "kind": "rework", "route": "over", "label": "不合格退回", "caption": "PenFix 判定不合格时，片段沿虚线退回分镜，定点重做该 Fragment" }
+        { "from": "video-ok", "to": "cut", "tool": "penclip", "kind": "merge", "caption": "PenClip 把合格视频按时间线落轨" },
+        { "from": "audio-ok", "to": "cut", "tool": "penclip", "kind": "merge", "caption": "PenClip 把合格音频对齐到同一条时间线" },
+        { "from": "cut", "to": "final", "tool": "penfix", "kind": "gate", "caption": "PenFix 终审初剪时间线，画面 / 音画 / 合规通过才放行" },
+        { "from": "video-ok", "to": "shots", "tool": "penfix", "kind": "rework", "route": "over", "label": "Gen/Dub 退回分镜", "caption": "PenGen 或 PenDub 的输出未通过 PenFix 时，退回分镜重做该 Fragment" },
+        { "from": "final", "to": "video", "tool": "penfix", "kind": "rework", "route": "over", "routeY": 42, "label": "Clip 退回 Gen/Dub", "caption": "PenClip 初剪未通过 PenFix 时，退回 PenGen / PenDub 重新生成，再重新落轨" }
       ]
     },
     "stages": [
@@ -102,24 +105,24 @@
         "story": "画面会动之后，视频还是哑的。音频与画面的同步最容易被忽略，又最影响观感：差半秒，观众就觉得「哪里不对」——PenDub 的工作就是让这半秒不存在。"
       },
       {
-        "id": "penfix",
-        "name": "PenFix",
-        "cn": "质量审核",
-        "url": "https://fix.helpenx.com",
-        "status": "planned",
-        "hook": "敢说「不」的环节，才让成片敢交出去。",
-        "tagline": "在落轨前逐条检查画面一致性、音画同步、内容合规与技术指标，不合格的片段打回分镜重做。",
-        "story": "「生成完了」不等于「能用」。PenFix 是落轨前唯一一个说「不」的环节：它逐条检查画面、音频与合规，把不合格的片段沿虚线退回分镜；也正因为有它，PenClip 拿到的每一条素材才敢直接上时间线。"
-      },
-      {
         "id": "penclip",
         "name": "PenClip",
         "cn": "视频剪辑",
         "url": "https://clip.helpenx.com",
         "status": "design",
         "hook": "同样的素材，剪法不同就是两部作品。",
-        "tagline": "按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出可发布的成片。",
-        "story": "素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质。"
+        "tagline": "按叙事节奏组装片段与音频，处理转场、节奏、时长与镜头顺序，输出初版时间线。",
+        "story": "素材齐了、声音对了，但还不是一部片子。哪个镜头留、节奏是快是慢、转场用切还是用叠——同样的素材，剪法不同就是两部作品，剪辑决定一部片子最终的气质；剪完的初版时间线，再交给 PenFix 终审。"
+      },
+      {
+        "id": "penfix",
+        "name": "PenFix",
+        "cn": "质量审核",
+        "url": "https://fix.helpenx.com",
+        "status": "planned",
+        "hook": "敢说「不」的环节，才让成片敢交出去。",
+        "tagline": "在视频、音频与初剪三个节点后各设一道质检：画面一致性、音画同步、内容合规与技术指标，不合格的按层退回分镜或重新生成。",
+        "story": "质量审核不是最后一步，而是三道关。PenGen 交出视频、PenDub 交出音频，各自先过 PenFix：画面不一致、音画不同步的片段被打回分镜重做；PenClip 落轨成初剪后还要再过一次终审，不合格就退回 PenGen / PenDub 重新生成。它是整条链上唯一敢说「不」的环节，也只有每一道关都点头，成片才敢交付。"
       }
     ],
     "note": "所有跨节点流转仍由 NeoTask 调度：节点不直接互调，只订阅 Project 的状态变更；生成或配音失败时自动换模型重试。"
@@ -143,7 +146,7 @@
       "ctaLabel": "立即体验 AIGC Studio",
       "tagline": "AIGC 创意工坊",
       "description": "从创意、剧本到成片的全链路多 Agent 编排：自动完成分集分场、分镜脚本、关键帧、视频片段与配音剪辑，并把角色、场景、道具、模型等数字资产统一沉淀为可复用资产库——换一部剧不必从零重画，跨镜头、跨集保持同一张脸、同一个空间。一致性记忆与自动质检把返工压到最低，整集可一键生成，也可以在任意节点人工介入、用对话直接改写——例如「把第 3 场第 2 镜改成仰拍，时长缩到 4 秒」。",
-      "pipeline": ["创意 / 剧本", "分集分场", "分镜脚本", "数字资产 · 角色 / 场景 / 模型", "关键帧", "视频片段", "配音 · 口型 · BGM", "剪辑合成"],
+      "pipeline": ["创意 / 剧本", "分集分场", "分镜脚本", "数字资产 · 角色 / 场景 / 模型", "关键帧", "视频片段", "配音 · 口型 · BGM", "分段质检", "剪辑合成", "终审 / 成片"],
       "features": ["角色 / 场景 / 模型资产库", "多模型路由与降级", "跨镜头跨集一致性", "自动质检与返工", "断点续跑与配额调度", "Tool / MCP / API 开放", "可用率与成本指标"],
       "keywords": ["短剧 AI 生成", "AI 短剧", "剧本转视频", "AIGC 工作流", "多 Agent 编排", "分镜脚本生成", "数字资产库", "角色一致性", "场景资产", "模型资产", "AI 配音", "口型同步", "文生视频", "图生视频", "AI 剪辑", "短剧制作"]
     },
@@ -222,7 +225,7 @@
       "status": "dev",
       "icon": "scissors",
       "tagline": "视频剪辑 · 按叙事节奏成片",
-      "description": "把生成的视频片段与同步好的音频按叙事节奏组装成完整作品，处理转场、节奏、时长与镜头顺序，输出可发布的成片。",
+      "description": "把生成的视频片段与同步好的音频按叙事节奏组装成完整作品，处理转场、节奏、时长与镜头顺序，输出初版时间线，交由 PenFix 终审。",
       "features": ["叙事节奏剪辑", "转场与调色", "镜头顺序编排", "成片导出"],
       "keywords": ["AI 剪辑", "视频剪辑", "自动成片", "转场", "节奏控制", "镜头排序", "短视频制作"]
     },
@@ -234,9 +237,9 @@
       "status": "planned",
       "deployed": false,
       "icon": "checkbadge",
-      "tagline": "质量审核 · 发布前的最后一道关",
-      "description": "逐项检查画面一致性、音画同步、内容合规与技术指标（分辨率、码率、时长），标记问题并给出修复建议，确保产出达到可发布标准。",
-      "features": ["画面一致性检查", "音画同步校验", "内容合规审查", "技术指标检测"],
+      "tagline": "质量审核 · 三处质检门",
+      "description": "在视频、音频与初剪三个节点后各设一道质检：逐项检查画面一致性、音画同步、内容合规与技术指标（分辨率、码率、时长），不合格时按层退回分镜重做或重新生成，确保产出达到可发布标准。",
+      "features": ["三处质检门", "画面一致性检查", "音画同步校验", "内容合规审查", "技术指标检测", "按层回退返工"],
       "keywords": ["视频审核", "内容合规", "画质检测", "音画同步校验", "质量把关", "AI 质检"]
     },
     {

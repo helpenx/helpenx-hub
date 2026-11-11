@@ -302,14 +302,14 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   const story = cfg.story || {};
   const stages = story.stages || [];
 
-  // 数据流图：数据是节点，工具是连线。画布固定 6 列，节点按 col / lane 落到网格上，
-  // 连线由 from / to 的包围盒计算；route:over 的连线绕到画布顶部，表示不合格回退。
+  // 数据流图：数据是节点，工具是连线。画布固定 7 列，节点按 col / lane 落到网格上，
+  // 连线由 from / to 的包围盒计算；route:over 的连线绕到画布顶部，routeY 决定绕行高度。
   const stageMap = {};
   stages.forEach((s, i) => { stageMap[s.id] = { stage: s, index: i }; });
   const graph = story.graph || {};
-  const NODE_W = 112, MID_H = 96, SIDE_H = 88, GAP = 57;
+  const NODE_W = 98, MID_H = 96, SIDE_H = 88, GAP = 49;
   const LANE_Y = { top: 104, mid: 250, bottom: 396 };
-  const BOARD_W = 960, BOARD_H = 456, REWORK_Y = 20;
+  const BOARD_W = 980, BOARD_H = 456, REWORK_Y = 20;
   const KIND_COLOR = { flow: "#0a7494", branch: "#6d4bf0", gate: "#96650a", merge: "#087a43", rework: "#b91c1c" };
 
   const boxes = {};
@@ -329,10 +329,11 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
     const a = boxes[edge.from], b = boxes[edge.to];
     if (!a || !b) return null;
     if (edge.route === "over") {
+      const y = edge.routeY || REWORK_Y;
       return {
-        d: "M" + a.cx + " " + a.y + "V" + REWORK_Y + "H" + b.cx + "V" + b.y,
+        d: "M" + a.cx + " " + a.y + "V" + y + "H" + b.cx + "V" + b.y,
         lx: (a.cx + b.cx) / 2,
-        ly: REWORK_Y
+        ly: y
       };
     }
     if (a.cy === b.cy) {
@@ -396,7 +397,7 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   }
   writeBlock("<!-- STORY-HEAD:START", "<!-- STORY-HEAD:END -->", headPad, headLines);
 
-  // 数据流图：左侧自然语言与 JSON 契约，中段分叉出视频 / 音频，过审后再汇入时间线
+  // 数据流图：契约从创意一路写到分镜，分叉出视频 / 音频，各自过质检后落轨，终审才成片
   // 工具是连线上的按钮，点击打开对应环节的详情；数据节点只展示契约，不可点击
   const flowPad = "    ";
   const flowLines = [];
@@ -429,7 +430,7 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
 
     flowLines.push(flowPad + '  <div class="flow" data-flow>');
     flowLines.push(flowPad + '    <div class="flow__scroll">');
-    flowLines.push(flowPad + '      <div class="flow__board" data-flow-board role="group" aria-label="短剧数据流：原始创意经 PenPlot、PenShot 变成分镜，分叉出视频与音频，经 PenFix 审核后由 PenClip 汇入时间线" style="width:' + BOARD_W + 'px;height:' + BOARD_H + 'px">');
+    flowLines.push(flowPad + '      <div class="flow__board" data-flow-board role="group" aria-label="短剧数据流：原始创意经 PenPlot、PenShot 变成分镜，分叉出视频与音频；PenGen、PenDub 的产出分别经 PenFix 质检，不合格退回分镜重做；PenClip 落轨成初剪后再由 PenFix 终审，不合格退回 PenGen / PenDub 重新生成，通过才输出成片" style="width:' + BOARD_W + 'px;height:' + BOARD_H + 'px">');
     flowLines.push(flowPad + '        <svg class="flow__edges" viewBox="0 0 ' + BOARD_W + ' ' + BOARD_H + '" aria-hidden="true" focusable="false">');
     flowLines.push(flowPad + "          <defs>");
     kinds.forEach((k) => {

@@ -461,6 +461,7 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
       flowLines.push(flowPad + '          <span class="flow-node__meta">' + esc(n.meta || "") + "</span>");
       flowLines.push(flowPad + '          <span class="flow-node__label">' + esc(n.label || "") + "</span>");
       if (n.sub) flowLines.push(flowPad + '          <span class="flow-node__sub">' + esc(n.sub) + "</span>");
+      if (n.badge) flowLines.push(flowPad + '          <span class="flow-node__badge" title="环节内部自检自修，必要时人工修正，不占用 PenFix 质检门">' + esc(n.badge) + "</span>");
       flowLines.push(flowPad + "        </div>");
     });
     graphEdges.forEach((row) => {

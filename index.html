@@ -113,14 +113,16 @@
             "@type": "WebApplication",
             "name": "PenShot",
             "url": "https://shot.helpenx.com",
-            "description": "将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。",
+            "description": "将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。分镜产出前先在环节内自检、自查、自修复，模型判断不了的转人工调整，确认可用后再进入生成。",
             "keywords": "AI 分镜, 分镜生成, 剧本拆解, 分场脚本, 镜头语言, 视频提示词, 提示词生成, storyboard, Text to Video, AI 编剧, 开源 Agent",
             "headline": "剧本分镜 · 把文字翻译成镜头",
             "featureList": [
               "多 Agent 流水线",
               "一致性记忆",
               "模型适配",
-              "SDK & API"
+              "SDK & API",
+              "分镜自检自修",
+              "人工修正介入"
             ],
             "codeRepository": "https://github.com/neopen/story-shot-agent",
             "applicationCategory": "MultimediaApplication",
@@ -475,7 +477,7 @@
     <div class="story__head">
       <span class="story__eyebrow">HelpEnX Studio · 数据流模型</span>
       <h2 class="story__title" id="story-title">不是一条直线：数据分叉、三处质检、按层回退</h2>
-      <p class="story__lead">HelpEnX Studio 的协作单位不是「步骤」，而是数据。一句自然语言先被写成结构化剧本 JSON，再切成一条条 Fragment 分镜：每一条都带着视觉 Prompt、音频参数与时长，成为后面所有环节共享的契约。</p>
+      <p class="story__lead">HelpEnX Studio 的协作单位不是「步骤」，而是数据。一句自然语言先被写成结构化剧本 JSON，再切成一条条 Fragment 分镜：每一条都带着视觉 Prompt、音频参数与时长，成为后面所有环节共享的契约。剧本与分镜都不是写完就下发——PenPlot、PenShot 各自在环节内自检、自查、自修复，模型判断不了的再交人工调整，合格后才进入下游。</p>
       <p class="story__lead">分镜之后流程分叉：PenGen 把同一条 Fragment 渲染成 MP4，PenDub 同步出 WAV，两条支线并行推进；两支产出都先过 PenFix 质检，不合格退回分镜调整构图与提示词重做；PenClip 把合格素材汇进同一条时间线剪出初版，再由 PenFix 终审——合成层问题（节奏、转场、混音、字幕）回 PenClip 重剪，具体镜头的素材问题则按镜头回 PenGen / PenDub 重生成。</p>
     </div>
     <!-- STORY-HEAD:END -->
@@ -489,7 +491,7 @@
       </div>
       <div class="flow-pool__head">
         <button class="flow-pool__label" type="button" aria-pressed="true"><span class="flow-pool__tile">N</span><span class="flow-pool__name">NeoTask</span><span class="flow-pool__tag">数据流</span><span class="flow-pool__bus">DATA FLOW · 数据契约</span><span class="flow-pool__hint"><span class="flow-pool__play" aria-hidden="true"></span><span class="flow-pool__hinttext">暂停演示</span></span></button>
-        <span class="flow-pool__note" data-idle="JSON 契约在环节间流转：分叉后逐段质检；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成" data-captions="[{&quot;kind&quot;:&quot;flow&quot;,&quot;tool&quot;:&quot;penplot&quot;,&quot;label&quot;:&quot;PenPlot 把原始创意写成结构化剧本 JSON&quot;},{&quot;kind&quot;:&quot;flow&quot;,&quot;tool&quot;:&quot;penshot&quot;,&quot;label&quot;:&quot;PenShot 把剧本切成带 Prompt 与时长的分镜列表&quot;},{&quot;kind&quot;:&quot;branch&quot;,&quot;tool&quot;:&quot;pengen&quot;,&quot;label&quot;:&quot;PenGen 消费分镜，逐镜渲染视频 MP4&quot;},{&quot;kind&quot;:&quot;branch&quot;,&quot;tool&quot;:&quot;pendub&quot;,&quot;label&quot;:&quot;PenDub 读取同一份分镜，同步生成音频 WAV&quot;},{&quot;kind&quot;:&quot;gate&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 审核画面一致性与技术指标，通过才放行&quot;},{&quot;kind&quot;:&quot;gate&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 审核音画同步与音频指标，通过才放行&quot;},{&quot;kind&quot;:&quot;merge&quot;,&quot;tool&quot;:&quot;penclip&quot;,&quot;label&quot;:&quot;PenClip 把合格视频按时间线落轨&quot;},{&quot;kind&quot;:&quot;merge&quot;,&quot;tool&quot;:&quot;penclip&quot;,&quot;label&quot;:&quot;PenClip 把合格音频对齐到同一条时间线&quot;},{&quot;kind&quot;:&quot;gate&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 终审初剪时间线，画面 / 音画 / 合规通过才放行&quot;},{&quot;kind&quot;:&quot;rework&quot;,&quot;tool&quot;:&quot;penclip&quot;,&quot;label&quot;:&quot;PenFix 终审判定为合成层问题（节奏、转场、混音、字幕、编码）时，退回 PenClip 重新剪辑与混音，不重新生成素材&quot;},{&quot;kind&quot;:&quot;rework&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenGen 或 PenDub 的输出未通过 PenFix 时，退回分镜调整构图与提示词，再重新生成该 Fragment&quot;},{&quot;kind&quot;:&quot;rework&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 终审判定为素材层问题（镜头画面崩坏、角色不一致、口型或配音错误）时，按镜头退回 PenGen / PenDub 重新生成，再由 PenClip 自动重新落轨&quot;}]">JSON 契约在环节间流转：分叉后逐段质检；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成</span>
+        <span class="flow-pool__note" data-idle="JSON 契约在环节间流转：剧本与分镜先自检自修、必要时人工修正，再进入生成；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成" data-captions="[{&quot;kind&quot;:&quot;flow&quot;,&quot;tool&quot;:&quot;penplot&quot;,&quot;label&quot;:&quot;PenPlot 把原始创意写成结构化剧本 JSON&quot;},{&quot;kind&quot;:&quot;flow&quot;,&quot;tool&quot;:&quot;penshot&quot;,&quot;label&quot;:&quot;PenShot 把剧本切成带 Prompt 与时长的分镜列表&quot;},{&quot;kind&quot;:&quot;branch&quot;,&quot;tool&quot;:&quot;pengen&quot;,&quot;label&quot;:&quot;PenGen 消费分镜，逐镜渲染视频 MP4&quot;},{&quot;kind&quot;:&quot;branch&quot;,&quot;tool&quot;:&quot;pendub&quot;,&quot;label&quot;:&quot;PenDub 读取同一份分镜，同步生成音频 WAV&quot;},{&quot;kind&quot;:&quot;gate&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 审核画面一致性与技术指标，通过才放行&quot;},{&quot;kind&quot;:&quot;gate&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 审核音画同步与音频指标，通过才放行&quot;},{&quot;kind&quot;:&quot;merge&quot;,&quot;tool&quot;:&quot;penclip&quot;,&quot;label&quot;:&quot;PenClip 把合格视频按时间线落轨&quot;},{&quot;kind&quot;:&quot;merge&quot;,&quot;tool&quot;:&quot;penclip&quot;,&quot;label&quot;:&quot;PenClip 把合格音频对齐到同一条时间线&quot;},{&quot;kind&quot;:&quot;gate&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 终审初剪时间线，画面 / 音画 / 合规通过才放行&quot;},{&quot;kind&quot;:&quot;rework&quot;,&quot;tool&quot;:&quot;penclip&quot;,&quot;label&quot;:&quot;PenFix 终审判定为合成层问题（节奏、转场、混音、字幕、编码）时，退回 PenClip 重新剪辑与混音，不重新生成素材&quot;},{&quot;kind&quot;:&quot;rework&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenGen 或 PenDub 的输出未通过 PenFix 时，退回分镜调整构图与提示词，再重新生成该 Fragment&quot;},{&quot;kind&quot;:&quot;rework&quot;,&quot;tool&quot;:&quot;penfix&quot;,&quot;label&quot;:&quot;PenFix 终审判定为素材层问题（镜头画面崩坏、角色不一致、口型或配音错误）时，按镜头退回 PenGen / PenDub 重新生成，再由 PenClip 自动重新落轨&quot;}]">JSON 契约在环节间流转：剧本与分镜先自检自修、必要时人工修正，再进入生成；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成</span>
       </div>
       <div class="flow-legend" role="group" aria-label="数据流类型，点击聚焦对应连线">
         <button class="flow-legend__chip flow-legend__chip--flow" type="button" data-kind="flow" aria-pressed="false"><span class="flow-legend__dot" aria-hidden="true"></span>数据顺流</button>
@@ -543,11 +545,13 @@
               <span class="flow-node__meta">SCRIPT · JSON</span>
               <span class="flow-node__label">结构化剧本</span>
               <span class="flow-node__sub">人物 / 场景 / 对白</span>
+              <span class="flow-node__badge" title="环节内部自检自修，必要时人工修正，不占用 PenFix 质检门">↻ 自检 / 人工修正</span>
             </div>
             <div class="flow-node flow-node--data" style="left:294px;top:202px;width:98px;height:96px">
               <span class="flow-node__meta">FRAGMENT · JSON</span>
               <span class="flow-node__label">分镜列表</span>
               <span class="flow-node__sub">视觉 Prompt / 音频参数 / 时长</span>
+              <span class="flow-node__badge" title="环节内部自检自修，必要时人工修正，不占用 PenFix 质检门">↻ 自检 / 人工修正</span>
             </div>
             <div class="flow-node flow-node--media" style="left:441px;top:60px;width:98px;height:88px">
               <span class="flow-node__meta">MEDIA · MP4</span>
@@ -599,13 +603,13 @@
           <div class="flow__panels">
             <article class="flow__panel" id="flow-panel-penplot" aria-hidden="true">
               <div class="flow__panel-head"><span class="flow__num">01</span><span class="flow__panel-name">PenPlot</span><span class="flow__cn">剧情创作</span><span class="status-tag status-tag--planned">规划中</span></div>
-              <p class="flow__tagline">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架。</p>
-              <p class="flow__story">每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。</p>
+              <p class="flow__tagline">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架；产出前先自检结构完整性，异常项自查自修，必要时人工介入调整。</p>
+              <p class="flow__story">每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。但剧本也可能不合格：冲突立不住、人物动机断裂、场次撑不起时长。PenPlot 会先按结构模板自检、自查、自修复，涉及创作取舍的交给人来定，确认可用后才交给 PenShot。</p>
             </article>
             <article class="flow__panel" id="flow-panel-penshot" aria-hidden="true">
               <div class="flow__panel-head"><span class="flow__num">02</span><span class="flow__panel-name">PenShot</span><span class="flow__cn">剧本分镜</span><span class="status-tag status-tag--test">测试中</span><a class="flow__visit" href="https://shot.helpenx.com" target="_blank" rel="noopener">进入 PenShot <span aria-hidden="true">↗</span></a></div>
-              <p class="flow__tagline">识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表。</p>
-              <p class="flow__story">剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。</p>
+              <p class="flow__tagline">识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表；产出前先自检一致性，异常项自查自修，必要时人工介入调整。</p>
+              <p class="flow__story">剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。但分镜也可能不合格：镜头断不开、人物前后对不上、提示词写不出画面。PenShot 会先自检、自查、自修复，模型判断不了的交给人来调，确认可用后才分叉给 PenGen 与 PenDub。</p>
             </article>
             <article class="flow__panel" id="flow-panel-pengen" aria-hidden="true">
               <div class="flow__panel-head"><span class="flow__num">03</span><span class="flow__panel-name">PenGen</span><span class="flow__cn">视频生成</span><span class="status-tag status-tag--design">设计中</span></div>
@@ -645,7 +649,7 @@
       <div class="arch__head">
         <span class="arch__eyebrow">HelpEnX Studio · 系统架构</span>
         <h2 class="arch__title" id="arch-title">四层架构，两条总线：控制面编排，数据面执行，模型层统一出网</h2>
-        <p class="arch__lead">创作者只接触业务 API，整集请求先交给 NeoTask Flow 拆成 DAG；Core 只管任务池与调度，驱动六个内嵌智能体。PenFix 不单独占一条产线，而是挂在视频、音频与初剪之后做三道质检门：Gen / Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen / Dub 重生成。六环之间只交换 JSON 契约，不互相调用。</p>
+        <p class="arch__lead">创作者只接触 API 网关，网关做路由与负载均衡，转发给业务服务完成鉴权、资产与计费，整集请求再交给 NeoTask Flow 拆成 DAG；Core 只管任务池与调度，驱动六个内嵌智能体。PenPlot、PenShot 的文本产出先由环节内部自检自修、必要时人工修正；PenFix 不单独占一条产线，而是挂在视频、音频与初剪之后做三道质检门：Gen / Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen / Dub 重生成。六环之间只交换 JSON 契约，不互相调用。</p>
       </div>
 
       <div class="arch-board" role="group" aria-label="HelpEnX Studio 四层系统架构">
@@ -653,7 +657,7 @@
           <div class="arch-layer__rail">
             <span class="arch-layer__num">LAYER 01</span>
             <span class="arch-layer__name">接入与业务网关</span>
-            <span class="arch-layer__note">创作者只和业务 API 打交道</span>
+            <span class="arch-layer__note">网关先路由，业务服务管鉴权 / 资产 / 计费</span>
           </div>
           <div class="arch-layer__body">
             <div class="arch-node arch-node--user" data-node="creator">
@@ -661,16 +665,22 @@
               <span class="arch-node__name">创作者 / 导演</span>
               <span class="arch-node__sub">Web / App</span>
             </div>
-            <span class="arch-arrow arch-arrow--bi" data-edge="creator|api" aria-hidden="true"><em>Web / UI</em></span>
-            <div class="arch-node arch-node--gateway" data-node="api">
-              <span class="arch-node__meta">BUSINESS API</span>
-              <span class="arch-node__name">业务 API 服务</span>
+            <span class="arch-arrow arch-arrow--bi" data-edge="creator|gateway" aria-hidden="true"><em>Web / UI</em></span>
+            <div class="arch-node arch-node--gateway" data-node="gateway">
+              <span class="arch-node__meta">API GATEWAY</span>
+              <span class="arch-node__name">API 网关</span>
+              <span class="arch-node__sub">路由 · 负载均衡</span>
+            </div>
+            <span class="arch-arrow arch-arrow--bi arch-arrow--svc" data-edge="gateway|biz" aria-hidden="true"><em>转发</em></span>
+            <div class="arch-node arch-node--service" data-node="biz">
+              <span class="arch-node__meta">BUSINESS SERVICE</span>
+              <span class="arch-node__name">业务服务</span>
               <span class="arch-node__sub">鉴权 · 资产 · 计费</span>
             </div>
           </div>
         </div>
 
-        <div class="arch-drop" data-edge="api|flow" aria-hidden="true"><span class="arch-drop__stem"></span><span class="arch-drop__label">提交整集生成任务</span></div>
+        <div class="arch-drop" data-edge="biz|flow" aria-hidden="true"><span class="arch-drop__stem"></span><span class="arch-drop__label">提交整集生成任务</span></div>
 
         <div class="arch-layer arch-layer--control">
           <div class="arch-layer__rail">
@@ -804,7 +814,7 @@
       <ul class="arch-notes">
         <li><span class="arch-notes__dot arch-notes__dot--control" aria-hidden="true"></span><strong>控制面不跑推理</strong><span>Flow 接整集请求拆成 DAG，节点任务投进 Core 任务池；Core 管优先级与重试，直接调度内嵌六环，智能体只订阅状态。</span></li>
         <li><span class="arch-notes__dot arch-notes__dot--state" aria-hidden="true"></span><strong>状态与记忆分离</strong><span>Redis 存热状态、队列与事件；向量库存世界观与长文本记忆，供 PenPlot、PenShot 检索。</span></li>
-        <li><span class="arch-notes__dot arch-notes__dot--data" aria-hidden="true"></span><strong>数据面只传契约</strong><span>分镜分叉给 PenGen 与 PenDub，两支产出先过 PenFix 质检：Gen / Dub 不合格退回分镜调整构图与提示词；PenClip 落轨成初剪后再过终审，合成问题回 PenClip 重剪，镜头素材问题按镜头回 PenGen / PenDub 重生成。</span></li>
+        <li><span class="arch-notes__dot arch-notes__dot--data" aria-hidden="true"></span><strong>数据面只传契约</strong><span>PenPlot、PenShot 先在环节内自检自修、必要时人工修正，再把剧本与分镜交给下游：分镜分叉给 PenGen 与 PenDub；两支产出过 PenFix 质检：Gen / Dub 不合格退回分镜调整构图与提示词；PenClip 落轨成初剪后再过终审，合成问题回 PenClip 重剪，镜头素材问题按镜头回 PenGen / PenDub 重生成。</span></li>
         <li><span class="arch-notes__dot arch-notes__dot--model" aria-hidden="true"></span><strong>模型统一出网</strong><span>AI Gateway 收敛鉴权、计费、限流与路由；调用失败由 NeoTask 换模型重试。</span></li>
       </ul>
     </section>
@@ -824,8 +834,8 @@
     <div class="grid" id="grid">
       <!-- CARDS-GRID:START 本区块由 sites.json 预渲染，供不执行 JS 的爬虫与首屏使用，JS 加载后重绘，请勿手改 -->
       <a class="card card--wide" href="https://task.helpenx.com" target="_blank" rel="noopener" style="--accent:#6d4bf0"><div class="card__lead"><div class="card__id"><span class="card__icon" aria-hidden="true">N</span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">NeoTask</span><span class="status-tag status-tag--iterating">迭代中</span></span><span class="card__domain">task.helpenx.com</span></span></div><span class="card__thumb"><img src="./assets/neotask-queue.svg" alt="NeoTask 异步任务队列示意：业务代码投递任务、优先级队列、多 Worker 消费与失败退避重试" decoding="async"></span></div><div class="card__main"><span class="card__tagline">Python 异步任务队列</span><p class="card__desc">先用纯 Python 把后台任务跑起来，需要分布式时再切到 Redis 共享队列——不必从第一天就部署中间件。优先级插队、延迟与 Cron 定时、多 Worker 并发、失败自动重试，任务状态可落在内存、SQLite 或 Redis，并带生命周期事件、进度上报与失败任务回收，适合 AI 生成、视频转码、批量抓取这类长任务。</p><ul class="card__features"><li>优先级插队</li><li>Cron / 延迟任务</li><li>多 Worker 并发</li><li>失败自动重试</li><li>内存 / SQLite / Redis</li><li>分布式锁与节点心跳</li><li>进度与事件上报</li></ul><span class="card__repo">源码仓库</span></div><span class="card__arrow" aria-hidden="true">↗</span></a>
-      <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-pen"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenPlot</span><span class="status-tag status-tag--planned">规划中</span></span><span class="card__domain">plot.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">剧情创作 · 从念头到故事线</span><p class="card__desc">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架，让一个模糊的想法变成一条能往下走的故事线。</p><ul class="card__features"><li>故事线梳理</li><li>情节节点打磨</li><li>结构化剧本骨架</li><li>起承转合设计</li></ul></div></div>
-      <a class="card" href="https://shot.helpenx.com" target="_blank" rel="noopener" style="--accent:#0a7494"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-frames"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenShot</span><span class="status-tag status-tag--test">测试中</span></span><span class="card__domain">shot.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">剧本分镜 · 把文字翻译成镜头</span><p class="card__desc">将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。</p><ul class="card__features"><li>多 Agent 流水线</li><li>一致性记忆</li><li>模型适配</li><li>SDK &amp; API</li></ul><span class="card__repo">源码仓库</span></div><span class="card__arrow" aria-hidden="true">↗</span></a>
+      <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-pen"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenPlot</span><span class="status-tag status-tag--planned">规划中</span></span><span class="card__domain">plot.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">剧情创作 · 从念头到故事线</span><p class="card__desc">把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架，让一个模糊的想法变成一条能往下走的故事线。剧本产出前先按结构模板自检、自查、自修复，涉及创作取舍的转人工调整，确认可用后再进入分镜。</p><ul class="card__features"><li>故事线梳理</li><li>情节节点打磨</li><li>结构化剧本骨架</li><li>起承转合设计</li><li>剧本自检自修</li><li>人工修正介入</li></ul></div></div>
+      <a class="card" href="https://shot.helpenx.com" target="_blank" rel="noopener" style="--accent:#0a7494"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-frames"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenShot</span><span class="status-tag status-tag--test">测试中</span></span><span class="card__domain">shot.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">剧本分镜 · 把文字翻译成镜头</span><p class="card__desc">将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。分镜产出前先在环节内自检、自查、自修复，模型判断不了的转人工调整，确认可用后再进入生成。</p><ul class="card__features"><li>多 Agent 流水线</li><li>一致性记忆</li><li>模型适配</li><li>SDK &amp; API</li><li>分镜自检自修</li><li>人工修正介入</li></ul><span class="card__repo">源码仓库</span></div><span class="card__arrow" aria-hidden="true">↗</span></a>
       <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-play"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenGen</span><span class="status-tag status-tag--design">设计中</span></span><span class="card__domain">gen.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">视频生成 · 把分镜变成画面</span><p class="card__desc">承接分镜表驱动视频模型产出画面，是整条链上算力最密集、也最接近成品的一环：每个 shot 在这里被生成、渲染，被赋予光影与运动。</p><ul class="card__features"><li>多模型路由</li><li>关键帧生成</li><li>镜头级重生成</li><li>跨镜头一致性</li></ul></div></div>
       <div class="card card--planned" style="--accent:#8b98a9"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-wave"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenDub</span><span class="status-tag status-tag--planned">规划中</span></span><span class="card__domain">dub.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">音频同步 · 让画面开口说话</span><p class="card__desc">负责视频的听觉层：配音、音效与背景音乐对齐视频时间线，确保每句台词落在该落的画面上，每个音效踩在该踩的节点上。</p><ul class="card__features"><li>AI 配音</li><li>音效与 BGM</li><li>音画时间线对齐</li><li>口型同步</li></ul></div></div>
       <a class="card" href="https://clip.helpenx.com" target="_blank" rel="noopener" style="--accent:#0a7494"><div class="card__id"><span class="card__icon" aria-hidden="true"><svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-scissors"></use></svg></span><span class="card__idtext"><span class="card__titlerow"><span class="card__name">PenClip</span><span class="status-tag status-tag--dev">开发中</span></span><span class="card__domain">clip.helpenx.com</span></span></div><div class="card__main"><span class="card__tagline">视频剪辑 · 按叙事节奏成片</span><p class="card__desc">把生成的视频片段与同步好的音频按叙事节奏组装成完整作品，处理转场、节奏、时长与镜头顺序，输出初版时间线，交由 PenFix 终审。</p><ul class="card__features"><li>叙事节奏剪辑</li><li>转场与调色</li><li>镜头顺序编排</li><li>成片导出</li></ul></div><span class="card__arrow" aria-hidden="true">↗</span></a>
@@ -905,11 +915,11 @@
     "eyebrow": "HelpEnX Studio · 数据流模型",
     "title": "不是一条直线：数据分叉、三处质检、按层回退",
     "lead": [
-      "HelpEnX Studio 的协作单位不是「步骤」，而是数据。一句自然语言先被写成结构化剧本 JSON，再切成一条条 Fragment 分镜：每一条都带着视觉 Prompt、音频参数与时长，成为后面所有环节共享的契约。",
+      "HelpEnX Studio 的协作单位不是「步骤」，而是数据。一句自然语言先被写成结构化剧本 JSON，再切成一条条 Fragment 分镜：每一条都带着视觉 Prompt、音频参数与时长，成为后面所有环节共享的契约。剧本与分镜都不是写完就下发——PenPlot、PenShot 各自在环节内自检、自查、自修复，模型判断不了的再交人工调整，合格后才进入下游。",
       "分镜之后流程分叉：PenGen 把同一条 Fragment 渲染成 MP4，PenDub 同步出 WAV，两条支线并行推进；两支产出都先过 PenFix 质检，不合格退回分镜调整构图与提示词重做；PenClip 把合格素材汇进同一条时间线剪出初版，再由 PenFix 终审——合成层问题（节奏、转场、混音、字幕）回 PenClip 重剪，具体镜头的素材问题则按镜头回 PenGen / PenDub 重生成。"
     ],
     "busLabel": "DATA FLOW · 数据契约",
-    "busNote": "JSON 契约在环节间流转：分叉后逐段质检；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成",
+    "busNote": "JSON 契约在环节间流转：剧本与分镜先自检自修、必要时人工修正，再进入生成；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成",
     "kinds": [
       { "id": "flow", "label": "数据顺流" },
       { "id": "branch", "label": "并行分支" },
@@ -920,8 +930,8 @@
     "graph": {
       "nodes": [
         { "id": "idea", "col": 0, "lane": "mid", "kind": "input", "meta": "INPUT · 自然语言", "label": "原始创意", "sub": "一句台词、一个画面、一个情绪" },
-        { "id": "script", "col": 1, "lane": "mid", "kind": "data", "meta": "SCRIPT · JSON", "label": "结构化剧本", "sub": "人物 / 场景 / 对白" },
-        { "id": "shots", "col": 2, "lane": "mid", "kind": "data", "meta": "FRAGMENT · JSON", "label": "分镜列表", "sub": "视觉 Prompt / 音频参数 / 时长" },
+        { "id": "script", "col": 1, "lane": "mid", "kind": "data", "meta": "SCRIPT · JSON", "label": "结构化剧本", "sub": "人物 / 场景 / 对白", "badge": "↻ 自检 / 人工修正" },
+        { "id": "shots", "col": 2, "lane": "mid", "kind": "data", "meta": "FRAGMENT · JSON", "label": "分镜列表", "sub": "视觉 Prompt / 音频参数 / 时长", "badge": "↻ 自检 / 人工修正" },
         { "id": "video", "col": 3, "lane": "top", "kind": "media", "meta": "MEDIA · MP4", "label": "视频片段", "sub": "逐镜渲染的画面" },
         { "id": "audio", "col": 3, "lane": "bottom", "kind": "media", "meta": "MEDIA · WAV", "label": "音频片段", "sub": "配音 / 音效 / BGM" },
         { "id": "video-ok", "col": 4, "lane": "top", "kind": "safe", "meta": "PASS · 视频质检", "label": "合格视频", "sub": "画面 / 技术达标" },
@@ -952,8 +962,8 @@
         "url": "https://plot.helpenx.com",
         "status": "planned",
         "hook": "一句台词、一个画面，就能长出一整部戏。",
-        "tagline": "把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架。",
-        "story": "每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。"
+        "tagline": "把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架；产出前先自检结构完整性，异常项自查自修，必要时人工介入调整。",
+        "story": "每个项目都始于一个模糊的念头——一句台词、一个画面、一个说不清的情绪。PenPlot 把它接住，写成起承转合：冲突在哪里升级、结局往哪落。它是整条链上最「人」的一环，也是后面所有自动化的源头；故事没写好，分镜、生成、剪辑都只是空转。但剧本也可能不合格：冲突立不住、人物动机断裂、场次撑不起时长。PenPlot 会先按结构模板自检、自查、自修复，涉及创作取舍的交给人来定，确认可用后才交给 PenShot。"
       },
       {
         "id": "penshot",
@@ -962,8 +972,8 @@
         "url": "https://shot.helpenx.com",
         "status": "iterating",
         "hook": "把「他推开门」翻译成看得见的镜头。",
-        "tagline": "识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表。",
-        "story": "剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。"
+        "tagline": "识别场景、切分镜头，为每个 shot 生成画面描述与镜头语言，输出可直接驱动生成的结构化分镜表；产出前先自检一致性，异常项自查自修，必要时人工介入调整。",
+        "story": "剧本是文字，视频是画面，中间隔着一道叫「分镜」的桥。PenShot 把「他推开门，屋里一片漆黑」翻译成中景、门开、光由外向内、镜头缓推——让剧本第一次看得见。但分镜也可能不合格：镜头断不开、人物前后对不上、提示词写不出画面。PenShot 会先自检、自查、自修复，模型判断不了的交给人来调，确认可用后才分叉给 PenGen 与 PenDub。"
       },
       {
         "id": "pengen",
@@ -1055,8 +1065,8 @@
       "deployed": false,
       "icon": "pen",
       "tagline": "剧情创作 · 从念头到故事线",
-      "description": "把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架，让一个模糊的想法变成一条能往下走的故事线。",
-      "features": ["故事线梳理", "情节节点打磨", "结构化剧本骨架", "起承转合设计"],
+      "description": "把创意孵化成可拍摄的故事：梳理故事线、打磨情节节点，输出结构化的剧本骨架，让一个模糊的想法变成一条能往下走的故事线。剧本产出前先按结构模板自检、自查、自修复，涉及创作取舍的转人工调整，确认可用后再进入分镜。",
+      "features": ["故事线梳理", "情节节点打磨", "结构化剧本骨架", "起承转合设计", "剧本自检自修", "人工修正介入"],
       "keywords": ["AI 编剧", "剧本创作", "故事线", "情节设计", "剧本骨架", "分集大纲", "创意孵化"]
     },
     {
@@ -1067,8 +1077,8 @@
       "status": "test",
       "icon": "frames",
       "tagline": "剧本分镜 · 把文字翻译成镜头",
-      "description": "将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。",
-      "features": ["多 Agent 流水线", "一致性记忆", "模型适配", "SDK & API"],
+      "description": "将剧本拆解为逐镜可投产的分场脚本，每一段都保持人物、场景与运镜的一致性，并直接输出适配主流视频生成模型的提示词。分镜产出前先在环节内自检、自查、自修复，模型判断不了的转人工调整，确认可用后再进入生成。",
+      "features": ["多 Agent 流水线", "一致性记忆", "模型适配", "SDK & API", "分镜自检自修", "人工修正介入"],
       "keywords": ["AI 分镜", "分镜生成", "剧本拆解", "分场脚本", "镜头语言", "视频提示词", "提示词生成", "storyboard", "Text to Video", "AI 编剧", "开源 Agent"],
       "repo": "https://github.com/neopen/story-shot-agent"
     },

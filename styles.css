@@ -521,6 +521,14 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
   font-size: 10px; line-height: 1.42; color: var(--text-dim);
 }
+/* 环节内自检标记：PenShot 的自检自修与人工修正在节点内完成，不占用 PenFix 质检门 */
+.flow-node__badge {
+  align-self: flex-start; max-width: 100%;
+  padding: 0 5px; border: 1px dashed rgba(10, 116, 148, 0.4); border-radius: 999px;
+  background: rgba(10, 116, 148, 0.06);
+  font-size: 7.5px; line-height: 1.45; color: #0a7494;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 
 /* 工具按钮：压在连线上，既是标签也是环节入口 */
 .flow-tool {
@@ -677,6 +685,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 }
 .arch-node--user { --node-accent: #c026d3; background: linear-gradient(180deg, #fff, #fdf4ff); }
 .arch-node--gateway { --node-accent: #ca8a04; background: linear-gradient(180deg, #fff, #fefce8); }
+.arch-node--service { --node-accent: #0a7494; background: linear-gradient(180deg, #fff, #f0fafd); }
 .arch-node--neotask { --node-accent: #9333ea; background: linear-gradient(180deg, #fff, #faf5ff); }
 .arch-node--vdb { --node-accent: #6b7280; background: linear-gradient(180deg, #fff, #f9fafb); }
 .arch-node__meta {
@@ -718,6 +727,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   color: var(--text-dim); white-space: nowrap;
 }
 .arch-layer--access .arch-arrow { --arrow-from: rgba(192, 38, 211, 0.45); --arrow-to: rgba(202, 138, 4, 0.72); }
+.arch-layer--access .arch-arrow--svc { --arrow-from: rgba(202, 138, 4, 0.45); --arrow-to: rgba(10, 116, 148, 0.72); }
 .arch-layer--control .arch-arrow { --arrow-from: rgba(147, 51, 234, 0.55); --arrow-to: rgba(147, 51, 234, 0.72); }
 .arch-agents .arch-arrow {
   --arrow-from: rgba(2, 132, 199, 0.42);

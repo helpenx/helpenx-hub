@@ -649,9 +649,9 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   --layer-accent: var(--cyan);
 }
 .arch-layer:first-child { border-top: 0; }
-.arch-layer--access { --layer-accent: #c026d3; }
-.arch-layer--control { --layer-accent: #9333ea; }
-.arch-layer--agents { --layer-accent: #0284c7; }
+.arch-layer--access { --layer-accent: #c026d3; --halo: rgba(192, 38, 211, 0.2); --halo-strong: rgba(192, 38, 211, 0.42); }
+.arch-layer--control { --layer-accent: #9333ea; --halo: rgba(147, 51, 234, 0.2); --halo-strong: rgba(147, 51, 234, 0.42); }
+.arch-layer--agents { --layer-accent: #0284c7; --halo: rgba(2, 132, 199, 0.22); --halo-strong: rgba(2, 132, 199, 0.45); }
 .arch-layer--models { --layer-accent: #16a34a; }
 .arch-layer__rail {
   display: flex; flex-direction: column; gap: 2px;
@@ -787,6 +787,29 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   margin-left: auto; font-family: var(--mono); font-size: 9px; font-weight: 600;
   letter-spacing: 0.08em; color: var(--bus-accent);
 }
+.arch-runtime {
+  position: relative; min-width: 0;
+  padding: 20px 12px 12px;
+  border: 1px dashed rgba(147, 51, 234, 0.26);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(147, 51, 234, 0.035), rgba(2, 132, 199, 0.02));
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.arch-runtime__tag {
+  position: absolute; top: -9px; left: 14px;
+  padding: 1px 9px; border-radius: 999px;
+  background: #fff; border: 1px solid rgba(147, 51, 234, 0.24);
+  font-family: var(--mono); font-size: 8.5px; font-weight: 600;
+  letter-spacing: 0.06em; color: #9333ea; white-space: nowrap;
+}
+.arch-board.is-tracing .arch-runtime:not(.is-related) {
+  border-color: rgba(15, 34, 67, 0.08); background: transparent;
+}
+.arch-board.is-tracing .arch-runtime:not(.is-related) .arch-runtime__tag { opacity: 0.4; }
+.arch-board.is-tracing .arch-runtime.is-related {
+  border-color: rgba(147, 51, 234, 0.55);
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.06);
+}
 .arch-agents { gap: 5px; }
 .arch-agent {
   display: flex; flex-direction: column; gap: 1px;
@@ -814,9 +837,13 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   font-size: 10.5px; line-height: 1.5; color: #9f1239;
 }
 .arch-rework span:first-child { flex: none; font-size: 13px; }
+.arch-layer--models .arch-layer__body {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+}
 .arch-model {
   display: flex; flex-direction: column; gap: 1px;
-  min-width: 150px; padding: 8px 12px;
+  min-width: 0; padding: 8px 12px;
   background: linear-gradient(180deg, #fff, #f4fbf7);
   border: 1px solid rgba(8, 122, 67, 0.2);
   border-left: 3px solid var(--green); border-radius: 9px;
@@ -841,6 +868,29 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   font-weight: 650; color: var(--text);
 }
 .arch-notes li > span:last-child { flex: 1 1 auto; min-width: 0; }
+
+/* 悬停追踪：只保留当前节点与其一跳上下游 */
+.arch-node, .arch-agent, .arch-model, .arch-arrow, .arch-drop, .arch-rework, .arch-bus {
+  transition: opacity 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+}
+.arch-board.is-tracing .arch-node,
+.arch-board.is-tracing .arch-agent,
+.arch-board.is-tracing .arch-model,
+.arch-board.is-tracing .arch-arrow,
+.arch-board.is-tracing .arch-drop,
+.arch-board.is-tracing .arch-rework {
+  opacity: 0.28; filter: saturate(0.5);
+}
+.arch-board.is-tracing .arch-bus { opacity: 0.55; }
+.arch-board.is-tracing .is-related { opacity: 1; filter: none; }
+.arch-board.is-tracing .arch-node.is-related,
+.arch-board.is-tracing .arch-agent.is-related {
+  box-shadow: 0 0 0 2px var(--halo, rgba(2, 132, 199, 0.22)), 0 4px 12px rgba(15, 34, 67, 0.08);
+}
+.arch-board.is-tracing .is-focus {
+  box-shadow: 0 0 0 2px var(--halo-strong, rgba(2, 132, 199, 0.45)), 0 8px 20px rgba(15, 34, 67, 0.12);
+}
+.arch-board.is-tracing .arch-arrow.is-related em { color: var(--text); font-weight: 600; }
 
 .board__title {
   display: flex; align-items: center; gap: 14px;
@@ -1039,6 +1089,10 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .site-footer__site { font-family: var(--mono); }
 
 /* ---------- 响应式 ---------- */
+@media (max-width: 1120px) {
+  .arch-runtime { padding: 18px 8px 10px; }
+  .arch-agents .arch-arrow { flex-basis: 40px; min-width: 40px; }
+}
 @media (max-width: 1060px) {
   .flow-pool { padding: 14px 14px 16px; border-radius: 18px; }
   .flow-pool__note, .flow-pool__hint, .flow-pool__bus, .flow-legend { display: none; }
@@ -1067,6 +1121,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   .arch-layer { grid-template-columns: 1fr; gap: 10px; padding: 16px 18px; }
   .arch-layer__note { max-width: 60ch; }
   .arch-arrow { display: none; }
+  .arch-layer--models .arch-layer__body { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .arch-drop { margin: 2px 18px; }
   .arch-bus { margin: 6px 18px; }
   .arch-notes { grid-template-columns: 1fr; }
@@ -1092,13 +1147,15 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   .arch-board { border-radius: 16px; }
   .arch-layer { padding: 14px; }
   .arch-layer__body { gap: 6px; }
+  .arch-runtime { padding: 17px 7px 9px; }
+  .arch-runtime__tag { left: 9px; font-size: 8px; }
   .arch-drop { margin: 2px 14px; }
   .arch-drop__label { transform: translate(12px, -50%); font-size: 9px; }
   .arch-node { flex: 1 1 44%; min-width: 0; }
   .arch-node__name, .arch-node__sub { white-space: normal; }
   .arch-agent { flex: 1 1 44%; min-width: 0; }
   .arch-branch { flex: 1 1 44%; }
-  .arch-model { flex: 1 1 44%; min-width: 0; }
+  .arch-layer--models .arch-layer__body { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .arch-bus { padding: 9px 12px; gap: 6px 10px; }
   .arch-bus__meta { margin-left: 0; }
   .arch-rework { font-size: 10px; }

@@ -840,6 +840,67 @@
     sync();
   }
 
+  function bindArchitecture() {
+    var board = document.querySelector(".arch-board");
+    if (!board) return;
+    var nodes = [].slice.call(board.querySelectorAll("[data-node]"));
+    var wires = [].slice.call(board.querySelectorAll("[data-edge]"));
+    if (!nodes.length || !wires.length) return;
+
+    var links = {};
+    function link(a, b) {
+      links[a] = links[a] || [];
+      links[b] = links[b] || [];
+      if (links[a].indexOf(b) === -1) links[a].push(b);
+      if (links[b].indexOf(a) === -1) links[b].push(a);
+    }
+    wires.forEach(function (wire) {
+      wire.getAttribute("data-edge").split(" ").forEach(function (pair) {
+        var ends = pair.split("|");
+        link(ends[0], ends[1]);
+      });
+    });
+    nodes.forEach(function (node) {
+      var hub = node.getAttribute("data-hub");
+      if (hub) link(hub, node.getAttribute("data-node"));
+    });
+
+    var runtime = board.querySelector(".arch-runtime");
+    var current = null;
+
+    function paint(id) {
+      current = id;
+      var related = links[id] || [];
+      board.classList.add("is-tracing");
+      nodes.forEach(function (node) {
+        var nodeId = node.getAttribute("data-node");
+        node.classList.toggle("is-focus", nodeId === id);
+        node.classList.toggle("is-related", nodeId === id || related.indexOf(nodeId) !== -1);
+      });
+      wires.forEach(function (wire) {
+        var hit = wire.getAttribute("data-edge").split(" ").some(function (pair) {
+          return pair.split("|").indexOf(id) !== -1;
+        });
+        wire.classList.toggle("is-related", hit);
+      });
+      if (runtime) runtime.classList.toggle("is-related", !!runtime.querySelector(".arch-agent.is-related"));
+    }
+
+    function clear() {
+      if (current === null) return;
+      current = null;
+      board.classList.remove("is-tracing");
+      nodes.forEach(function (node) { node.classList.remove("is-focus", "is-related"); });
+      wires.forEach(function (wire) { wire.classList.remove("is-related"); });
+      if (runtime) runtime.classList.remove("is-related");
+    }
+
+    nodes.forEach(function (node) {
+      node.addEventListener("mouseenter", function () { paint(node.getAttribute("data-node")); });
+      node.addEventListener("mouseleave", clear);
+    });
+  }
+
   function bindHeader() {
     var brand = state.data.brand || {};
     var sites = state.data.sites || [];
@@ -856,6 +917,7 @@
     state.data = data;
     buildIndex();
     bindHeader();
+    bindArchitecture();
     bindFlow();
     renderChips();
     renderShowcase();

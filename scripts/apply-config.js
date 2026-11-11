@@ -187,7 +187,7 @@ const eol = "\n";
 })();
 
 // 预渲染卡片：不执行 JS 的爬虫（百度、搜狗等）与首屏直接拿到正文，JS 加载后由 app.js 重绘
-const ACCENTS = { studio: "#0a7494", oss: "#6d4bf0", tools: "#087a43", demo: "#4d6484", content: "#96650a" };
+const ACCENTS = { studio: "#0a7494", oss: "#6f5bb8", tools: "#087a43", demo: "#4d6484", content: "#96650a" };
 const PLANNED_ACCENT = "#8b98a9";
 const STATUS_LABEL = { planned: "规划中", design: "设计中", dev: "开发中", test: "测试中", live: "已上线", iterating: "迭代中", archived: "已归档" };
 
@@ -311,7 +311,7 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
   const NODE_W = 98, MID_H = 96, SIDE_H = 88, GAP = 49;
   const LANE_Y = { top: 104, mid: 250, bottom: 396 };
   const BOARD_W = 980, BOARD_H = 456, REWORK_Y = 20, REWORK_UNDER_Y = 340;
-  const KIND_COLOR = { flow: "#0a7494", branch: "#6d4bf0", gate: "#96650a", merge: "#087a43", rework: "#b91c1c" };
+  const KIND_COLOR = { flow: "#3f7f96", branch: "#7059b0", gate: "#a8843c", merge: "#3f8a63", rework: "#a45757" };
 
   const boxes = {};
   const graphNodes = (graph.nodes || []).map((n) => {

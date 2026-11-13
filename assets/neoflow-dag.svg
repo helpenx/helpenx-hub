@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" width="480" height="300" role="img" aria-labelledby="nf-t nf-d">
+  <title id="nf-t">NeoFlow 工作流编排示意</title>
+  <desc id="nf-d">NeoFlow 把流程拆成 DAG 并下发任务；NeoTask 拉取任务、执行 Handler 并上报事件，NeoFlow 校验事件后推进状态、解锁下游节点。</desc>
+  <defs>
+    <linearGradient id="nf-fill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a7494" stop-opacity="0.09"/>
+      <stop offset="100%" stop-color="#6d4bf0" stop-opacity="0.06"/>
+    </linearGradient>
+    <pattern id="nf-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0v24" fill="none" stroke="#0e1c2e" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <filter id="nf-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#0f2243" flood-opacity="0.12"/>
+    </filter>
+    <marker id="nf-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z" fill="#0a7494" fill-opacity="0.75"/>
+    </marker>
+    <marker id="nf-arrow-up" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z" fill="#6d4bf0" fill-opacity="0.75"/>
+    </marker>
+  </defs>
+
+  <rect width="480" height="300" fill="#f4f7fb"/>
+  <rect width="480" height="300" fill="url(#nf-grid)"/>
+  <text x="22" y="30" font-family="ui-monospace, Consolas, monospace" font-size="12" letter-spacing="1.6" fill="#0a7494" fill-opacity="0.9">WORKFLOW ORCHESTRATION</text>
+  <text x="458" y="30" text-anchor="end" font-family="ui-monospace, Consolas, monospace" font-size="11" letter-spacing="1.2" fill="#8b98a9">DAG · EVENT · STATE</text>
+
+  <!-- DAG -->
+  <g>
+    <path d="M104 90C118 90 122 66 136 66" fill="none" stroke="#0a7494" stroke-opacity="0.6" stroke-width="1.8" stroke-linecap="round" marker-end="url(#nf-arrow)"/>
+    <path d="M104 90C118 90 122 116 136 116" fill="none" stroke="#0a7494" stroke-opacity="0.6" stroke-width="1.8" stroke-linecap="round" marker-end="url(#nf-arrow)"/>
+    <path d="M222 66C236 66 238 90 252 90" fill="none" stroke="#0a7494" stroke-opacity="0.6" stroke-width="1.8" stroke-linecap="round" marker-end="url(#nf-arrow)"/>
+    <path d="M222 116C236 116 238 90 252 90" fill="none" stroke="#0a7494" stroke-opacity="0.6" stroke-width="1.8" stroke-linecap="round" marker-end="url(#nf-arrow)"/>
+    <path d="M338 90H364" fill="none" stroke="#6d4bf0" stroke-opacity="0.6" stroke-width="1.8" stroke-linecap="round" marker-end="url(#nf-arrow-up)"/>
+  </g>
+
+  <g filter="url(#nf-soft)">
+    <rect x="18" y="70" width="86" height="40" rx="10" fill="#ffffff" stroke="#0a7494" stroke-opacity="0.35"/>
+    <rect x="136" y="46" width="86" height="40" rx="10" fill="#ffffff" stroke="#0e1c2e" stroke-opacity="0.14"/>
+    <rect x="136" y="96" width="86" height="40" rx="10" fill="#ffffff" stroke="#0e1c2e" stroke-opacity="0.14"/>
+    <rect x="252" y="70" width="86" height="40" rx="10" fill="#ffffff" stroke="#0e1c2e" stroke-opacity="0.14"/>
+    <rect x="366" y="70" width="86" height="40" rx="10" fill="#ffffff" stroke="#6d4bf0" stroke-opacity="0.3"/>
+  </g>
+
+  <g font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="600" fill="#0e1c2e" text-anchor="middle">
+    <text x="61" y="95">DAG 拆解</text>
+    <text x="179" y="71">生成</text>
+    <text x="179" y="121">配音</text>
+    <text x="295" y="95">汇总</text>
+    <text x="409" y="95">交付</text>
+  </g>
+
+  <circle cx="92" cy="82" r="3.5" fill="#087a43"/>
+  <circle cx="210" cy="58" r="3.5" fill="#0a7494"/>
+  <circle cx="210" cy="108" r="3.5" fill="#0a7494"/>
+  <circle cx="326" cy="82" r="3.5" fill="#8b98a9" fill-opacity="0.55"/>
+  <circle cx="440" cy="82" r="3.5" fill="#8b98a9" fill-opacity="0.55"/>
+
+  <text x="18" y="158" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#5c6b7f">事件校验通过 → 推进状态 → 解锁下游节点</text>
+
+  <!-- 下发 / 回传 -->
+  <path d="M390 126V172" fill="none" stroke="#0a7494" stroke-opacity="0.65" stroke-width="1.8" stroke-linecap="round" marker-end="url(#nf-arrow)"/>
+  <path d="M428 172V126" fill="none" stroke="#6d4bf0" stroke-opacity="0.6" stroke-width="1.8" stroke-dasharray="5 5" stroke-linecap="round" marker-end="url(#nf-arrow-up)"/>
+  <text x="382" y="152" text-anchor="end" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="11" fill="#0a7494">下发</text>
+  <text x="436" y="152" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="11" fill="#6d4bf0">回传</text>
+
+  <!-- 执行侧 -->
+  <rect x="18" y="180" width="444" height="108" rx="14" fill="url(#nf-fill)" stroke="#0a7494" stroke-opacity="0.3"/>
+  <text x="32" y="205" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="600" fill="#0a7494">NeoTask · 执行侧</text>
+  <text x="448" y="205" text-anchor="end" font-family="ui-monospace, Consolas, monospace" font-size="10.5" letter-spacing="1" fill="#5c6b7f">PULL / HANDLER / REPORT</text>
+
+  <g>
+    <rect x="32" y="220" width="118" height="32" rx="8" fill="#ffffff" stroke="#0a7494" stroke-opacity="0.35"/>
+    <rect x="181" y="220" width="118" height="32" rx="8" fill="#ffffff" stroke="#0a7494" stroke-opacity="0.35"/>
+    <rect x="330" y="220" width="118" height="32" rx="8" fill="#ffffff" stroke="#0a7494" stroke-opacity="0.35"/>
+  </g>
+  <g font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="14" fill="#0e1c2e" text-anchor="middle">
+    <text x="91" y="241">拉取任务</text>
+    <text x="240" y="241">执行 Handler</text>
+    <text x="389" y="241">上报事件</text>
+  </g>
+  <path d="M152 236H177" fill="none" stroke="#0a7494" stroke-opacity="0.6" stroke-width="1.8" stroke-linecap="round" marker-end="url(#nf-arrow)"/>
+  <path d="M301 236H326" fill="none" stroke="#0a7494" stroke-opacity="0.6" stroke-width="1.8" stroke-linecap="round" marker-end="url(#nf-arrow)"/>
+
+  <text x="32" y="276" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#5c6b7f">进度与结果以事件回传，执行与重试交给 NeoTask</text>
+</svg>

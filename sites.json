@@ -12,8 +12,8 @@
   },
   "seo": {
     "title": "HelpEnX Hub｜短剧 AI 生产 · 开源项目 · 在线工具箱 · 行业演示",
-    "description": "HelpEnX Hub：短剧 AI 生产编排 Studio、AI 分镜 PenShot、任务队列 NeoTask、JPA 增强工具包、在线工具箱 Helpoke、防久坐提醒、智慧城市与安检/TMS/ERP 行业演示、技术博客。全部服务一次点击直达。",
-    "keywords": ["HelpEnX", "HelpEnX Studio", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
+    "description": "HelpEnX Hub：短剧 AI 生产编排 Studio、AI 分镜 PenShot、工作流编排 NeoFlow、任务队列 NeoTask、JPA 增强工具包、在线工具箱 Helpoke、防久坐提醒、智慧城市与安检/TMS/ERP 行业演示、技术博客。全部服务一次点击直达。",
+    "keywords": ["HelpEnX", "HelpEnX Studio", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "工作流编排", "DAG 调度", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
     "url": "https://helpenx.com/",
     "image": "https://helpenx.com/assets/studio-pipeline.svg",
     "imageAlt": "HelpEnX Studio 短剧 AI 生产链路示意图",
@@ -126,7 +126,7 @@
         "story": "PenGen、PenDub 的产出先过质检，不合格回分镜改提示词重做。初剪终审先判根因：剪法问题回 PenClip 重剪，镜头素材问题才回 Gen/Dub 重生成。"
       }
     ],
-    "note": "所有跨节点流转仍由 NeoTask 调度：节点不直接互调，只订阅 Project 的状态变更；生成或配音失败时自动换模型重试。"
+    "note": "所有跨节点流转统一由 NeoFlow 编排：DAG 拆解后下发任务，NeoTask 拉取执行并回传事件，节点不直接互调；生成或配音失败时自动换模型重试。"
   },
   "categories": [
     { "id": "studio", "name": "AIGC Studio", "shortName": "AIGC Studio" },
@@ -150,6 +150,21 @@
       "pipeline": ["创意 / 剧本", "分集分场", "分镜脚本", "数字资产 · 角色 / 场景 / 模型", "关键帧", "视频片段", "配音 · 口型 · BGM", "分段质检", "剪辑合成", "终审 / 成片"],
       "features": ["角色 / 场景 / 模型资产库", "多模型路由与降级", "跨镜头跨集一致性", "自动质检与返工", "断点续跑与配额调度", "Tool / MCP / API 开放", "可用率与成本指标"],
       "keywords": ["短剧 AI 生成", "AI 短剧", "剧本转视频", "AIGC 工作流", "多 Agent 编排", "分镜脚本生成", "数字资产库", "角色一致性", "场景资产", "模型资产", "AI 配音", "口型同步", "文生视频", "图生视频", "AI 剪辑", "短剧制作"]
+    },
+    {
+      "id": "neoflow",
+      "name": "NeoFlow",
+      "url": "https://flow.helpenx.com",
+      "category": "oss",
+      "status": "planned",
+      "deployed": false,
+      "span": "full",
+      "tagline": "DAG 工作流编排引擎",
+      "description": "把业务流程拆成有向无环图：按依赖拆解节点、把任务下发给执行侧，再监听回传事件、推进状态并解锁下游。NeoFlow 只做编排与调度，具体任务由 NeoTask 负责拉取、执行 Handler 并上报结果，两层职责分离、可独立扩展。",
+      "features": ["DAG 依赖拆解", "并行与条件分支", "任务下发与分派", "事件监听与消费", "状态机推进", "失败重试与补偿", "与 NeoTask 拉取式解耦"],
+      "keywords": ["工作流编排", "DAG 调度", "任务编排", "事件驱动", "状态机推进", "任务下发", "依赖管理", "工作流引擎", "异步编排", "流程编排", "AI 工作流", "Orchestration", "Workflow Engine", "NeoFlow"],
+      "image": "./assets/neoflow-dag.svg",
+      "imageAlt": "NeoFlow 编排示意：DAG 拆解并下发任务，NeoTask 拉取执行 Handler 后回传事件，NeoFlow 据此推进状态"
     },
     {
       "id": "neotask",
@@ -184,7 +199,7 @@
       "name": "PenShot",
       "url": "https://shot.helpenx.com",
       "category": "studio",
-      "status": "test",
+      "status": "dev",
       "icon": "frames",
       "tagline": "剧本分镜 · 把文字翻译成镜头",
       "description": "把剧本拆成逐镜可投产的分场脚本，保持人物、场景与运镜一致，直接输出适配主流视频模型的提示词。分镜先自检自修，判断不了的转人工调整。",

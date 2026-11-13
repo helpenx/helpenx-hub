@@ -214,7 +214,6 @@
       card.rel = "noopener";
     }
     card.style.setProperty("--accent", planned ? PLANNED_ACCENT : accentFor(site));
-    card.style.animationDelay = Math.min(index, 8) * 50 + "ms";
 
     var repo = site.repo
       ? '<span class="card__repo">' + GITHUB_ICON + "源码仓库</span>"
@@ -310,6 +309,7 @@
       });
     }
     box.appendChild(card);
+    revealRefresh();
   }
 
   function renderChips() {
@@ -386,6 +386,8 @@
     if (state.query) title.textContent = "搜索「" + state.query + "」· " + sites.length;
     else if (state.category !== "all") title.textContent = categoryName(state.category) + " · " + sites.length;
     else title.textContent = "更多服务 · " + sites.length;
+
+    revealRefresh();
   }
 
   /* ---------- 联想面板与搜索交互 ---------- */
@@ -675,6 +677,111 @@
     onScroll();
   }
 
+  /* ---------- 滚动观感：进度条、光晕视差、逐段揭示 ---------- */
+  var revealState = { observer: null, initialDone: false, reduce: false, pending: [] };
+
+  function setupScrollChrome() {
+    revealState.reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var bar = document.createElement("div");
+    bar.className = "scroll-progress";
+    bar.setAttribute("aria-hidden", "true");
+    document.body.appendChild(bar);
+
+    if (!revealState.reduce && "IntersectionObserver" in window) {
+      revealState.observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          revealState.observer.unobserve(entry.target);
+          var at = revealState.pending.indexOf(entry.target);
+          if (at > -1) revealState.pending.splice(at, 1);
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    }
+
+    var root = document.documentElement;
+    var ticking = false;
+    function paint() {
+      ticking = false;
+      var max = root.scrollHeight - window.innerHeight;
+      var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      bar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+      if (!revealState.reduce) root.style.setProperty("--sy", Math.round(window.scrollY) + "px");
+      catchUpReveal();
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(paint);
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
+  }
+
+  /* 拖动滚动条、锚点跳转或恢复滚动位置会整段跳过观察器，已滚过的段落直接补上 */
+  function catchUpReveal() {
+    var pending = revealState.pending;
+    if (!pending.length) return;
+    var rest = [];
+    pending.forEach(function (node) {
+      if (!node.isConnected) return;
+      if (node.getBoundingClientRect().bottom <= 0) {
+        node.classList.add("is-visible");
+        if (revealState.observer) revealState.observer.unobserve(node);
+        return;
+      }
+      rest.push(node);
+    });
+    revealState.pending = rest;
+  }
+
+  function reveal(node, delay) {
+    if (!node) return;
+    node.classList.add("reveal");
+    if (revealState.reduce || !revealState.observer) {
+      node.classList.add("is-visible");
+      return;
+    }
+    if (delay) node.style.setProperty("--reveal-delay", delay + "ms");
+    revealState.pending.push(node);
+    revealState.observer.observe(node);
+  }
+
+  function revealGroup(selector, step) {
+    var nodes = [].slice.call(document.querySelectorAll(selector));
+    nodes.forEach(function (node, i) {
+      reveal(node, Math.min(i, 8) * (step || 0));
+    });
+  }
+
+  /* 首屏渲染完成后统一挂揭示：先让观察器接管，避免和重绘打架 */
+  function revealInitial() {
+    revealGroup(".story__head > *", 70);
+    revealGroup(".flow-pool", 0);
+    revealGroup(".arch__head > *", 70);
+    revealGroup(".arch-board", 0);
+    revealGroup(".arch-layer", 55);
+    revealGroup("#showcase .showcase__card", 80);
+    revealGroup(".board > .board__title, .board > .board__legend", 0);
+    revealGroup("#grid .grid__divider", 0);
+    revealGroup("#grid .card", 45);
+    revealGroup(".site-footer", 0);
+    revealState.initialDone = true;
+  }
+
+  /* 搜索 / 筛选会重绘卡片，新节点直接可见，不重复播放入场 */
+  function revealRefresh() {
+    if (!revealState.initialDone) return;
+    var nodes = [].slice.call(document.querySelectorAll(
+      "#showcase .showcase__card, #grid .card, #grid .grid__divider"
+    ));
+    nodes.forEach(function (node) {
+      node.classList.add("reveal", "is-visible");
+    });
+  }
+
   /* 数据流：点选连线上的工具展开对应环节；图例聚焦某类连线；支持暂停 / 播放 */
   function bindFlow() {
     var flow = document.querySelector("[data-flow]");
@@ -916,6 +1023,8 @@
     if (brand.github) el("github-link").href = brand.github;
   }
 
+  setupScrollChrome();
+
   loadData().then(function (data) {
     state.data = data;
     buildIndex();
@@ -927,5 +1036,6 @@
     renderGrid();
     bindSearch();
     bindStickyHeader();
+    revealInitial();
   });
 })();

@@ -649,7 +649,7 @@
       <div class="arch__head">
         <span class="arch__eyebrow">HelpEnX Studio · 系统架构</span>
         <h2 class="arch__title" id="arch-title">四层架构，两条总线：控制面编排，数据面执行，模型层统一出网</h2>
-        <p class="arch__lead">创作者只接触 API 网关，业务服务完成鉴权、资产与计费；NeoTask 拆 DAG、管调度，驱动六环执行。PenFix 挂在视频、音频与初剪之后做三道质检，不合格按根因回退；六环之间只交换 JSON，不互相调用。</p>
+        <p class="arch__lead">创作者只接触 API 网关，业务服务完成鉴权、资产与计费；NeoFlow 拆 DAG、管调度，任务由 NeoTask 拉取执行，驱动六环推进。PenFix 挂在视频、音频与初剪之后做三道质检，不合格按根因回退；六环之间只交换 JSON，不互相调用。</p>
       </div>
 
       <div class="arch-board" role="group" aria-label="HelpEnX Studio 四层系统架构">
@@ -689,15 +689,15 @@
             <span class="arch-layer__note">控制面：只编排，不跑推理</span>
           </div>
           <div class="arch-layer__body">
-            <div class="arch-node arch-node--neotask" data-node="core">
+            <div class="arch-node arch-node--control" data-node="core">
               <span class="arch-node__meta">CONTROL PLANE</span>
-              <span class="arch-node__name">NeoTask Core</span>
+              <span class="arch-node__name">NeoTask SDK</span>
               <span class="arch-node__sub">任务池 / 优先级 / 重试</span>
             </div>
             <span class="arch-arrow arch-arrow--bi" data-edge="core|flow" aria-hidden="true"><em>DAG 编排</em></span>
-            <div class="arch-node arch-node--neotask" data-node="flow">
+            <div class="arch-node arch-node--control" data-node="flow">
               <span class="arch-node__meta">CONTROL PLANE</span>
-              <span class="arch-node__name">NeoTask Flow</span>
+              <span class="arch-node__name">NeoFlow 编排层</span>
               <span class="arch-node__sub">条件分支 / 断点续跑</span>
             </div>
             <div class="arch-node arch-node--vdb">
@@ -721,7 +721,7 @@
             <span class="arch-layer__note">数据面：六环只交换 JSON 契约</span>
           </div>
           <div class="arch-runtime">
-            <span class="arch-runtime__tag">NeoTask Core · 执行子域</span>
+            <span class="arch-runtime__tag">NeoTask SDK · 执行子域</span>
             <div class="arch-layer__body arch-agents">
               <div class="arch-agent" data-node="plot" data-hub="core">
                 <span class="arch-agent__num">01</span>
@@ -812,10 +812,10 @@
       </div>
 
       <ul class="arch-notes">
-        <li><span class="arch-notes__dot arch-notes__dot--control" aria-hidden="true"></span><strong>控制面不跑推理</strong><span>Flow 把整集请求拆成 DAG，任务进 Core 任务池；Core 管优先级与重试，六环只订阅状态。</span></li>
+        <li><span class="arch-notes__dot arch-notes__dot--control" aria-hidden="true"></span><strong>控制面不跑推理</strong><span>NeoFlow 把整集请求拆成 DAG，任务进 NeoTask 任务池；NeoTask 管优先级与重试，六环只订阅状态。</span></li>
         <li><span class="arch-notes__dot arch-notes__dot--state" aria-hidden="true"></span><strong>状态与记忆分离</strong><span>Redis 存热状态、队列与事件；向量库存世界观与长文本记忆，供 PenPlot、PenShot 检索。</span></li>
         <li><span class="arch-notes__dot arch-notes__dot--data" aria-hidden="true"></span><strong>数据面只传契约</strong><span>剧本与分镜先自检自修、必要时人工修正，再交给下游；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成。</span></li>
-        <li><span class="arch-notes__dot arch-notes__dot--model" aria-hidden="true"></span><strong>模型统一出网</strong><span>AI Gateway 收敛鉴权、计费、限流与路由；调用失败由 NeoTask 换模型重试。</span></li>
+        <li><span class="arch-notes__dot arch-notes__dot--model" aria-hidden="true"></span><strong>模型统一出网</strong><span>AI Gateway 收敛鉴权、计费、限流与路由；调用失败由 NeoFlow 换模型重试。</span></li>
       </ul>
     </section>
   </section>

@@ -936,6 +936,21 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   font-size: 7.5px; line-height: 1.45; color: #0a7494;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+/* 数据流经过时按列凸起，并行分支同步，颜色跟随节点自身的强调色 */
+.flow-node.is-live {
+  z-index: 3;
+  border-color: color-mix(in srgb, var(--node-accent) 55%, var(--border));
+  box-shadow:
+    0 12px 24px rgba(15, 34, 67, 0.15),
+    0 0 0 3px color-mix(in srgb, var(--node-accent) 14%, transparent);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  animation: flowNodeRise 640ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes flowNodeRise {
+  0% { transform: translateY(0) scale(1); }
+  38% { transform: translateY(-6px) scale(1.045); }
+  100% { transform: translateY(0) scale(1); }
+}
 
 /* 工具按钮：压在连线上，既是标签也是环节入口 */
 .flow-tool {

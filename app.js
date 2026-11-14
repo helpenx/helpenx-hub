@@ -1089,6 +1089,7 @@
         var tool = edge.getAttribute("data-tool");
         edge.classList.toggle("is-dim", !!((focusKind && kind !== focusKind) || (toolFocus && tool !== toolFocus)));
       });
+      syncNodeLoop();
     }
 
     function clearKind() {
@@ -1170,10 +1171,51 @@
       pool.classList.toggle("is-paused", !running);
       if (label) label.setAttribute("aria-pressed", running ? "true" : "false");
       if (hintText) hintText.textContent = running ? "暂停演示" : "播放演示";
+      syncNodeLoop();
       if (running === wasRunning) return;
       wasRunning = running;
       stopCaptions();
       if (running) startCaptions();
+    }
+
+    /* 节点脉冲：同一列（并行分支）一起凸起，按链路逐列推进；暂停、聚焦或降级动效时停下 */
+    var nodeSeq = [].slice.call(flow.querySelectorAll(".flow-node"));
+    var waveMap = {};
+    var nodeWaves = [];
+    nodeSeq.forEach(function (node) {
+      var x = Math.round(parseFloat(node.style.left) || 0);
+      if (!waveMap[x]) { waveMap[x] = []; nodeWaves.push(x); }
+      waveMap[x].push(node);
+    });
+    nodeWaves = nodeWaves.sort(function (a, b) { return a - b; }).map(function (x) { return waveMap[x]; });
+    var nodeTimer = null;
+    var nodeStep = 0;
+    var nodeReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    function stopNodeLoop() {
+      if (nodeTimer) { window.clearInterval(nodeTimer); nodeTimer = null; }
+      nodeSeq.forEach(function (node) { node.classList.remove("is-live"); });
+    }
+
+    function popWave() {
+      var wave = nodeWaves[nodeStep % nodeWaves.length];
+      nodeStep += 1;
+      wave.forEach(function (node) {
+        node.classList.remove("is-live");
+        void node.offsetWidth;
+        node.classList.add("is-live");
+      });
+      window.setTimeout(function () {
+        wave.forEach(function (node) { node.classList.remove("is-live"); });
+      }, 860);
+    }
+
+    function syncNodeLoop() {
+      var on = wide() && !paused && !nodeReduce.matches && !active && !focusKind;
+      if (!on) { stopNodeLoop(); return; }
+      if (nodeTimer) return;
+      popWave();
+      nodeTimer = window.setInterval(popWave, 1300);
     }
 
     if (label) {

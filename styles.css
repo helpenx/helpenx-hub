@@ -1373,6 +1373,166 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .arch-page__back:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 3px; }
 .arch-page__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
 
+/* ---------- 架构页：目录 / 生命周期 / 契约 / 质检 / 运维 / 扩展 ---------- */
+.arch-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 28px; }
+.arch-toc a {
+  display: inline-flex; align-items: center;
+  padding: 6px 13px; border-radius: 999px;
+  border: 1px solid var(--border); background: rgba(255, 255, 255, 0.75);
+  font-size: 12px; font-weight: 600; color: var(--text-dim); text-decoration: none;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+.arch-toc a:hover { color: var(--cyan); border-color: rgba(10, 116, 148, 0.3); background: #fff; box-shadow: 0 2px 8px rgba(15, 34, 67, 0.05); }
+.arch-toc a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+.arch-sec { margin-top: 48px; scroll-margin-top: 84px; }
+.arch-sec--notes { margin-top: 44px; }
+.arch-sec__head { max-width: 880px; margin-bottom: 18px; }
+.arch-sec__eyebrow {
+  font-family: var(--mono); font-size: 9.5px; font-weight: 600;
+  letter-spacing: 0.12em; color: var(--cyan);
+}
+.arch-sec__title {
+  margin: 5px 0 7px;
+  font-size: 19px; font-weight: 680; letter-spacing: -0.01em; line-height: 1.4; color: var(--ink);
+}
+.arch-sec__note { margin: 0; font-size: 13.5px; line-height: 1.85; color: var(--text-dim); }
+.arch-sec--notes .arch-notes { margin-top: 0; }
+
+/* 生命周期：七步可点，联动架构板高亮 */
+.arch-steps {
+  list-style: none;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;
+}
+.arch-step {
+  width: 100%; height: 100%; text-align: left;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 15px 15px;
+  border: 1px solid var(--border); border-radius: 12px;
+  background: linear-gradient(180deg, #fff, #fbfcfe);
+  box-shadow: 0 1px 2px rgba(15, 34, 67, 0.03);
+  font: inherit; color: inherit; cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+.arch-step:hover { border-color: rgba(10, 116, 148, 0.3); box-shadow: var(--shadow); transform: translateY(-1px); }
+.arch-step:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.arch-step.is-active {
+  border-color: rgba(10, 116, 148, 0.45);
+  box-shadow: 0 0 0 3px rgba(10, 116, 148, 0.08), var(--shadow);
+}
+.arch-step__num { font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.08em; color: var(--cyan); }
+.arch-step__title { font-size: 13.5px; font-weight: 650; line-height: 1.5; color: var(--ink); }
+.arch-step__desc { font-size: 12px; line-height: 1.7; color: var(--text-dim); }
+.arch-step__layer {
+  margin-top: auto; padding-top: 6px;
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.06em; color: var(--text-faint);
+}
+
+/* 数据契约表 */
+.arch-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border); border-radius: 16px;
+  background: #fff; box-shadow: 0 1px 2px rgba(15, 34, 67, 0.03);
+  -webkit-overflow-scrolling: touch;
+}
+.arch-table { width: 100%; min-width: 780px; border-collapse: collapse; font-size: 12.5px; }
+.arch-table th, .arch-table td { padding: 12px 14px; text-align: left; vertical-align: top; }
+.arch-table thead th {
+  font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--text-faint); background: #f8fafc; border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.arch-table tbody th { font-size: 12.5px; font-weight: 650; color: var(--ink); white-space: nowrap; }
+.arch-table tbody tr { border-bottom: 1px solid rgba(15, 34, 67, 0.06); }
+.arch-table tbody tr:last-child { border-bottom: 0; }
+.arch-table tbody tr:hover { background: rgba(10, 116, 148, 0.025); }
+.arch-table td { color: var(--text-dim); line-height: 1.7; }
+.arch-type {
+  display: inline-block; padding: 1px 7px; border-radius: 5px;
+  border: 1px solid rgba(10, 116, 148, 0.18); background: rgba(10, 116, 148, 0.05);
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.04em; color: #0a7494;
+  white-space: nowrap;
+}
+.arch-type--pass { border-color: rgba(8, 122, 67, 0.22); background: rgba(8, 122, 67, 0.06); color: #087a43; }
+.arch-table__hint { display: none; }
+
+/* 质检门 */
+.arch-gates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.arch-gate {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 16px 17px;
+  border: 1px solid rgba(168, 132, 60, 0.22); border-left: 3px solid #a8843c; border-radius: 12px;
+  background: linear-gradient(180deg, #fff, #fffdf8);
+  box-shadow: 0 1px 2px rgba(15, 34, 67, 0.03);
+}
+.arch-gate__tag { font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: #a8843c; }
+.arch-gate__title { font-size: 13.5px; font-weight: 650; color: var(--ink); }
+.arch-gate__desc { font-size: 12px; line-height: 1.75; color: var(--text-dim); }
+.arch-gate__back {
+  margin-top: auto; padding-top: 8px;
+  border-top: 1px dashed rgba(168, 132, 60, 0.22);
+  font-size: 11.5px; line-height: 1.65; color: var(--text-faint);
+}
+.arch-gate__back b { margin-right: 4px; font-weight: 650; color: #a45757; }
+.arch-qc__escalate {
+  margin: 12px 0 0; padding: 10px 0 10px 14px;
+  border-left: 2px solid rgba(164, 87, 87, 0.3);
+  font-size: 12.5px; line-height: 1.8; color: var(--text-faint);
+}
+
+/* 可运维性 */
+.arch-ops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.arch-op {
+  padding: 14px 15px;
+  border: 1px solid var(--border); border-radius: 12px;
+  background: #fff; box-shadow: 0 1px 2px rgba(15, 34, 67, 0.03);
+}
+.arch-op__head { display: flex; align-items: baseline; gap: 8px; }
+.arch-op__index { font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; color: var(--cyan); }
+.arch-op__title { font-size: 13px; font-weight: 650; color: var(--ink); }
+.arch-op p { margin: 5px 0 0; font-size: 12px; line-height: 1.72; color: var(--text-dim); }
+
+/* 扩展点 */
+.arch-extend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.arch-extend__item {
+  padding: 15px 16px;
+  border: 1px solid var(--border); border-left: 3px solid var(--extend-accent, var(--cyan));
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fff, var(--extend-bg, #fbfdfe));
+  box-shadow: 0 1px 2px rgba(15, 34, 67, 0.03);
+}
+.arch-extend__item--cyan { --extend-accent: #3f7f96; --extend-bg: #f8fcfd; }
+.arch-extend__item--amber { --extend-accent: #a8843c; --extend-bg: #fffdf8; }
+.arch-extend__item--violet { --extend-accent: #7059b0; --extend-bg: #fbf9fe; }
+.arch-extend__tag { font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; color: var(--extend-accent); }
+.arch-extend__title { margin-top: 4px; font-size: 13px; font-weight: 650; color: var(--ink); }
+.arch-extend__item p { margin: 4px 0 0; font-size: 12px; line-height: 1.72; color: var(--text-dim); }
+
+.arch-step.reveal, .arch-gate.reveal, .arch-op.reveal, .arch-extend__item.reveal {
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    translate 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  transition-delay: var(--reveal-delay, 0ms), var(--reveal-delay, 0ms), 0s, 0s, 0s;
+}
+
+@media (max-width: 1060px) {
+  .arch-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .arch-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .arch-gates, .arch-ops, .arch-extend { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .arch-sec { margin-top: 36px; scroll-margin-top: 76px; }
+  .arch-sec__title { font-size: 17.5px; }
+  .arch-steps { grid-template-columns: 1fr; }
+  .arch-table th, .arch-table td { padding: 10px 12px; }
+  .arch-table__hint { display: block; margin-top: 6px; font-size: 11.5px; color: var(--text-faint); text-align: center; }
+  .arch-toc { gap: 6px; }
+  .arch-toc a { padding: 5px 11px; font-size: 11.5px; }
+}
+
 /* 技术底座入口：嵌在 Studio 卡描述下方，随文字列收窄，不再单独占一行 */
 .arch-teaser {
   display: flex; align-items: flex-end; justify-content: space-between; gap: 10px 18px; flex-wrap: wrap;

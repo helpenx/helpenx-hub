@@ -65,12 +65,33 @@
         node.addEventListener("focus", function () { paint(node.getAttribute("data-node")); });
         node.addEventListener("blur", clear);
       });
+
+      /* 生命周期步骤：点一下回到架构板，高亮对应组件片刻 */
+      var steps = [].slice.call(document.querySelectorAll(".arch-step[data-focus]"));
+      var stepTimer = null;
+      steps.forEach(function (step) {
+        step.addEventListener("click", function () {
+          var id = step.getAttribute("data-focus");
+          if (!links[id]) return;
+          board.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+          paint(id);
+          steps.forEach(function (s) { s.classList.remove("is-active"); });
+          step.classList.add("is-active");
+          if (stepTimer) window.clearTimeout(stepTimer);
+          stepTimer = window.setTimeout(function () {
+            step.classList.remove("is-active");
+            clear();
+          }, 2600);
+        });
+      });
     }
   }
 
   /* 滚动揭示：标题、架构板、每一层与说明逐段入场 */
   var revealNodes = [].slice.call(document.querySelectorAll(
-    ".arch-page__back, .arch__head > *, .arch-board, .arch-layer, .arch-notes > li, .arch-page__actions"
+    ".arch-page__back, .arch__head > *, .arch-toc, .arch-board, .arch-layer, " +
+    ".arch-sec__head > *, .arch-step, .arch-gate, .arch-op, .arch-extend__item, .arch-table-wrap, " +
+    ".arch-notes > li, .arch-page__actions"
   ));
   if (reduce || !("IntersectionObserver" in window)) {
     revealNodes.forEach(function (node) { node.classList.add("reveal", "is-visible"); });

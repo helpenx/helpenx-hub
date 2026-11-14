@@ -76,6 +76,15 @@
       <p class="arch__lead">创作者只接触 API 网关，业务服务完成鉴权、资产与计费；NeoFlow 拆 DAG、管调度，任务由 NeoTask 拉取执行，驱动六环推进。PenFix 挂在视频、音频与初剪之后做三道质检，不合格按根因回退；六环之间只交换 JSON，不互相调用。</p>
     </div>
 
+    <nav class="arch-toc" aria-label="架构页目录">
+      <a href="#lifecycle">请求生命周期</a>
+      <a href="#contracts">数据契约</a>
+      <a href="#qc">质检与回退</a>
+      <a href="#ops">可运维性</a>
+      <a href="#extend">扩展点</a>
+      <a href="#invariants">四条不变量</a>
+    </nav>
+
     <div class="arch-board" role="group" aria-label="轻天璇 Studio 四层系统架构">
       <div class="arch-layer arch-layer--access">
         <div class="arch-layer__rail">
@@ -235,12 +244,224 @@
       </div>
     </div>
 
-    <ul class="arch-notes">
-      <li><span class="arch-notes__dot arch-notes__dot--control" aria-hidden="true"></span><strong>控制面不跑推理</strong><span>NeoFlow 把整集请求拆成 DAG，任务进 NeoTask 任务池；NeoTask 管优先级与重试，六环只订阅状态。</span></li>
-      <li><span class="arch-notes__dot arch-notes__dot--state" aria-hidden="true"></span><strong>状态与记忆分离</strong><span>Redis 存热状态、队列与事件；向量库存世界观与长文本记忆，供 PenPlot、PenShot 检索。</span></li>
-      <li><span class="arch-notes__dot arch-notes__dot--data" aria-hidden="true"></span><strong>数据面只传契约</strong><span>剧本与分镜先自检自修、必要时人工修正，再交给下游；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成。</span></li>
-      <li><span class="arch-notes__dot arch-notes__dot--model" aria-hidden="true"></span><strong>模型统一出网</strong><span>AI Gateway 收敛鉴权、计费、限流与路由；调用失败由 NeoFlow 换模型重试。</span></li>
-    </ul>
+    <section class="arch-sec" id="lifecycle" aria-labelledby="lifecycle-title">
+      <div class="arch-sec__head">
+        <span class="arch-sec__eyebrow">LIFECYCLE</span>
+        <h2 class="arch-sec__title" id="lifecycle-title">一次整集请求，如何穿过四层</h2>
+        <p class="arch-sec__note">点任一环节，会回到上方架构板并高亮对应组件。这里只描述职责边界，具体技术实现可替换。</p>
+      </div>
+      <ol class="arch-steps">
+        <li><button class="arch-step" type="button" data-focus="gateway">
+          <span class="arch-step__num">01</span>
+          <span class="arch-step__title">提交整集请求</span>
+          <span class="arch-step__desc">创作者在 Studio 提交剧本、集数与人设设定；API 网关按租户与项目路由，并做负载均衡。</span>
+          <span class="arch-step__layer">LAYER 01 · API 网关</span>
+        </button></li>
+        <li><button class="arch-step" type="button" data-focus="biz">
+          <span class="arch-step__num">02</span>
+          <span class="arch-step__title">鉴权、资产与计费</span>
+          <span class="arch-step__desc">业务服务校验登录、素材权限与算力配额，把请求写成一条可追踪的任务记录。</span>
+          <span class="arch-step__layer">LAYER 01 · 业务服务</span>
+        </button></li>
+        <li><button class="arch-step" type="button" data-focus="flow">
+          <span class="arch-step__num">03</span>
+          <span class="arch-step__title">拆成场景 / 镜头 DAG</span>
+          <span class="arch-step__desc">NeoFlow 按剧本结构拆 DAG，标出可并行的镜头，按依赖关系推进状态机。</span>
+          <span class="arch-step__layer">LAYER 02 · NeoFlow</span>
+        </button></li>
+        <li><button class="arch-step" type="button" data-focus="core">
+          <span class="arch-step__num">04</span>
+          <span class="arch-step__title">任务入池并被拉取</span>
+          <span class="arch-step__desc">NeoTask 管优先级、延迟与重试；六环作为 Worker 主动拉取任务，控制面只订阅事件。</span>
+          <span class="arch-step__layer">LAYER 02 · NeoTask</span>
+        </button></li>
+        <li><button class="arch-step" type="button" data-focus="shot">
+          <span class="arch-step__num">05</span>
+          <span class="arch-step__title">六环执行、统一出网</span>
+          <span class="arch-step__desc">每个环节读取上游契约、调用 AI Gateway 出网，产出写回契约交给下一环。</span>
+          <span class="arch-step__layer">LAYER 03 · 智能体执行</span>
+        </button></li>
+        <li><button class="arch-step" type="button" data-focus="fix">
+          <span class="arch-step__num">06</span>
+          <span class="arch-step__title">三处质检、按根因回退</span>
+          <span class="arch-step__desc">PenFix 在 Gen / Dub / Clip 之后判定，不合格时回到真正能修问题的那一环。</span>
+          <span class="arch-step__layer">LAYER 03 · PenFix</span>
+        </button></li>
+        <li><button class="arch-step" type="button" data-focus="clip">
+          <span class="arch-step__num">07</span>
+          <span class="arch-step__title">交付、归档与复用</span>
+          <span class="arch-step__desc">终审通过后输出成片与时间线；资产、指标与事件留档，下一集直接复用。</span>
+          <span class="arch-step__layer">LAYER 03 · 交付</span>
+        </button></li>
+      </ol>
+    </section>
+
+    <section class="arch-sec" id="contracts" aria-labelledby="contracts-title">
+      <div class="arch-sec__head">
+        <span class="arch-sec__eyebrow">DATA CONTRACTS</span>
+        <h2 class="arch-sec__title" id="contracts-title">六环之间只交换契约，不互相调用</h2>
+        <p class="arch-sec__note">契约是唯一的耦合点：上游只承诺字段结构，不暴露内部实现。落地时用 JSON Schema 固化版本，字段演进走兼容升级，重跑与回退都从契约快照恢复。</p>
+      </div>
+      <div class="arch-table-wrap" role="region" aria-label="六环数据契约表" tabindex="0">
+        <table class="arch-table">
+          <thead>
+            <tr>
+              <th scope="col">环节</th>
+              <th scope="col">输入</th>
+              <th scope="col">输出</th>
+              <th scope="col">契约要点</th>
+              <th scope="col">自检 / 人审</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">PenPlot</th>
+              <td>创意简述 · 人设 / 世界观</td>
+              <td><span class="arch-type">SCRIPT · JSON</span></td>
+              <td>故事线、幕结构、角色与场景清单、情绪走向</td>
+              <td>结构模板自检；创作取舍人审</td>
+            </tr>
+            <tr>
+              <th scope="row">PenShot</th>
+              <td><span class="arch-type">SCRIPT · JSON</span></td>
+              <td><span class="arch-type">FRAGMENT · JSON</span></td>
+              <td>镜头号、画面描述、运镜、台词、时长</td>
+              <td>一致性自检；模糊镜头人审</td>
+            </tr>
+            <tr>
+              <th scope="row">PenGen</th>
+              <td><span class="arch-type">FRAGMENT · JSON</span></td>
+              <td><span class="arch-type">MEDIA · MP4</span></td>
+              <td>shot 编号、模型、分辨率、帧率、时长</td>
+              <td>画面一致性 + 技术指标自检</td>
+            </tr>
+            <tr>
+              <th scope="row">PenDub</th>
+              <td>台词 + 音色 / BGM 参数</td>
+              <td><span class="arch-type">MEDIA · WAV</span></td>
+              <td>shot 编号、音色、音效、BGM、音画对齐</td>
+              <td>音画同步 + 音频指标自检</td>
+            </tr>
+            <tr>
+              <th scope="row">PenClip</th>
+              <td><span class="arch-type">MEDIA · MP4 / WAV</span></td>
+              <td><span class="arch-type">TIMELINE · JSON</span></td>
+              <td>轨道、镜头顺序、转场、时长、混音</td>
+              <td>节奏与时长检查；终审人审</td>
+            </tr>
+            <tr>
+              <th scope="row">PenFix</th>
+              <td>任一环节产物</td>
+              <td><span class="arch-type arch-type--pass">PASS / FAIL + 根因</span></td>
+              <td>门位、指标、根因、建议回退点</td>
+              <td>判定写回事件；回退由 NeoFlow 执行</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="arch-table__hint">← 左右滑动查看完整契约 →</p>
+    </section>
+
+    <section class="arch-sec" id="qc" aria-labelledby="qc-title">
+      <div class="arch-sec__head">
+        <span class="arch-sec__eyebrow">QC &amp; ROLLBACK</span>
+        <h2 class="arch-sec__title" id="qc-title">三道质检门，按根因回退</h2>
+        <p class="arch-sec__note">质检挂在 Gen、Dub 与 Clip 之后。回退点由根因决定：改提示词能解决的，不重剪；重剪能解决的，不重生成。</p>
+      </div>
+      <div class="arch-gates">
+        <article class="arch-gate">
+          <span class="arch-gate__tag">GATE 01 · 画面门</span>
+          <h3 class="arch-gate__title">PenGen 之后</h3>
+          <p class="arch-gate__desc">逐 shot 检查画面一致性、人物与场景连续性，以及分辨率、帧率等技术指标。</p>
+          <p class="arch-gate__back"><b>不通过</b>回 PenShot 改分镜与提示词，重生成对应 shot。</p>
+        </article>
+        <article class="arch-gate">
+          <span class="arch-gate__tag">GATE 02 · 音画门</span>
+          <h3 class="arch-gate__title">PenDub 之后</h3>
+          <p class="arch-gate__desc">检查音画同步、音量与音频指标，确认每句台词落在该落的镜头上。</p>
+          <p class="arch-gate__back"><b>不通过</b>回 PenShot 调整台词与节奏，重配对应片段。</p>
+        </article>
+        <article class="arch-gate">
+          <span class="arch-gate__tag">GATE 03 · 成片门</span>
+          <h3 class="arch-gate__title">PenClip 之后</h3>
+          <p class="arch-gate__desc">检查叙事节奏、转场、时长与内容合规，给出初剪终审结论。</p>
+          <p class="arch-gate__back"><b>不通过</b>剪辑 / 混音问题回 PenClip 重剪；素材缺陷按镜头回 Gen / Dub。</p>
+        </article>
+      </div>
+      <p class="arch-qc__escalate">升级策略：同一问题重试两次仍不过，升级为按镜头重生成；重生成仍不过则转人工介入，判定记录与上下文一并保留，避免下一轮从零排查。</p>
+    </section>
+
+    <section class="arch-sec" id="ops" aria-labelledby="ops-title">
+      <div class="arch-sec__head">
+        <span class="arch-sec__eyebrow">OPERABILITY</span>
+        <h2 class="arch-sec__title" id="ops-title">长任务链路的可运维性</h2>
+        <p class="arch-sec__note">整集生成动辄数十个任务，最怕跑到一半全部丢失。状态、重试、配额与人审断点都要在架构里预留位置。</p>
+      </div>
+      <div class="arch-ops">
+        <article class="arch-op">
+          <div class="arch-op__head"><span class="arch-op__index">01</span><h3 class="arch-op__title">断点续跑</h3></div>
+          <p>DAG 状态与产物快照落 Redis，任务中断后从最近完成的节点继续，不必整集重跑。</p>
+        </article>
+        <article class="arch-op">
+          <div class="arch-op__head"><span class="arch-op__index">02</span><h3 class="arch-op__title">失败重试</h3></div>
+          <p>单节点按退避重试；模型超时或限流由 NeoFlow 换模型重跑，不把错误直接抛给上游。</p>
+        </article>
+        <article class="arch-op">
+          <div class="arch-op__head"><span class="arch-op__index">03</span><h3 class="arch-op__title">优先级与配额</h3></div>
+          <p>NeoTask 任务池支持优先级插队与租户配额，交互式请求不被批量长任务挤占。</p>
+        </article>
+        <article class="arch-op">
+          <div class="arch-op__head"><span class="arch-op__index">04</span><h3 class="arch-op__title">人工在环</h3></div>
+          <p>剧本、分镜与终审保留人工改写断点，人工结论回写契约，下游按新契约继续。</p>
+        </article>
+        <article class="arch-op">
+          <div class="arch-op__head"><span class="arch-op__index">05</span><h3 class="arch-op__title">资产复用</h3></div>
+          <p>角色、场景、道具与模型沉淀为资产库，跨镜头、跨集引用，减少重复生成与风格漂移。</p>
+        </article>
+        <article class="arch-op">
+          <div class="arch-op__head"><span class="arch-op__index">06</span><h3 class="arch-op__title">指标与留痕</h3></div>
+          <p>任务事件、进度与失败原因统一上报，形成可用率、耗时与单集成本指标。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="arch-sec" id="extend" aria-labelledby="extend-title">
+      <div class="arch-sec__head">
+        <span class="arch-sec__eyebrow">EXTENSIBILITY</span>
+        <h2 class="arch-sec__title" id="extend-title">变化收敛在三个位置</h2>
+        <p class="arch-sec__note">分层与总线把变化关进少数接口里：新增能力不需要改上下游，也不需要重写调度。</p>
+      </div>
+      <div class="arch-extend">
+        <article class="arch-extend__item arch-extend__item--cyan">
+          <span class="arch-extend__tag">扩展点 · 新环节</span>
+          <h3 class="arch-extend__title">按契约实现 Worker</h3>
+          <p>注册进 DAG 就能插到任意位置；上下游只认 JSON 契约，不感知环节内部实现。</p>
+        </article>
+        <article class="arch-extend__item arch-extend__item--amber">
+          <span class="arch-extend__tag">扩展点 · 新模型</span>
+          <h3 class="arch-extend__title">在网关注册供应商</h3>
+          <p>路由、限流与降级顺序统一配置，节点代码不动；换模型不改业务逻辑。</p>
+        </article>
+        <article class="arch-extend__item arch-extend__item--violet">
+          <span class="arch-extend__tag">扩展点 · 新租户 / 计费</span>
+          <h3 class="arch-extend__title">业务层隔离，调度层共用</h3>
+          <p>资产与配额按租户隔离，限流与计量放在网关；任务池与执行层保持共享。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="arch-sec arch-sec--notes" id="invariants" aria-labelledby="invariants-title">
+      <div class="arch-sec__head">
+        <span class="arch-sec__eyebrow">INVARIANTS</span>
+        <h2 class="arch-sec__title" id="invariants-title">四条不变量：实现可换，边界不换</h2>
+      </div>
+      <ul class="arch-notes">
+        <li><span class="arch-notes__dot arch-notes__dot--control" aria-hidden="true"></span><strong>控制面不跑推理</strong><span>NeoFlow 把整集请求拆成 DAG，任务进 NeoTask 任务池；NeoTask 管优先级与重试，六环只订阅状态。</span></li>
+        <li><span class="arch-notes__dot arch-notes__dot--state" aria-hidden="true"></span><strong>状态与记忆分离</strong><span>Redis 存热状态、队列与事件；向量库存世界观与长文本记忆，供 PenPlot、PenShot 检索。</span></li>
+        <li><span class="arch-notes__dot arch-notes__dot--data" aria-hidden="true"></span><strong>数据面只传契约</strong><span>剧本与分镜先自检自修、必要时人工修正，再交给下游；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成。</span></li>
+        <li><span class="arch-notes__dot arch-notes__dot--model" aria-hidden="true"></span><strong>模型统一出网</strong><span>AI Gateway 收敛鉴权、计费、限流与路由；调用失败由 NeoFlow 换模型重试。</span></li>
+      </ul>
+    </section>
   </section>
 
   <div class="arch-page__actions">

@@ -24,7 +24,7 @@ const host = new URL(url).host;
 const domain = host.split(".").slice(-2).join(".");
 
 // meta keywords：门户词 + 各服务名，再按服务轮流取各自的关键词（避免词表偏向第一个服务），去重后截断
-const KW_LIMIT = 24;
+const KW_LIMIT = 30;
 const keywords = [];
 function addKeyword(list) {
   list.forEach((k) => {
@@ -117,18 +117,22 @@ const graph = {
       "alternateName": brand.alias || brand.name,
       "url": url,
       "description": desc,
+      "keywords": metaKeywords,
       "inLanguage": seo.language || "zh-CN"
     },
     {
       "@type": "Organization",
       "@id": url + "#org",
       "name": brand.name,
+      "alternateName": brand.fullName || brand.alias || brand.name,
+      "slogan": brand.motto || "",
+      "description": brand.tagline || "",
       "url": url,
       "sameAs": brand.github ? [brand.github] : []
     },
     {
       "@type": "ItemList",
-      "name": (brand.fullName || "HelpEnx") + " 服务清单",
+      "name": (brand.fullName || "HelpEnx") + " · 北斗阵列服务清单",
       "numberOfItems": sites.length,
       "itemListElement": availableSites.map((s, i) => entity(s, i + 1))
     }
@@ -148,20 +152,6 @@ const eol = "\n";
   if (a === -1 || b === -1) throw new Error("缺少 SEO 标记");
   const commentEnd = html.indexOf("\n", a);
   html = html.slice(0, commentEnd + 1) + head.join(eol) + eol + html.slice(b);
-})();
-
-// 页脚服务链接（静态渲染，爬虫无需执行 JS 也能发现全部子站）
-(function () {
-  const START = "<!-- FOOTNAV:START", END = "<!-- FOOTNAV:END -->";
-  const a = html.indexOf(START), b = html.indexOf(END);
-  if (a === -1 || b === -1) throw new Error("缺少 FOOTNAV 标记");
-  const links = availableSites.map((s) =>
-    '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a>");
-  if (brand.github) {
-    links.push('<a href="' + esc(brand.github) + '" target="_blank" rel="noopener me">GitHub</a>');
-  }
-  const commentEnd = html.indexOf("\n", a);
-  html = html.slice(0, commentEnd + 1) + "  " + links.join(eol + "  ") + eol + "    " + html.slice(b);
 })();
 
 // 首页主行动按钮：由 brand.cta 独立维护（外链新开标签，站内锚点原地跳转）
@@ -307,6 +297,57 @@ const hubStar = stars.filter((s) => s.isHub)[0] || stars[0] || {};
 if (!hubStar.id) throw new Error("constellation 缺少 isHub 主星");
 const starCount = (s) => (s.isHub ? sites.length : (s.projects || []).length);
 
+// 微观七星轨：主星可挂 track，环节必须指向本星已有的服务，且不得重复
+const stageSiteIds = {};
+stars.forEach((star) => {
+  const track = star.track;
+  if (!track) return;
+  const stages = track.stages || [];
+  if (!stages.length) throw new Error("track 缺少 stages：" + star.id);
+  const seen = {};
+  stages.forEach((stage) => {
+    if (!stage.id || seen[stage.id]) throw new Error("track 环节 id 缺失或重复：" + star.id + " / " + stage.id);
+    seen[stage.id] = true;
+    if (!stage.char) throw new Error("track 环节缺少 char：" + stage.id);
+    if (!siteById[stage.site]) throw new Error("track 引用了不存在的服务：" + stage.site);
+    if (stageSiteIds[stage.site]) throw new Error("track 环节重复引用服务：" + stage.site);
+    stageSiteIds[stage.site] = star.id;
+    if ((star.projects || []).indexOf(stage.site) === -1) {
+      throw new Error("track 环节的服务不属于 " + star.id + "：" + stage.site);
+    }
+  });
+});
+const trackedStars = stars.filter((s) => s.track && (s.track.stages || []).length);
+
+// 页脚按七星阵列收敛：每颗主星只留一条代表入口，完整清单仍在阵列面板与页面内
+(function () {
+  const START = "<!-- FOOTNAV:START", END = "<!-- FOOTNAV:END -->";
+  const a = html.indexOf(START), b = html.indexOf(END);
+  if (a === -1 || b === -1) throw new Error("缺少 FOOTNAV 标记");
+
+  function footStarOf(star) {
+    const accent = ' style="--accent:' + esc(star.accent || "#4f6ae0") + '"';
+    if (star.isHub) {
+      return '<a class="footstar" href="#constellation"' + accent + ">" +
+        '<span class="footstar__name">' + esc(star.name) + "</span>" +
+        '<span class="footstar__line">' + esc(star.short || "总枢纽") + "</span>" +
+        '<span class="footstar__site">回到北斗阵列</span></a>';
+    }
+    const site = (star.projects || []).map((id) => siteById[id])
+      .filter((item) => item && item.deployed !== false)[0];
+    if (!site) return "";
+    return '<a class="footstar" href="' + esc(site.url) + '" target="_blank" rel="noopener"' + accent + ">" +
+      '<span class="footstar__name">' + esc(star.name) + "</span>" +
+      '<span class="footstar__line">' + esc(star.short || "") + "</span>" +
+      '<span class="footstar__site">' + esc(site.name) + "</span></a>";
+  }
+
+  const pad = "    ";
+  const links = stars.map(footStarOf).filter(Boolean);
+  const commentEnd = html.indexOf("\n", a);
+  html = html.slice(0, commentEnd + 1) + links.map((line) => pad + line).join(eol) + eol + pad + html.slice(b);
+})();
+
 const heroSite = sites.filter((s) => s.size === "hero")[0];
 
 // 通栏分隔条：与 app.js dividerNode 同构，由 sites.json 的 dividerBefore 驱动
@@ -345,14 +386,16 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
 
 function starButtonOf(s) {
   const count = starCount(s);
-  return '<button class="cstar' + (s.isHub ? " cstar--hub" : "") +
+  const hasTrack = !!(s.track && (s.track.stages || []).length);
+  return '<button class="cstar' + (s.isHub ? " cstar--hub" : "") + (hasTrack ? " cstar--track" : "") +
     " cstar--label-" + esc(s.label || "bottom") + '" type="button" data-star="' + esc(s.id) +
     '" aria-pressed="' + (s.isHub ? "true" : "false") + '"' +
-    ' aria-label="' + esc(s.title + "，" + count + " 项服务，点击筛选") + '"' +
+    ' aria-label="' + esc(s.title + "，" + count + " 项服务，" + (hasTrack ? "点击展开七星轨" : "点击筛选")) + '"' +
     ' style="--accent:' + esc(s.accent || "#4f6ae0") + ";--x:" + s.x + "%;--y:" + s.y + '%">' +
     '<span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span>' +
     '<span class="cstar__label"><span class="cstar__name">' + esc(s.name) + "</span>" +
       '<span class="cstar__short">' + esc(s.short || "") + "</span>" +
+      (hasTrack ? '<span class="cstar__track">轨</span>' : "") +
       '<span class="cstar__count">' + count + "</span></span>" +
     "</button>";
 }
@@ -395,6 +438,77 @@ function starGroupOf(s) {
   "</div>";
 }
 
+// 环节坐标以百分比书写，与主星画布共用 1000 × 340 的视口
+function railPathOf(stages) {
+  const pts = stages.map((s) => ({ x: +(s.x * 10).toFixed(1), y: +(s.y * 3.4).toFixed(1) }));
+  if (pts.length < 2) return "";
+  let d = "M" + pts[0].x + " " + pts[0].y;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] || p2;
+    d += "C" + (p1.x + (p2.x - p0.x) / 6).toFixed(1) + " " + (p1.y + (p2.y - p0.y) / 6).toFixed(1) +
+      " " + (p2.x - (p3.x - p1.x) / 6).toFixed(1) + " " + (p2.y - (p3.y - p1.y) / 6).toFixed(1) +
+      " " + p2.x + " " + p2.y;
+  }
+  return d;
+}
+
+function trackNodeOf(star, stage) {
+  const site = siteById[stage.site];
+  const label = stage.label || site.cn || site.name;
+  return '<button class="ctrack" type="button" data-stage="' + esc(stage.id) +
+    '" data-site="' + esc(site.id) + '" data-star="' + esc(star.id) + '" aria-pressed="false"' +
+    ' aria-label="' + esc("筛选 " + site.name + "，定位到卡片") + '"' +
+    ' style="--accent:' + esc(stage.accent || star.accent || "#4f6ae0") + ";--x:" + stage.x + "%;--y:" + stage.y + '%">' +
+    '<span class="ctrack__node" aria-hidden="true"><span class="ctrack__char">' + esc(stage.char) + "</span></span>" +
+    '<span class="ctrack__label"><span class="ctrack__name">' + esc(stage.char + " · " + label) + "</span>" +
+      '<span class="ctrack__site">' + esc(site.name) + "</span></span>" +
+  "</button>";
+}
+
+function trackBoardOf(star) {
+  const track = star.track || {};
+  const stages = track.stages || [];
+  const rail = railPathOf(stages);
+  const out = [];
+  out.push('<div class="constellation__board constellation__board--track" data-constellation-track="' +
+    esc(star.id) + '" role="group" aria-label="' +
+    esc((track.title || star.title) + "：点环节筛选并定位工具") + '" hidden>');
+  out.push('  <button class="ctrack__back" type="button" data-constellation-back>← 北斗阵列</button>');
+  out.push('  <span class="ctrack__level" aria-hidden="true">' + esc(track.eyebrow || star.title) + "</span>");
+  out.push('  <svg class="constellation__edges constellation__edges--track" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
+  out.push('    <path class="ctrack-rail" d="' + rail + '"></path>');
+  out.push('    <path class="ctrack-flow" d="' + rail + '"></path>');
+  out.push("  </svg>");
+  stages.forEach((stage) => out.push("  " + trackNodeOf(star, stage)));
+  out.push('  <span class="constellation__axis" aria-hidden="true">' +
+    esc(star.name + " · " + (track.charLine || "七 星 轨")) + "</span>");
+  out.push('  <span class="constellation__meta" aria-hidden="true">' + stages.length + " 环节 · 点按定位</span>");
+  out.push("</div>");
+  return out;
+}
+
+function trackPanelOf(star) {
+  const track = star.track || {};
+  const stages = track.stages || [];
+  const out = [];
+  out.push('<div class="constellation__track" data-constellation-track-panel="' + esc(star.id) + '" hidden>');
+  stages.forEach((stage) => {
+    const site = siteById[stage.site];
+    out.push('  <button class="ctrack-chip" type="button" data-stage="' + esc(stage.id) +
+      '" data-star="' + esc(star.id) + '" aria-pressed="false" style="--accent:' +
+      esc(stage.accent || star.accent || "#4f6ae0") + '">' +
+      '<span class="ctrack-chip__char" aria-hidden="true">' + esc(stage.char) + "</span>" +
+      '<span class="ctrack-chip__name">' + esc(stage.char + " · " + (stage.label || site.cn || site.name)) + "</span>" +
+      '<span class="ctrack-chip__site">' + esc(site.name) + "</span>" +
+    "</button>");
+  });
+  out.push("</div>");
+  return out;
+}
+
 (function () {
   const START = "<!-- CONSTELLATION:START", END = "<!-- CONSTELLATION:END -->";
   const a = html.indexOf(START), b = html.indexOf(END);
@@ -421,20 +535,25 @@ function starGroupOf(s) {
   }
   lines.push(p + "</div>");
 
-  lines.push(p + '<div class="constellation__board" data-constellation-board role="group" aria-label="北斗阵列：点主星筛选服务线，点辅星直达项目">');
-  lines.push(p + '  <svg class="constellation__edges" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
-  (constellation.links || []).forEach((pair) => lines.push(p + "    " + starLinkOf(pair)));
-  lines.push(p + "  </svg>");
-  lines.push(p + '  <div class="constellation__aux" data-constellation-aux></div>');
-  stars.forEach((s) => lines.push(p + "  " + starButtonOf(s)));
-  lines.push(p + '  <span class="constellation__axis" aria-hidden="true">北斗 · BIG DIPPER</span>');
-  lines.push(p + '  <span class="constellation__meta" aria-hidden="true">' + sites.length + " 服务 · " +
+  lines.push(p + '<div class="constellation__flip" data-constellation-flip data-mode="macro">');
+  lines.push(p + '  <div class="constellation__board" data-constellation-board role="group" aria-label="北斗阵列：点主星筛选服务线，点辅星直达项目">');
+  lines.push(p + '    <svg class="constellation__edges" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
+  (constellation.links || []).forEach((pair) => lines.push(p + "      " + starLinkOf(pair)));
+  lines.push(p + "    </svg>");
+  lines.push(p + '    <div class="constellation__aux" data-constellation-aux></div>');
+  stars.forEach((s) => lines.push(p + "    " + starButtonOf(s)));
+  lines.push(p + '    <span class="constellation__axis" aria-hidden="true">北斗 · BIG DIPPER</span>');
+  lines.push(p + '    <span class="constellation__meta" aria-hidden="true">' + sites.length + " 服务 · " +
     stars.length + " 主星 · 点按筛选</span>");
+  lines.push(p + "  </div>");
+  trackedStars.forEach((star) => {
+    trackBoardOf(star).forEach((line) => lines.push(p + "  " + line));
+  });
   lines.push(p + "</div>");
 
   lines.push(p + '<div class="constellation__panel">');
   lines.push(p + '  <div class="constellation__current">');
-  lines.push(p + '    <span class="constellation__current-eyebrow">CURRENT · 当前星位</span>');
+  lines.push(p + '    <span class="constellation__current-eyebrow" data-constellation-eyebrow>CURRENT · 当前星位</span>');
   lines.push(p + '    <div class="constellation__current-row">');
   lines.push(p + '      <h3 class="constellation__current-title" data-constellation-title>' +
     esc(hubStar.title || "") + "</h3>");
@@ -445,8 +564,13 @@ function starGroupOf(s) {
     esc(hubStar.desc || "") + "</p>");
   lines.push(p + '    <button class="constellation__reset" type="button" data-constellation-reset hidden>← 回到总枢纽</button>');
   lines.push(p + "  </div>");
-  lines.push(p + '  <div class="constellation__groups" data-constellation-groups>');
-  stars.filter((s) => !s.isHub).forEach((s) => lines.push(p + "    " + starGroupOf(s)));
+  lines.push(p + '  <div class="constellation__body">');
+  lines.push(p + '    <div class="constellation__groups" data-constellation-groups>');
+  stars.filter((s) => !s.isHub).forEach((s) => lines.push(p + "      " + starGroupOf(s)));
+  lines.push(p + "    </div>");
+  trackedStars.forEach((star) => {
+    trackPanelOf(star).forEach((line) => lines.push(p + "    " + line));
+  });
   lines.push(p + "  </div>");
   lines.push(p + "</div>");
 
@@ -717,6 +841,6 @@ if (JSON.stringify(embedded) !== JSON.stringify(cfg)) throw new Error("内嵌数
 
 console.log("head meta：", head.length - 1, "行 + 1 段 JSON-LD（", graph["@graph"].length, "个实体，", availableSites.length, "个服务条目 ）");
 console.log("meta keywords：", keywords.length, "个候选，写入", Math.min(keywords.length, KW_LIMIT), "个");
-console.log("页脚静态链接：", availableSites.length + (brand.github ? 1 : 0), "条");
+console.log("页脚七星入口：", stars.length, "条");
 console.log("sitemap.xml：", sameOrigin.length + 1, "条同域 URL；跳过未部署与非同域", sites.length - sameOrigin.length, "条");
 console.log("内嵌数据与 sites.json 一致：true");

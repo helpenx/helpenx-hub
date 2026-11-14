@@ -13,9 +13,9 @@
     }
   },
   "seo": {
-    "title": "HelpEnx Hub · 星阵工坊 | AIGC 创意、开源与数字生态枢纽",
-    "description": "HelpEnx Hub 星阵工坊：聚七星之阵，筑数字工坊。北斗阵列汇聚轻天璇(AIGC Studio)、轻天枢(开源引擎)、轻天权(数字工具)与轻玉衡、轻开阳、轻摇光六条产品线，18 项服务一触即达。",
-    "keywords": ["HelpEnx", "HelpEnx Hub", "星阵工坊", "数字工坊", "轻天玑", "轻天璇 Studio", "轻天枢", "轻天权", "轻玉衡", "轻开阳", "轻摇光", "北斗阵列", "七星阵列", "AIGC Studio", "AIGC 创意", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "工作流编排", "DAG 调度", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
+    "title": "HelpEnx Hub · 星阵工坊 | 北斗七星生态 · AIGC 创意与开源工具枢纽",
+    "description": "HelpEnx Hub 星阵工坊：聚七星之阵，筑数字工坊。以北斗七星为引，天玑总枢纽居中，天枢开源引擎、天璇 AIGC Studio（启绘铸韵织鉴藏七星轨）、天权数字工具、玉衡内容洞察、开阳行业演示、摇光实验共创，18 项服务一触即达。",
+    "keywords": ["HelpEnx", "HelpEnx Hub", "星阵工坊", "北斗七星", "北斗阵列", "七星阵列", "七星生态", "七主星", "天枢", "天璇", "天玑", "天权", "玉衡", "开阳", "摇光", "轻天枢", "轻天璇 Studio", "轻天玑", "轻天权", "轻玉衡", "轻开阳", "轻摇光", "七星轨", "天璇七星轨", "AIGC Studio", "AIGC 创意", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "工作流编排", "DAG 调度", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
     "url": "https://helpenx.com/",
     "image": "https://helpenx.com/assets/studio-pipeline.svg",
     "imageAlt": "轻天璇 Studio 短剧 AI 生产链路示意图",
@@ -27,7 +27,7 @@
     "eyebrow": "北斗阵列 · 七主星",
     "title": "七主星领航，18 项服务各归其位",
     "lead": "轻天玑居中调度：天璇管创意生产，天枢管开源引擎，天权管数字工具，玉衡沉淀内容，开阳承载行业演示，摇光试验新可能。",
-    "hint": "点主星筛选下方服务，点辅星直达项目；再点天玑回到全部。",
+    "hint": "点主星筛选服务，点辅星直达项目；点天璇展开七星轨，再点天玑回到全部。",
     "links": [
       ["tianshu", "tianxuan"],
       ["tianxuan", "tianji"],
@@ -64,7 +64,23 @@
         "label": "bottom",
         "auxAngle": 200,
         "auxSpread": 92,
-        "projects": ["studio", "penplot", "penshot", "pengen", "pendub", "penclip", "penfix"]
+        "projects": ["studio", "penplot", "penshot", "pengen", "pendub", "penclip", "penfix"],
+        "track": {
+          "eyebrow": "天璇 · 七星轨",
+          "title": "天璇 · 七星轨",
+          "charLine": "启 · 绘 · 铸 · 韵 · 织 · 鉴 · 藏",
+          "lead": "从一句念头到一部成片，七颗星位各守一段工序。点星位筛选并定位对应工具，再点一次回到整轨。",
+          "hint": "点环节定位工具，左上角返回北斗阵列。",
+          "stages": [
+            { "id": "qi", "char": "启", "site": "penplot", "label": "剧情创作", "accent": "#2f8a63", "x": 7, "y": 64 },
+            { "id": "hui", "char": "绘", "site": "penshot", "label": "剧本分镜", "accent": "#2f6fb0", "x": 21, "y": 46 },
+            { "id": "zhu", "char": "铸", "site": "pengen", "label": "视频生成", "accent": "#7059b0", "x": 35, "y": 34 },
+            { "id": "yun", "char": "韵", "site": "pendub", "label": "音频同步", "accent": "#c2762a", "x": 50, "y": 30 },
+            { "id": "zhi", "char": "织", "site": "penclip", "label": "视频剪辑", "accent": "#b08a1e", "x": 65, "y": 34 },
+            { "id": "jian", "char": "鉴", "site": "penfix", "label": "质量审核", "accent": "#b0524c", "x": 79, "y": 46 },
+            { "id": "cang", "char": "藏", "site": "studio", "label": "资产沉淀", "accent": "#8b98a9", "x": 93, "y": 60 }
+          ]
+        }
       },
       {
         "id": "tianji",

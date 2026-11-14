@@ -34,7 +34,7 @@
     try { return new URL(url).hostname; } catch (e) { return url; }
   }
 
-  var state = { data: null, query: "", star: "tianji" };
+  var state = { data: null, query: "", star: "tianji", stage: null };
 
   /* sites.json 优先；file:// 打开时回退到页面内嵌数据 */
   function loadData() {
@@ -220,9 +220,39 @@
       '<span class="card__star-dot" aria-hidden="true"></span>' + escapeHtml(label) + "</span>";
   }
 
+  /* 微观七星轨：天璇展开的七环节工作流 */
+  function trackedStar() {
+    var list = stars();
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].track && (list[i].track.stages || []).length) return list[i];
+    }
+    return null;
+  }
+
+  function trackStages() {
+    var star = trackedStar();
+    return star ? (star.track.stages || []) : [];
+  }
+
+  function stageById(id) {
+    var list = trackStages();
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+
+  function trackOpen() {
+    var star = trackedStar();
+    return !!star && !state.query && state.star === star.id;
+  }
+
+  function activeStage() {
+    return trackOpen() && state.stage ? stageById(state.stage) : null;
+  }
+
   /* 移动端分组手风琴，桌面保持全展开；openGroupId 只记录用户手动展开的那一组 */
   var compactMql = window.matchMedia("(max-width: 760px)");
   var openGroupId = null;
+  var flipTimer = 0;
 
   function applyGroupAccordion() {
     var compact = compactMql.matches;
@@ -254,6 +284,10 @@
       hits.sort(function (a, b) {
         return order[a.entry.site.id] - order[b.entry.site.id];
       });
+    }
+    var stage = activeStage();
+    if (stage) {
+      hits = hits.filter(function (h) { return h.entry.site.id === stage.site; });
     }
     return hits.map(function (h) { return h.entry.site; });
   }
@@ -292,7 +326,8 @@
     var query = state.query;
     var host = hostOf(site.url);
     var status = site.status || "live";
-    var isHero = site.size === "hero" && !query && isHubActive();
+    // 轻天璇 Studio 在星位筛选列表里独占一行；总枢纽时它由展示区承载，搜索时保持统一网格
+    var isHero = site.size === "hero" && !query;
     // 生命周期阶段与部署解耦：只有地址尚未部署（deployed:false）的服务不跳转，以灰底 + 阶段标签呈现
     var planned = site.deployed === false;
 
@@ -447,7 +482,9 @@
 
     var title = el("board-title");
     var star = activeStar();
+    var stage = activeStage();
     if (state.query) title.textContent = "搜索「" + state.query + "」· " + sites.length;
+    else if (stage) title.textContent = stage.char + " · " + (stage.label || "") + " · " + sites.length;
     else if (star && !star.isHub) title.textContent = star.title + " · " + sites.length;
     else title.textContent = "星图 · 全部服务 · " + sites.length;
 
@@ -460,6 +497,7 @@
     if (!star) return;
     var hub = hubId();
     state.star = (!keep && state.star === id && id !== hub) ? hub : id;
+    state.stage = null;
     if (state.query) {
       state.query = "";
       var input = el("search");
@@ -472,11 +510,33 @@
     syncConstellation();
   }
 
+  /* 七星轨环节：选中只保留该工具，再点一次回到整轨；选中后把卡片带进视野 */
+  function setStage(id) {
+    var stage = stageById(id);
+    var star = trackedStar();
+    if (!stage || !star) return;
+    state.star = star.id;
+    state.stage = state.stage === id ? null : id;
+    renderShowcase();
+    renderGrid();
+    syncConstellation();
+    if (state.stage) {
+      var card = el("grid").querySelector(".card");
+      if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
   function syncConstellation() {
     var board = document.querySelector("[data-constellation-board]");
     if (!board) return;
     var star = activeStar();
     var hub = !star || !!star.isHub;
+    var trackSrc = trackedStar();
+    var inTrack = !!trackSrc && !hub && !state.query && star.id === trackSrc.id;
+    if (!inTrack) state.stage = null;
+    var stage = inTrack && state.stage ? stageById(state.stage) : null;
+
+    board.hidden = inTrack;
 
     var buttons = [].slice.call(board.querySelectorAll(".cstar"));
     buttons.forEach(function (btn) {
@@ -501,23 +561,77 @@
     board.classList.remove("is-tracing");
     board.classList.toggle("has-filter", !hub);
 
+    // 微观七星轨：只显示当前主星的一副轨道，选中环节高亮、其余压暗
+    var tracks = [].slice.call(document.querySelectorAll("[data-constellation-track]"));
+    tracks.forEach(function (trackBoard) {
+      var own = inTrack && trackBoard.getAttribute("data-constellation-track") === trackSrc.id;
+      trackBoard.hidden = !own;
+      if (!own) return;
+      [].slice.call(trackBoard.querySelectorAll(".ctrack")).forEach(function (node) {
+        var on = !!stage && node.getAttribute("data-stage") === stage.id;
+        node.classList.toggle("is-active", on);
+        node.classList.toggle("is-dim", !!stage && !on);
+        node.setAttribute("aria-pressed", String(on));
+      });
+    });
+
+    var trackPanels = [].slice.call(document.querySelectorAll("[data-constellation-track-panel]"));
+    trackPanels.forEach(function (panel) {
+      var own = inTrack && panel.getAttribute("data-constellation-track-panel") === trackSrc.id;
+      panel.hidden = !own;
+      if (!own) return;
+      [].slice.call(panel.querySelectorAll(".ctrack-chip")).forEach(function (chip) {
+        var on = !!stage && chip.getAttribute("data-stage") === stage.id;
+        chip.classList.toggle("is-active", on);
+        chip.setAttribute("aria-pressed", String(on));
+      });
+    });
+
     var groups = [].slice.call(document.querySelectorAll("[data-constellation-groups] [data-group]"));
     groups.forEach(function (g) {
-      g.hidden = !hub && g.getAttribute("data-group") !== star.id;
+      g.hidden = inTrack || (!hub && g.getAttribute("data-group") !== star.id);
       g.classList.remove("is-hover");
     });
 
+    var eyebrow = document.querySelector("[data-constellation-eyebrow]");
     var title = document.querySelector("[data-constellation-title]");
     var count = document.querySelector("[data-constellation-count]");
     var desc = document.querySelector("[data-constellation-desc]");
     var reset = document.querySelector("[data-constellation-reset]");
-    if (title) title.textContent = star ? star.title : "";
-    if (count) count.textContent = (star ? starCount(star) : 0) + " 项服务";
-    if (desc) desc.textContent = star ? star.desc : "";
-    if (reset) reset.hidden = hub;
+    if (inTrack) {
+      var track = trackSrc.track || {};
+      var stageSite = stage ? siteById(stage.site) : null;
+      if (eyebrow) eyebrow.textContent = "TRACK · 当前环节";
+      if (title) title.textContent = stage ? stage.char + " · " + (stage.label || "") : (track.title || trackSrc.title);
+      if (count) count.textContent = stage ? "1 项工具" : trackStages().length + " 环节";
+      if (desc) desc.textContent = stage
+        ? (stageSite ? stageSite.description : "")
+        : (track.lead || track.hint || "");
+      if (reset) reset.hidden = true;
+    } else {
+      if (eyebrow) eyebrow.textContent = "CURRENT · 当前星位";
+      if (title) title.textContent = star ? star.title : "";
+      if (count) count.textContent = (star ? starCount(star) : 0) + " 项服务";
+      if (desc) desc.textContent = star ? star.desc : "";
+      if (reset) reset.hidden = hub;
+    }
+
+    // 棋盘原地翻转：仅在层级切换时播放一次，初始加载不触发
+    var flip = document.querySelector("[data-constellation-flip]");
+    if (flip) {
+      var mode = inTrack ? "track" : "macro";
+      if (flip.getAttribute("data-mode") !== mode) {
+        flip.setAttribute("data-mode", mode);
+        flip.classList.remove("is-turning");
+        void flip.offsetWidth;
+        flip.classList.add("is-turning");
+        window.clearTimeout(flipTimer);
+        flipTimer = window.setTimeout(function () { flip.classList.remove("is-turning"); }, 460);
+      }
+    }
 
     // 回到总枢纽时收起所有分组；筛选单星时自动展开该组
-    openGroupId = hub ? null : star.id;
+    openGroupId = inTrack || hub ? null : star.id;
     applyGroupAccordion();
   }
 
@@ -704,6 +818,7 @@
 
   function applyQuery(value) {
     state.query = String(value || "").trim();
+    state.stage = null;
     // 搜索是全局行为：带着关键词时回到总枢纽，避免星位筛选与关键词互相收窄
     if (state.query && state.star !== hubId()) {
       state.star = hubId();
@@ -718,6 +833,7 @@
   function resetAll() {
     el("search").value = "";
     state.star = hubId();
+    state.stage = null;
     applyQuery("");
     renderSuggest();
   }
@@ -794,7 +910,7 @@
     document.addEventListener("keydown", function (ev) {
       var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
       if (ev.key === "Escape" && !typing &&
-          (state.query || state.star !== hubId())) {
+          (state.query || state.stage || state.star !== hubId())) {
         resetAll();
       } else if ((ev.key === "/" || (ev.key === "k" && (ev.ctrlKey || ev.metaKey))) && !typing) {
         ev.preventDefault();
@@ -1263,6 +1379,17 @@
 
     var reset = document.querySelector("[data-constellation-reset]");
     if (reset) reset.addEventListener("click", function () { setStar(hubId()); });
+
+    // 微观七星轨：左上角返回宏观阵列，点环节筛选并定位工具
+    [].slice.call(document.querySelectorAll("[data-constellation-back]")).forEach(function (btn) {
+      btn.addEventListener("click", function () { setStar(hubId()); });
+    });
+    [].slice.call(document.querySelectorAll("[data-constellation-track] .ctrack")).forEach(function (node) {
+      node.addEventListener("click", function () { setStage(node.getAttribute("data-stage")); });
+    });
+    [].slice.call(document.querySelectorAll("[data-constellation-track-panel] .ctrack-chip")).forEach(function (chip) {
+      chip.addEventListener("click", function () { setStage(chip.getAttribute("data-stage")); });
+    });
 
     syncConstellation();
   }

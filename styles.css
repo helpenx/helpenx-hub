@@ -1373,31 +1373,28 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .arch-page__back:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 3px; }
 .arch-page__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
 
+/* 技术底座入口：嵌在 Studio 卡描述下方，随文字列收窄，不再单独占一行 */
 .arch-teaser {
-  display: flex; align-items: center; justify-content: space-between; gap: 18px 28px; flex-wrap: wrap;
-  margin: 0 0 36px; padding: 18px 24px;
-  border: 1px solid rgba(15, 34, 67, 0.09); border-radius: 16px;
-  background:
-    radial-gradient(90% 160% at 0% 0%, rgba(10, 116, 148, 0.06), transparent 60%),
-    radial-gradient(90% 160% at 100% 0%, rgba(111, 91, 184, 0.06), transparent 60%),
-    #fcfdff;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 10px 18px; flex-wrap: wrap;
+  margin-top: 2px; padding-top: 14px;
+  border-top: 1px dashed rgba(15, 34, 67, 0.14);
 }
 .arch-teaser__text { min-width: 0; }
 .arch-teaser__eyebrow { font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; color: var(--violet); }
-.arch-teaser__title { margin-top: 3px; font-size: 15px; font-weight: 650; line-height: 1.5; color: var(--ink); }
+.arch-teaser__title { margin-top: 3px; font-size: 13.5px; font-weight: 650; line-height: 1.55; color: var(--ink); }
 .arch-teaser__desc { margin-top: 2px; font-size: 12.5px; line-height: 1.75; color: var(--text-dim); }
 .arch-teaser__link {
-  flex: none; display: inline-flex; align-items: center; gap: 6px;
-  padding: 9px 16px; border-radius: 999px;
+  flex: none; display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 13px; border-radius: 999px;
   border: 1px solid rgba(10, 116, 148, 0.25); background: #fff;
-  font-size: 13px; font-weight: 600; color: var(--cyan); text-decoration: none;
+  font-size: 12px; font-weight: 600; color: var(--cyan); text-decoration: none;
+  white-space: nowrap;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
 }
 .arch-teaser__link:hover { border-color: var(--cyan); box-shadow: var(--shadow); transform: translateY(-1px); }
 .arch-teaser__link:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 @media (max-width: 680px) {
   .arch-page__back { margin-top: 16px; }
-  .arch-teaser { padding: 16px 18px; }
   .arch-teaser__link { width: 100%; justify-content: center; }
 }
 

@@ -509,6 +509,88 @@ function trackPanelOf(star) {
   return out;
 }
 
+// 面板左栏配图：总枢纽用七星定位图，七星轨用迷你轨道，填补标题下方的留白
+function artStarMap() {
+  const pts = {};
+  stars.forEach((s) => {
+    pts[s.id] = {
+      x: +(34 + ((s.x - 10) / 74) * 252).toFixed(1),
+      y: +(76 + ((s.y - 27) / 36) * 180).toFixed(1)
+    };
+  });
+  const out = ['<svg class="c-art" viewBox="0 0 320 340" role="presentation" focusable="false">'];
+  [
+    [18, 118], [56, 44], [128, 118], [178, 58], [246, 38], [298, 92],
+    [286, 196], [236, 252], [150, 296], [62, 306], [32, 212], [132, 168],
+    [212, 176], [302, 268], [96, 342]
+  ].forEach((p, i) => {
+    out.push('<circle class="c-art__speck" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (i % 3 ? 0.8 : 1.2) + '"></circle>');
+  });
+  const hub = pts[hubStar.id];
+  if (hub) {
+    [26, 46, 66].forEach((r, i) => {
+      out.push('<circle cx="' + hub.x + '" cy="' + hub.y + '" r="' + r + '" fill="none" stroke="rgba(79,106,224,' +
+        (0.2 - i * 0.05).toFixed(2) + ')" stroke-width="0.8" stroke-dasharray="3 6"></circle>');
+    });
+  }
+  (constellation.links || []).forEach((pair) => {
+    const a = pts[pair[0]], b = pts[pair[1]];
+    if (!a || !b) return;
+    out.push('<line class="c-art__link" x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '"></line>');
+  });
+  stars.forEach((s) => {
+    const pt = pts[s.id];
+    const r = s.isHub ? 5.5 : 4.2;
+    out.push('<g data-art-star="' + esc(s.id) + '"' + (s.isHub ? ' class="is-hub"' : "") + ">");
+    out.push('<circle class="c-art__ring" cx="' + pt.x + '" cy="' + pt.y + '" r="' + (r + 7) + '" stroke="' + esc(s.accent) + '"></circle>');
+    if (s.isHub) out.push('<circle class="c-art__halo" cx="' + pt.x + '" cy="' + pt.y + '" r="13" fill="' + esc(s.accent) + '"></circle>');
+    out.push('<circle class="c-art__dot" cx="' + pt.x + '" cy="' + pt.y + '" r="' + r + '" fill="' + esc(s.accent) + '"></circle>');
+    out.push('<text class="c-art__name" x="' + pt.x + '" y="' + (pt.y + 16) + '" text-anchor="middle">' + esc(s.name) + "</text>");
+    out.push('<text class="c-art__count" x="' + pt.x + '" y="' + (pt.y + 27) + '" text-anchor="middle">' + starCount(s) + " 项</text>");
+    out.push("</g>");
+  });
+  out.push('<text class="c-art__cap" x="160" y="330" text-anchor="middle">北斗 · 七主星 · ' + sites.length + " 项服务</text>");
+  out.push("</svg>");
+  return out.join("");
+}
+
+function miniRailPath(points) {
+  if (points.length < 2) return "";
+  let d = "M" + points[0].x + " " + points[0].y;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i - 1] || points[i];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const p3 = points[i + 2] || p2;
+    d += "C" + (p1.x + (p2.x - p0.x) / 6).toFixed(1) + " " + (p1.y + (p2.y - p0.y) / 6).toFixed(1) +
+      " " + (p2.x - (p3.x - p1.x) / 6).toFixed(1) + " " + (p2.y - (p3.y - p1.y) / 6).toFixed(1) +
+      " " + p2.x + " " + p2.y;
+  }
+  return d;
+}
+
+function artTrackOf(star) {
+  const track = star.track || {};
+  const stages = track.stages || [];
+  const pts = stages.map((s) => ({
+    x: +(26 + (s.x / 100) * 268).toFixed(1),
+    y: +(30 + ((s.y - 30) / 34) * 32).toFixed(1)
+  }));
+  const out = ['<svg class="c-art" viewBox="0 0 320 96" role="presentation" focusable="false">'];
+  out.push('<path class="c-art__rail" d="' + miniRailPath(pts) + '"></path>');
+  stages.forEach((s, i) => {
+    const pt = pts[i];
+    const accent = esc(s.accent || star.accent || "#4f6ae0");
+    out.push('<circle class="c-art__node" cx="' + pt.x + '" cy="' + pt.y + '" r="10" stroke="' + accent + '"></circle>');
+    out.push('<text class="c-art__char" x="' + pt.x + '" y="' + (pt.y + 3.4).toFixed(1) +
+      '" text-anchor="middle" fill="' + accent + '">' + esc(s.char) + "</text>");
+  });
+  out.push('<text class="c-art__cap" x="160" y="91" text-anchor="middle">' +
+    esc(track.charLine || "启 · 绘 · 铸 · 韵 · 织 · 鉴 · 藏") + "</text>");
+  out.push("</svg>");
+  return out.join("");
+}
+
 (function () {
   const START = "<!-- CONSTELLATION:START", END = "<!-- CONSTELLATION:END -->";
   const a = html.indexOf(START), b = html.indexOf(END);
@@ -563,6 +645,14 @@ function trackPanelOf(star) {
   lines.push(p + '    <p class="constellation__current-desc" data-constellation-desc>' +
     esc(hubStar.desc || "") + "</p>");
   lines.push(p + '    <button class="constellation__reset" type="button" data-constellation-reset hidden>← 回到总枢纽</button>');
+  lines.push(p + '    <div class="constellation__art" data-constellation-art="macro" aria-hidden="true">');
+  lines.push(p + '      <div class="constellation__art-frame">' + artStarMap() + "</div>");
+  lines.push(p + "    </div>");
+  trackedStars.forEach((star) => {
+    lines.push(p + '    <div class="constellation__art" data-constellation-track-art="' + esc(star.id) + '" aria-hidden="true" hidden>');
+    lines.push(p + '      <div class="constellation__art-frame">' + artTrackOf(star) + "</div>");
+    lines.push(p + "    </div>");
+  });
   lines.push(p + "  </div>");
   lines.push(p + '  <div class="constellation__body">');
   lines.push(p + '    <div class="constellation__groups" data-constellation-groups>');
@@ -824,6 +914,11 @@ write("sitemap.xml", [
   "    <changefreq>weekly</changefreq>",
   "    <priority>1.0</priority>",
   "  </url>",
+  "  <url>",
+  "    <loc>https://" + host + "/architecture.html</loc>",
+  "    <changefreq>monthly</changefreq>",
+  "    <priority>0.7</priority>",
+  "  </url>",
   sameOrigin.map((s) => [
     "  <url>",
     "    <loc>" + esc(s.url) + "/</loc>",
@@ -842,5 +937,5 @@ if (JSON.stringify(embedded) !== JSON.stringify(cfg)) throw new Error("内嵌数
 console.log("head meta：", head.length - 1, "行 + 1 段 JSON-LD（", graph["@graph"].length, "个实体，", availableSites.length, "个服务条目 ）");
 console.log("meta keywords：", keywords.length, "个候选，写入", Math.min(keywords.length, KW_LIMIT), "个");
 console.log("页脚七星入口：", stars.length, "条");
-console.log("sitemap.xml：", sameOrigin.length + 1, "条同域 URL；跳过未部署与非同域", sites.length - sameOrigin.length, "条");
+console.log("sitemap.xml：", sameOrigin.length + 2, "条同域 URL；跳过未部署与非同域", sites.length - sameOrigin.length, "条");
 console.log("内嵌数据与 sites.json 一致：true");

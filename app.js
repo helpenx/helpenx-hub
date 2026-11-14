@@ -326,14 +326,12 @@
     var query = state.query;
     var host = hostOf(site.url);
     var status = site.status || "live";
-    // 轻天璇 Studio 在星位筛选列表里独占一行；总枢纽时它由展示区承载，搜索时保持统一网格
-    var isHero = site.size === "hero" && !query;
     // 生命周期阶段与部署解耦：只有地址尚未部署（deployed:false）的服务不跳转，以灰底 + 阶段标签呈现
     var planned = site.deployed === false;
 
     var card = document.createElement(planned ? "div" : "a");
-    card.className = "card" + (isHero ? " card--hero" : "") +
-      (site.span === "full" ? " card--wide" : "") + (planned ? " card--planned" : "");
+    card.className = "card" + (site.span === "full" ? " card--wide" : "") +
+      (planned ? " card--planned" : "");
     if (!planned) {
       card.href = site.url;
       card.target = "_blank";
@@ -387,20 +385,11 @@
     return card;
   }
 
-  function renderShowcase() {
-    var box = el("showcase");
-    var hs = heroSite();
-    var visible = !!hs && showcaseVisible();
-    // 定位引言与六段流水线只属于 AIGC 类目：按其他类目筛选或搜索时随旗舰卡一起收起
-    var story = el("story");
-    if (story) story.hidden = !visible;
-    box.textContent = "";
-    if (!visible) { box.hidden = true; return; }
-    box.hidden = false;
-
+  /* 首页展示卡与筛选态旗舰卡共用同一套 DOM，保证两种视图完全一致 */
+  function showcaseCardNode(hs, extraClass) {
     var status = hs.status || "live";
     var card = document.createElement("article");
-    card.className = "showcase__card";
+    card.className = "showcase__card" + (extraClass ? " " + extraClass : "");
     card.style.setProperty("--accent", accentFor(hs));
 
     var media = hs.image
@@ -436,7 +425,20 @@
         card.classList.add("no-media");
       });
     }
-    box.appendChild(card);
+    return card;
+  }
+
+  function renderShowcase() {
+    var box = el("showcase");
+    var hs = heroSite();
+    var visible = !!hs && showcaseVisible();
+    // 定位引言与六段流水线只属于 AIGC 类目：按其他类目筛选或搜索时随旗舰卡一起收起
+    var story = el("story");
+    if (story) story.hidden = !visible;
+    box.textContent = "";
+    if (!visible) { box.hidden = true; return; }
+    box.hidden = false;
+    box.appendChild(showcaseCardNode(hs));
     revealRefresh();
   }
 
@@ -471,6 +473,11 @@
           note = (note ? note + " · " : "") + n;
         }
         grid.appendChild(dividerNode(cfg.label || "", note));
+      }
+      // 主星筛选时旗舰服务回到列表首位，但沿用首页展示卡版式
+      if (site.size === "hero" && !state.query) {
+        grid.appendChild(showcaseCardNode(site, "showcase__card--grid"));
+        return;
       }
       grid.appendChild(renderCard(site, i));
     });
@@ -615,6 +622,17 @@
       if (desc) desc.textContent = star ? star.desc : "";
       if (reset) reset.hidden = hub;
     }
+
+    // 左栏配图：总枢纽显示七星定位图，进入七星轨后换成迷你轨道
+    var macroArt = document.querySelector('[data-constellation-art="macro"]');
+    if (macroArt) macroArt.hidden = !hub;
+    [].slice.call(document.querySelectorAll("[data-constellation-track-art]")).forEach(function (art) {
+      art.hidden = !inTrack || !trackSrc || art.getAttribute("data-constellation-track-art") !== trackSrc.id;
+    });
+    [].slice.call(document.querySelectorAll("[data-art-star]")).forEach(function (node) {
+      var on = !hub && !!star && node.getAttribute("data-art-star") === star.id;
+      node.classList.toggle("is-hot", on);
+    });
 
     // 棋盘原地翻转：仅在层级切换时播放一次，初始加载不触发
     var flip = document.querySelector("[data-constellation-flip]");
@@ -1014,9 +1032,7 @@
     revealGroup(".constellation__panel", 0);
     revealGroup(".story__head > *", 70);
     revealGroup(".flow-pool", 0);
-    revealGroup(".arch__head > *", 70);
-    revealGroup(".arch-board", 0);
-    revealGroup(".arch-layer", 55);
+    revealGroup(".arch-teaser", 0);
     revealGroup("#showcase .showcase__card", 80);
     revealGroup(".board > .board__title, .board > .board__legend", 0);
     revealGroup("#grid .grid__divider", 0);
@@ -1029,7 +1045,7 @@
   function revealRefresh() {
     if (!revealState.initialDone) return;
     var nodes = [].slice.call(document.querySelectorAll(
-      "#showcase .showcase__card, #grid .card, #grid .grid__divider"
+      "#showcase .showcase__card, #grid .showcase__card, #grid .card, #grid .grid__divider"
     ));
     nodes.forEach(function (node) {
       node.classList.add("reveal", "is-visible");
@@ -1204,67 +1220,6 @@
     sync();
   }
 
-  function bindArchitecture() {
-    var board = document.querySelector(".arch-board");
-    if (!board) return;
-    var nodes = [].slice.call(board.querySelectorAll("[data-node]"));
-    var wires = [].slice.call(board.querySelectorAll("[data-edge]"));
-    if (!nodes.length || !wires.length) return;
-
-    var links = {};
-    function link(a, b) {
-      links[a] = links[a] || [];
-      links[b] = links[b] || [];
-      if (links[a].indexOf(b) === -1) links[a].push(b);
-      if (links[b].indexOf(a) === -1) links[b].push(a);
-    }
-    wires.forEach(function (wire) {
-      wire.getAttribute("data-edge").split(" ").forEach(function (pair) {
-        var ends = pair.split("|");
-        link(ends[0], ends[1]);
-      });
-    });
-    nodes.forEach(function (node) {
-      var hub = node.getAttribute("data-hub");
-      if (hub) link(hub, node.getAttribute("data-node"));
-    });
-
-    var runtime = board.querySelector(".arch-runtime");
-    var current = null;
-
-    function paint(id) {
-      current = id;
-      var related = links[id] || [];
-      board.classList.add("is-tracing");
-      nodes.forEach(function (node) {
-        var nodeId = node.getAttribute("data-node");
-        node.classList.toggle("is-focus", nodeId === id);
-        node.classList.toggle("is-related", nodeId === id || related.indexOf(nodeId) !== -1);
-      });
-      wires.forEach(function (wire) {
-        var hit = wire.getAttribute("data-edge").split(" ").some(function (pair) {
-          return pair.split("|").indexOf(id) !== -1;
-        });
-        wire.classList.toggle("is-related", hit);
-      });
-      if (runtime) runtime.classList.toggle("is-related", !!runtime.querySelector("[data-node].is-related"));
-    }
-
-    function clear() {
-      if (current === null) return;
-      current = null;
-      board.classList.remove("is-tracing");
-      nodes.forEach(function (node) { node.classList.remove("is-focus", "is-related"); });
-      wires.forEach(function (wire) { wire.classList.remove("is-related"); });
-      if (runtime) runtime.classList.remove("is-related");
-    }
-
-    nodes.forEach(function (node) {
-      node.addEventListener("mouseenter", function () { paint(node.getAttribute("data-node")); });
-      node.addEventListener("mouseleave", clear);
-    });
-  }
-
   /* 北斗阵列：辅星按主星角度展开，悬停可追踪整条产品线 */
   function bindConstellation() {
     var board = document.querySelector("[data-constellation-board]");
@@ -1413,7 +1368,6 @@
     var hub = hubStar();
     state.star = (hub && hub.id) || "tianji";
     buildIndex();    bindHeader();
-    bindArchitecture();
     bindFlow();
     renderShowcase();
     renderGrid();

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>轻天璇 Studio · 系统架构 | HelpEnx Hub 星阵工坊</title>
+<meta name="description" content="轻天璇 Studio 的分层系统架构：接入与业务网关、调度与状态、智能体执行、基础设施与模型四层，Redis 状态总线与 AI Gateway 模型出口连接控制面与数据面；六环只交换 JSON 契约，PenFix 三道质检门按根因回退。" />
+<meta name="keywords" content="轻天璇 Studio 架构, AIGC 系统架构, 四层架构, NeoFlow, NeoTask, AI Gateway, 质检回退, HelpEnx" />
+<meta name="author" content="HelpEnx" />
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+<link rel="canonical" href="https://helpenx.com/architecture.html" />
+<meta name="theme-color" content="#f6f8fb" />
+<meta name="color-scheme" content="light" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="HelpEnx Hub · 星阵工坊" />
+<meta property="og:title" content="轻天璇 Studio · 系统架构" />
+<meta property="og:description" content="四层架构、两条总线：控制面编排，数据面执行，模型层统一出网。六环只交换 JSON，PenFix 三道质检按根因回退。" />
+<meta property="og:url" content="https://helpenx.com/architecture.html" />
+<meta property="og:locale" content="zh_CN" />
+<link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+<link rel="icon" type="image/png" sizes="48x48" href="./assets/icons/favicon-48x48.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
+<link rel="stylesheet" href="./styles.css?v=20261114" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "星阵工坊", "item": "https://helpenx.com/" },
+    { "@type": "ListItem", "position": 2, "name": "轻天璇 Studio · 系统架构", "item": "https://helpenx.com/architecture.html" }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+
+<header class="site-header">
+  <a class="brand" href="./" aria-label="HelpEnx Hub · 星阵工坊 首页">
+    <svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+      <g class="brand__lines" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7.5 12.5 15.5 7.5 20.5 16.5 11 20.5Z" />
+        <path d="M20.5 16.5 26.5 23 31.5 30.5 34 24" />
+      </g>
+      <g class="brand__stars" fill="currentColor">
+        <circle cx="7.5" cy="12.5" r="1.9" />
+        <circle cx="15.5" cy="7.5" r="1.6" />
+        <circle class="is-key" cx="20.5" cy="16.5" r="2.4" />
+        <circle cx="11" cy="20.5" r="1.6" />
+        <circle cx="26.5" cy="23" r="1.8" />
+        <circle cx="31.5" cy="30.5" r="1.5" />
+        <circle cx="34" cy="24" r="1.9" />
+      </g>
+    </svg>
+    <span class="brand__name">HelpEnx Hub</span>
+    <span class="brand__sub">星阵工坊</span>
+  </a>
+  <div class="header__right">
+    <a class="ghlink" href="https://github.com/neopen" target="_blank" rel="noopener me" aria-label="HelpEnx 的 GitHub">
+      <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      <span>GitHub</span>
+    </a>
+  </div>
+</header>
+
+<main class="arch-page">
+  <a class="arch-page__back" href="./">← 返回星阵工坊</a>
+
+  <section class="arch" id="architecture" aria-labelledby="arch-title">
+    <div class="arch__head">
+      <span class="arch__eyebrow">轻天璇 Studio · 系统架构</span>
+      <h1 class="arch__title" id="arch-title">四层架构，两条总线：控制面编排，数据面执行，模型层统一出网</h1>
+      <p class="arch__lead">创作者只接触 API 网关，业务服务完成鉴权、资产与计费；NeoFlow 拆 DAG、管调度，任务由 NeoTask 拉取执行，驱动六环推进。PenFix 挂在视频、音频与初剪之后做三道质检，不合格按根因回退；六环之间只交换 JSON，不互相调用。</p>
+    </div>
+
+    <div class="arch-board" role="group" aria-label="轻天璇 Studio 四层系统架构">
+      <div class="arch-layer arch-layer--access">
+        <div class="arch-layer__rail">
+          <span class="arch-layer__num">LAYER 01</span>
+          <span class="arch-layer__name">接入与业务网关</span>
+          <span class="arch-layer__note">网关先路由，业务服务管鉴权 / 资产 / 计费</span>
+        </div>
+        <div class="arch-layer__body">
+          <div class="arch-node arch-node--user" data-node="creator">
+            <span class="arch-node__meta">CREATOR</span>
+            <span class="arch-node__name">创作者 / 导演</span>
+            <span class="arch-node__sub">Web / App</span>
+          </div>
+          <span class="arch-arrow arch-arrow--bi" data-edge="creator|gateway" aria-hidden="true"><em>Web / UI</em></span>
+          <div class="arch-node arch-node--gateway" data-node="gateway">
+            <span class="arch-node__meta">API GATEWAY</span>
+            <span class="arch-node__name">API 网关</span>
+            <span class="arch-node__sub">路由 · 负载均衡</span>
+          </div>
+          <span class="arch-arrow arch-arrow--bi arch-arrow--svc" data-edge="gateway|biz" aria-hidden="true"><em>转发</em></span>
+          <div class="arch-node arch-node--service" data-node="biz">
+            <span class="arch-node__meta">BUSINESS SERVICE</span>
+            <span class="arch-node__name">业务服务</span>
+            <span class="arch-node__sub">鉴权 · 资产 · 计费</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-drop" data-edge="biz|flow" aria-hidden="true"><span class="arch-drop__stem"></span><span class="arch-drop__label">提交整集生成任务</span></div>
+
+      <div class="arch-layer arch-layer--control">
+        <div class="arch-layer__rail">
+          <span class="arch-layer__num">LAYER 02</span>
+          <span class="arch-layer__name">调度与状态</span>
+          <span class="arch-layer__note">控制面：只编排，不跑推理</span>
+        </div>
+        <div class="arch-layer__body">
+          <div class="arch-node arch-node--control" data-node="core">
+            <span class="arch-node__meta">CONTROL PLANE</span>
+            <span class="arch-node__name">NeoTask SDK</span>
+            <span class="arch-node__sub">任务池 / 优先级 / 重试</span>
+          </div>
+          <span class="arch-arrow arch-arrow--bi" data-edge="core|flow" aria-hidden="true"><em>DAG 编排</em></span>
+          <div class="arch-node arch-node--control" data-node="flow">
+            <span class="arch-node__meta">CONTROL PLANE</span>
+            <span class="arch-node__name">NeoFlow 编排层</span>
+            <span class="arch-node__sub">条件分支 / 断点续跑</span>
+          </div>
+          <div class="arch-node arch-node--vdb">
+            <span class="arch-node__meta">MEMORY</span>
+            <span class="arch-node__name">向量数据库</span>
+            <span class="arch-node__sub">Chroma / Milvus · 供 01 / 02 检索</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-bus arch-bus--redis">
+        <span class="arch-bus__name">Redis · 状态总线</span>
+        <span class="arch-bus__note">任务队列 / 缓存 / 状态事件</span>
+        <span class="arch-bus__meta">CONTROL ⇅ DATA</span>
+      </div>
+
+      <div class="arch-layer arch-layer--agents">
+        <div class="arch-layer__rail">
+          <span class="arch-layer__num">LAYER 03</span>
+          <span class="arch-layer__name">智能体执行</span>
+          <span class="arch-layer__note">数据面：六环只交换 JSON 契约</span>
+        </div>
+        <div class="arch-runtime">
+          <span class="arch-runtime__tag">NeoTask SDK · 执行子域</span>
+          <div class="arch-layer__body arch-agents">
+            <div class="arch-agent" data-node="plot" data-hub="core">
+              <span class="arch-agent__num">01</span>
+              <span class="arch-agent__name">PenPlot</span>
+              <span class="arch-agent__sub">剧情创作</span>
+            </div>
+            <span class="arch-arrow" data-edge="plot|shot" aria-hidden="true"><em>剧本 JSON</em></span>
+            <div class="arch-agent" data-node="shot" data-hub="core">
+              <span class="arch-agent__num">02</span>
+              <span class="arch-agent__name">PenShot</span>
+              <span class="arch-agent__sub">剧本分镜</span>
+            </div>
+            <span class="arch-arrow" data-edge="shot|gen shot|dub" aria-hidden="true"><em>分镜 / 台词</em></span>
+            <div class="arch-branch">
+              <div class="arch-agent" data-node="gen" data-hub="core">
+                <span class="arch-agent__num">03</span>
+                <span class="arch-agent__name">PenGen</span>
+                <span class="arch-agent__sub">视频生成</span>
+              </div>
+              <div class="arch-agent" data-node="dub" data-hub="core">
+                <span class="arch-agent__num">04</span>
+                <span class="arch-agent__name">PenDub</span>
+                <span class="arch-agent__sub">音频同步</span>
+              </div>
+            </div>
+            <span class="arch-arrow arch-arrow--merge" data-edge="gen|clip dub|clip" aria-hidden="true"><em>合格音视频</em></span>
+            <div class="arch-agent arch-agent--clip" data-node="clip" data-hub="core">
+              <span class="arch-agent__num">05</span>
+              <span class="arch-agent__name">PenClip</span>
+              <span class="arch-agent__sub">视频剪辑</span>
+            </div>
+          </div>
+          <div class="arch-qa" data-node="fix" data-hub="core">
+            <div class="arch-qa__head">
+              <span class="arch-qa__num">06</span>
+              <span class="arch-qa__name">PenFix</span>
+              <span class="arch-qa__sub">质量审核 · 三处质检门</span>
+            </div>
+            <div class="arch-qa__returns">
+              <span class="arch-rework" data-edge="fix|shot"><span aria-hidden="true">↩</span><span>Gen / Dub 不合格 → 改分镜与提示词</span></span>
+              <span class="arch-rework" data-edge="fix|clip"><span aria-hidden="true">↩</span><span>Clip 合成不合格 → 回 PenClip 重剪</span></span>
+              <span class="arch-rework" data-edge="fix|clip fix|gen fix|dub"><span aria-hidden="true">↩</span><span>Clip 素材不合格 → 按镜头回 Gen / Dub</span></span>
+            </div>
+            <div class="arch-qa__checks">
+              <span class="arch-qa__check" data-edge="gen|fix"><b>Gen 后</b>画面一致性 · 技术指标</span>
+              <span class="arch-qa__check" data-edge="dub|fix"><b>Dub 后</b>音画同步 · 音频指标</span>
+              <span class="arch-qa__check" data-edge="clip|fix"><b>Clip 后</b>成片终审 · 合规 / 技术</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-bus arch-bus--gateway">
+        <span class="arch-bus__name">AI Gateway · 统一模型出口</span>
+        <span class="arch-bus__note">鉴权 / 计费 / 限流 / 路由 / 降级</span>
+        <span class="arch-bus__meta">DATA → MODELS</span>
+      </div>
+
+      <div class="arch-layer arch-layer--models">
+        <div class="arch-layer__rail">
+          <span class="arch-layer__num">LAYER 04</span>
+          <span class="arch-layer__name">基础设施与模型</span>
+          <span class="arch-layer__note">模型可替换，接口不穿透</span>
+        </div>
+        <div class="arch-layer__body">
+          <div class="arch-model">
+            <span class="arch-model__name">文本生成</span>
+            <span class="arch-model__sub">GPT / Claude / Qwen</span>
+          </div>
+          <div class="arch-model">
+            <span class="arch-model__name">图像生成</span>
+            <span class="arch-model__sub">MJ / SD / DALL·E</span>
+          </div>
+          <div class="arch-model">
+            <span class="arch-model__name">视频生成</span>
+            <span class="arch-model__sub">Sora / Kling / Vidu</span>
+          </div>
+          <div class="arch-model">
+            <span class="arch-model__name">TTS / 音频</span>
+            <span class="arch-model__sub">ElevenLabs / MiniMax</span>
+          </div>
+          <div class="arch-model">
+            <span class="arch-model__name">嵌入模型</span>
+            <span class="arch-model__sub">BGE-M3 / Embedding-3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="arch-notes">
+      <li><span class="arch-notes__dot arch-notes__dot--control" aria-hidden="true"></span><strong>控制面不跑推理</strong><span>NeoFlow 把整集请求拆成 DAG，任务进 NeoTask 任务池；NeoTask 管优先级与重试，六环只订阅状态。</span></li>
+      <li><span class="arch-notes__dot arch-notes__dot--state" aria-hidden="true"></span><strong>状态与记忆分离</strong><span>Redis 存热状态、队列与事件；向量库存世界观与长文本记忆，供 PenPlot、PenShot 检索。</span></li>
+      <li><span class="arch-notes__dot arch-notes__dot--data" aria-hidden="true"></span><strong>数据面只传契约</strong><span>剧本与分镜先自检自修、必要时人工修正，再交给下游；Gen/Dub 不合格回分镜改提示词，Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成。</span></li>
+      <li><span class="arch-notes__dot arch-notes__dot--model" aria-hidden="true"></span><strong>模型统一出网</strong><span>AI Gateway 收敛鉴权、计费、限流与路由；调用失败由 NeoFlow 换模型重试。</span></li>
+    </ul>
+  </section>
+
+  <div class="arch-page__actions">
+    <a class="btn btn-primary" href="https://studio.helpenx.com" target="_blank" rel="noopener">进入轻天璇 Studio <span class="btn__arrow" aria-hidden="true">→</span></a>
+    <a class="btn btn-ghost" href="./">返回首页</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__row">
+      <span>© <span id="year"></span> <a href="https://pengline.cn/" target="_blank" rel="noopener">余一叶知秋尽</a></span>
+      <div class="site-footer__contact">
+        <a href="./">星阵工坊首页</a>
+        <span class="site-footer__dot" aria-hidden="true"></span>
+        <a href="https://studio.helpenx.com" target="_blank" rel="noopener">轻天璇 Studio</a>
+        <span class="site-footer__dot" aria-hidden="true"></span>
+        <a href="mailto:contact@helpenx.com">contact@helpenx.com</a>
+      </div>
+      <span class="site-footer__site">helpenx.com</span>
+    </div>
+  </div>
+</footer>
+
+<script src="./architecture.js?v=20261114"></script>
+</body>
+</html>

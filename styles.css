@@ -466,8 +466,45 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   border: 0; background: none; cursor: pointer;
   font-family: inherit; font-size: 12.5px; font-weight: 600; color: var(--cyan);
 }
+.constellation__reset { align-self: flex-start; }
 .constellation__reset:hover { color: var(--violet); }
 .constellation__reset:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+
+/* 面板左栏配图：总枢纽七星定位图 / 七星轨迷你轨道 */
+.constellation__current { display: flex; flex-direction: column; }
+.constellation__art {
+  flex: 1 1 auto; min-height: 0; margin-top: 16px;
+  display: flex; flex-direction: column;
+}
+.constellation__art[hidden] { display: none; }
+.constellation__art-frame {
+  flex: 1 1 auto; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 10px 8px;
+  border: 1px dashed rgba(79, 106, 224, 0.24); border-radius: 14px;
+  background:
+    radial-gradient(85% 70% at 50% 6%, rgba(79, 106, 224, 0.055), transparent 62%),
+    radial-gradient(85% 80% at 50% 100%, rgba(10, 116, 148, 0.045), transparent 62%),
+    rgba(255, 255, 255, 0.62);
+}
+.constellation__art[data-constellation-art="macro"] .constellation__art-frame { min-height: 210px; }
+.constellation__art[data-constellation-track-art] .constellation__art-frame { min-height: 104px; }
+.constellation__art svg { display: block; width: 100%; height: auto; }
+.c-art text { font-family: var(--sans); }
+.c-art__speck { fill: rgba(15, 23, 42, 0.16); }
+.c-art__link { stroke: rgba(15, 34, 67, 0.16); stroke-width: 0.9; }
+.c-art__ring { fill: none; stroke-width: 1.2; opacity: 0; transition: opacity 0.25s ease; }
+.c-art__halo { opacity: 0.12; }
+.c-art__dot { stroke: #fff; stroke-width: 1.4; }
+.c-art__name { font-size: 10px; font-weight: 650; fill: var(--ink); }
+.c-art__count { font-family: var(--mono); font-size: 8px; fill: var(--text-faint); }
+.c-art__cap { font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.18em; fill: var(--text-faint); }
+.c-art__rail { fill: none; stroke: rgba(15, 34, 67, 0.2); stroke-width: 1.2; stroke-dasharray: 4 5; animation: cArtFlow 18s linear infinite; }
+.c-art__node { fill: #fff; stroke-width: 1.8; }
+.c-art__char { font-size: 10.5px; font-weight: 700; }
+[data-art-star].is-hot .c-art__ring { opacity: 1; }
+[data-art-star].is-hot .c-art__dot { stroke-width: 2.2; }
+@keyframes cArtFlow { to { stroke-dashoffset: -90; } }
 
 .constellation__groups {
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1309,6 +1346,46 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 }
 .arch-board.is-tracing .arch-arrow.is-related em { color: var(--text); font-weight: 600; }
 
+/* ---------- 系统架构独立页与首页入口条 ---------- */
+.arch-page { padding-bottom: 64px; }
+.arch-page__back {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 30px 0 0;
+  font-size: 13px; color: var(--text-dim); text-decoration: none;
+  transition: color 0.18s ease;
+}
+.arch-page__back:hover { color: var(--cyan); }
+.arch-page__back:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 3px; }
+.arch-page__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+
+.arch-teaser {
+  display: flex; align-items: center; justify-content: space-between; gap: 18px 28px; flex-wrap: wrap;
+  margin: 0 0 36px; padding: 18px 24px;
+  border: 1px solid rgba(15, 34, 67, 0.09); border-radius: 16px;
+  background:
+    radial-gradient(90% 160% at 0% 0%, rgba(10, 116, 148, 0.06), transparent 60%),
+    radial-gradient(90% 160% at 100% 0%, rgba(111, 91, 184, 0.06), transparent 60%),
+    #fcfdff;
+}
+.arch-teaser__text { min-width: 0; }
+.arch-teaser__eyebrow { font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; color: var(--violet); }
+.arch-teaser__title { margin-top: 3px; font-size: 15px; font-weight: 650; line-height: 1.5; color: var(--ink); }
+.arch-teaser__desc { margin-top: 2px; font-size: 12.5px; line-height: 1.75; color: var(--text-dim); }
+.arch-teaser__link {
+  flex: none; display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 16px; border-radius: 999px;
+  border: 1px solid rgba(10, 116, 148, 0.25); background: #fff;
+  font-size: 13px; font-weight: 600; color: var(--cyan); text-decoration: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+.arch-teaser__link:hover { border-color: var(--cyan); box-shadow: var(--shadow); transform: translateY(-1px); }
+.arch-teaser__link:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+@media (max-width: 680px) {
+  .arch-page__back { margin-top: 16px; }
+  .arch-teaser { padding: 16px 18px; }
+  .arch-teaser__link { width: 100%; justify-content: center; }
+}
+
 .board__title {
   display: flex; align-items: center; gap: 14px;
   font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
@@ -1369,10 +1446,8 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 }
 .card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 
-.card--hero { grid-column: 1 / -1; flex-direction: row; align-items: flex-start; gap: 36px; padding: 36px; }
-.card--hero .card__id { flex: 0 0 260px; }
-.card--hero .card__name { font-size: 21px; }
-.card--hero .card__desc { -webkit-line-clamp: 4; }
+/* 筛选态直接复用首页展示卡：与总枢纽下的轻天璇 Studio 保持同一套版式 */
+.showcase__card--grid { grid-column: 1 / -1; }
 
 /* 通栏卡：用于被单独强调的服务（如 NeoTask） */
 .card--wide { grid-column: 1 / -1; flex-direction: row; align-items: flex-start; gap: 34px; padding: 30px 32px; }
@@ -1802,8 +1877,6 @@ body::after {
   .site-header { flex-wrap: wrap; row-gap: 10px; padding: 14px 24px; }
   .hsearch { order: 3; flex: 1 1 100%; max-width: none; margin: 0; }
   .suggest { min-width: 0; }
-  .card--hero { flex-direction: column; gap: 22px; }
-  .card--hero .card__id { flex: none; }
   .card--wide { flex-direction: column; gap: 20px; }
   .card--wide .card__lead { flex: none; width: 100%; max-width: 320px; }
   .card--wide .card__id { flex: none; }
@@ -1903,6 +1976,8 @@ body::after {
   .constellation__panel { padding: 18px; border-radius: 16px; }
   .constellation__groups { grid-template-columns: 1fr; gap: 14px; }
   .constellation__current-title { font-size: 17px; }
+  .constellation__art[data-constellation-art="macro"] .constellation__art-frame { min-height: 0; }
+  .constellation__art[data-constellation-art="macro"] svg { max-height: 240px; }
   /* 分组在移动端默认收起，点组头展开；无 JS 时保持全展开 */
   .js .cgroup__head {
     margin: 0 -6px; padding: 10px 6px 9px; border-radius: 8px;
@@ -1928,7 +2003,6 @@ body::after {
   .grid { grid-template-columns: 1fr; gap: 18px; }
   .footnav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .card { padding: 24px; }
-  .card--hero { padding: 26px; }
   .card__arrow { top: 24px; right: 22px; }
   .story { padding-bottom: 44px; }
   .flow-pool { padding: 12px 10px 14px; border-radius: 16px; }

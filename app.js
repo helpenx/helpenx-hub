@@ -203,6 +203,23 @@
     return null;
   }
 
+  function starForSite(id) {
+    var list = stars();
+    for (var i = 0; i < list.length; i++) {
+      if ((list[i].projects || []).indexOf(id) !== -1) return list[i];
+    }
+    return null;
+  }
+
+  function starBadgeHtml(site) {
+    var star = starForSite(site.id);
+    if (!star) return "";
+    var label = String(star.title || star.name || "").split(" · ")[0];
+    return '<span class="card__star" style="--star:' + escapeHtml(star.accent || DEFAULT_ACCENT) +
+      '" title="' + escapeHtml(star.title || star.name || label) + '">' +
+      '<span class="card__star-dot" aria-hidden="true"></span>' + escapeHtml(label) + "</span>";
+  }
+
   /* 移动端分组手风琴，桌面保持全展开；openGroupId 只记录用户手动展开的那一组 */
   var compactMql = window.matchMedia("(max-width: 760px)");
   var openGroupId = null;
@@ -303,7 +320,8 @@
             '<span class="card__name">' + highlight(site.name, query) + "</span>" +
             badge +
           "</span>" +
-          '<span class="card__domain">' + highlight(host, query) + "</span>" +
+          '<span class="card__meta"><span class="card__domain">' + highlight(host, query) + "</span>" +
+            starBadgeHtml(site) + "</span>" +
         "</span>" +
       "</div>";
 
@@ -362,6 +380,7 @@
           '<span class="showcase__name">' + escapeHtml(hs.name) + "</span>" +
           '<span class="status-tag status-tag--' + status + '">' + (STATUS_LABEL[status] || "") + "</span>" +
           '<span class="showcase__domain">' + escapeHtml(hostOf(hs.url)) + "</span>" +
+          starBadgeHtml(hs) +
         "</div>" +
         '<a class="btn btn-primary" href="' + escapeHtml(hs.url) + '" target="_blank" rel="noopener">' +
           escapeHtml(hs.ctaLabel || "进入") + ' <span class="btn__arrow" aria-hidden="true">&rarr;</span></a>' +

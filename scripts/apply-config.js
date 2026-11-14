@@ -221,6 +221,14 @@ function iconGlyphOf(site) {
     ? '<svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-' + esc(site.icon) + '"></use></svg>'
     : esc(String(site.name || "?").trim().charAt(0).toUpperCase());
 }
+function starBadgeOf(site) {
+  const star = starById[starOfSite[site.id]];
+  if (!star) return "";
+  const label = String(star.title || star.name || "").split(" · ")[0];
+  return '<span class="card__star" style="--star:' + esc(star.accent || "#4f6ae0") +
+    '" title="' + esc(star.title || star.name || label) + '">' +
+    '<span class="card__star-dot" aria-hidden="true"></span>' + esc(label) + "</span>";
+}
 function cardOf(site) {
   const status = site.status || "live";
   const planned = site.deployed === false;
@@ -237,7 +245,8 @@ function cardOf(site) {
       '<span class="card__idtext"><span class="card__titlerow">' +
         '<span class="card__name">' + esc(site.name) + "</span>" + badge +
       "</span>" +
-      '<span class="card__domain">' + esc(hostname(site.url)) + "</span></span></div>";
+      '<span class="card__meta"><span class="card__domain">' + esc(hostname(site.url)) + "</span>" +
+        starBadgeOf(site) + "</span></span></div>";
   const thumb = site.image && site.span === "full"
     ? '<span class="card__thumb"><img src="' + esc(site.image) + '" alt="' +
       esc(site.imageAlt || site.name + " 示意图") + '" decoding="async"></span>'
@@ -264,7 +273,8 @@ function heroCardOf(site) {
     '<div class="showcase__head"><div class="showcase__idline">' +
       '<span class="showcase__name">' + esc(site.name) + "</span>" +
       '<span class="status-tag status-tag--' + status + '">' + esc(STATUS_LABEL[status] || "") + "</span>" +
-      '<span class="showcase__domain">' + esc(hostname(site.url)) + "</span></div>" +
+      '<span class="showcase__domain">' + esc(hostname(site.url)) + "</span>" +
+      starBadgeOf(site) + "</div>" +
     '<a class="btn btn-primary" href="' + esc(site.url) + '" target="_blank" rel="noopener">' +
       esc(site.ctaLabel || "进入") + ' <span class="btn__arrow" aria-hidden="true">→</span></a></div>' +
     '<div class="showcase__main"><div class="showcase__text">' +
@@ -272,6 +282,30 @@ function heroCardOf(site) {
       '<p class="showcase__desc">' + esc(site.description || "") + "</p></div>" + media + "</div>" +
     '<div class="showcase__bands">' + flowOf(site) + featuresOf(site) + "</div></article>";
 }
+
+// 北斗阵列：七主星承载全部服务，辅星与面板清单由同一条配置驱动
+const constellation = cfg.constellation || {};
+const stars = constellation.stars || [];
+const siteById = {};
+sites.forEach((s) => { siteById[s.id] = s; });
+
+// 每项服务必须且只能归属一颗主星，避免漏项与重复入口
+const starOfSite = {};
+stars.forEach((star) => {
+  (star.projects || []).forEach((id) => {
+    if (!siteById[id]) throw new Error("constellation 引用了不存在的服务：" + id);
+    if (starOfSite[id]) throw new Error("服务 " + id + " 同时归属 " + starOfSite[id] + " 与 " + star.id);
+    starOfSite[id] = star.id;
+  });
+});
+const unassigned = sites.filter((s) => !starOfSite[s.id]).map((s) => s.id);
+if (unassigned.length) throw new Error("以下服务未加入北斗阵列：" + unassigned.join(", "));
+
+const starById = {};
+stars.forEach((s) => { starById[s.id] = s; });
+const hubStar = stars.filter((s) => s.isHub)[0] || stars[0] || {};
+if (!hubStar.id) throw new Error("constellation 缺少 isHub 主星");
+const starCount = (s) => (s.isHub ? sites.length : (s.projects || []).length);
 
 const heroSite = sites.filter((s) => s.size === "hero")[0];
 
@@ -308,30 +342,6 @@ function fillBlock(startMarker, endMarker, cards) {
 }
 fillBlock("<!-- CARDS-HERO:START", "<!-- CARDS-HERO:END -->", heroSite ? [heroCardOf(heroSite)] : []);
 fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
-
-// 北斗阵列：七主星承载全部服务，辅星与面板清单由同一条配置驱动
-const constellation = cfg.constellation || {};
-const stars = constellation.stars || [];
-const siteById = {};
-sites.forEach((s) => { siteById[s.id] = s; });
-
-// 每项服务必须且只能归属一颗主星，避免漏项与重复入口
-const starOfSite = {};
-stars.forEach((star) => {
-  (star.projects || []).forEach((id) => {
-    if (!siteById[id]) throw new Error("constellation 引用了不存在的服务：" + id);
-    if (starOfSite[id]) throw new Error("服务 " + id + " 同时归属 " + starOfSite[id] + " 与 " + star.id);
-    starOfSite[id] = star.id;
-  });
-});
-const unassigned = sites.filter((s) => !starOfSite[s.id]).map((s) => s.id);
-if (unassigned.length) throw new Error("以下服务未加入北斗阵列：" + unassigned.join(", "));
-
-const starById = {};
-stars.forEach((s) => { starById[s.id] = s; });
-const hubStar = stars.filter((s) => s.isHub)[0] || stars[0] || {};
-if (!hubStar.id) throw new Error("constellation 缺少 isHub 主星");
-const starCount = (s) => (s.isHub ? sites.length : (s.projects || []).length);
 
 function starButtonOf(s) {
   const count = starCount(s);

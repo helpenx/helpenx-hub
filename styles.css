@@ -146,6 +146,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   animation: starPulse 4.5s ease-in-out infinite;
 }
 .grad {
+  white-space: nowrap;
   background: linear-gradient(100deg, #14a3c7 0%, #4f6ae0 46%, var(--violet) 100%);
   background-size: 180% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -1297,10 +1298,22 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .card__idtext { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .card__titlerow { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
 .card__name { font-size: 17px; font-weight: 650; letter-spacing: -0.005em; }
+.card__meta { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .card__domain {
   font-family: var(--mono); font-size: 12px; color: var(--text-faint);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+.card__star {
+  flex: none; display: inline-flex; align-items: center; gap: 5px;
+  padding: 1px 7px 1px 5px;
+  border: 1px solid color-mix(in srgb, var(--star) 24%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--star) 8%, transparent);
+  font-size: 10.5px; line-height: 1.55; letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--star) 72%, var(--ink));
+  white-space: nowrap;
+}
+.card__star-dot { flex: none; width: 5px; height: 5px; border-radius: 50%; background: var(--star); }
 .card__arrow {
   position: absolute; top: 28px; right: 26px;
   font-size: 15px; color: var(--text-faint);

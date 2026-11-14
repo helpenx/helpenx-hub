@@ -1,6 +1,8 @@
 (function () {
   "use strict";
 
+  document.documentElement.classList.add("js");
+
   var ACCENTS = { studio: "#0a7494", oss: "#6d4bf0", tools: "#087a43", demo: "#4d6484", content: "#96650a" };
   var PLANNED_ACCENT = "#8b98a9";
   var DEFAULT_ACCENT = "#0a7494";
@@ -32,7 +34,7 @@
     try { return new URL(url).hostname; } catch (e) { return url; }
   }
 
-  var state = { data: null, query: "", category: "all" };
+  var state = { data: null, query: "", star: "tianji" };
 
   /* sites.json 优先；file:// 打开时回退到页面内嵌数据 */
   function loadData() {
@@ -134,11 +136,10 @@
   }
 
   // 返回 [{entry, score}]，已按相关度排序
-  function searchSites(query, category) {
+  function searchSites(query) {
     var tokens = tokensOf(query), hits = [];
     for (var i = 0; i < state.index.length; i++) {
       var entry = state.index[i];
-      if (category !== "all" && entry.site.category !== category) continue;
       var score = tokens.length ? scoreEntry(entry, tokens) : 1;
       if (score > 0) hits.push({ entry: entry, score: score });
     }
@@ -163,8 +164,81 @@
     return out.slice(0, limit);
   }
 
+  /* ---------- 北斗阵列：七主星筛选与辅星坐标 ---------- */
+  function constellationCfg() { return state.data.constellation || {}; }
+  function stars() { return constellationCfg().stars || []; }
+
+  function starById(id) {
+    var list = stars();
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+
+  function hubStar() {
+    var list = stars();
+    for (var i = 0; i < list.length; i++) if (list[i].isHub) return list[i];
+    return list[0] || null;
+  }
+
+  function hubId() {
+    var hub = hubStar();
+    return (hub && hub.id) || "tianji";
+  }
+
+  function activeStar() { return starById(state.star) || hubStar(); }
+
+  function isHubActive() {
+    var star = activeStar();
+    return !star || !!star.isHub;
+  }
+
+  function starCount(star) {
+    if (!star) return 0;
+    return star.isHub ? (state.data.sites || []).length : (star.projects || []).length;
+  }
+
+  function siteById(id) {
+    var list = state.data.sites || [];
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+
+  /* 移动端分组手风琴，桌面保持全展开；openGroupId 只记录用户手动展开的那一组 */
+  var compactMql = window.matchMedia("(max-width: 760px)");
+  var openGroupId = null;
+
+  function applyGroupAccordion() {
+    var compact = compactMql.matches;
+    var groups = [].slice.call(document.querySelectorAll("[data-constellation-groups] [data-group]"));
+    groups.forEach(function (g) {
+      var head = g.querySelector(".cgroup__head");
+      var name = head && head.querySelector(".cgroup__name");
+      var title = name ? name.textContent : "分组";
+      var open = compact && g.getAttribute("data-group") === openGroupId;
+      g.classList.toggle("is-open", open);
+      if (!head) return;
+      if (compact) {
+        head.setAttribute("aria-expanded", String(open));
+        head.setAttribute("aria-label", "展开或收起 " + title);
+      } else {
+        head.removeAttribute("aria-expanded");
+        head.setAttribute("aria-label", "筛选 " + title);
+      }
+    });
+  }
+
   function visibleSites() {
-    return searchSites(state.query, state.category).map(function (h) { return h.entry.site; });
+    var hits = searchSites(state.query);
+    var star = activeStar();
+    if (star && !star.isHub) {
+      var order = {};
+      (star.projects || []).forEach(function (id, i) { order[id] = i; });
+      hits = hits.filter(function (h) { return order[h.entry.site.id] != null; });
+      hits.sort(function (a, b) {
+        return order[a.entry.site.id] - order[b.entry.site.id];
+      });
+    }
+    return hits.map(function (h) { return h.entry.site; });
   }
 
   function heroSite() {
@@ -173,10 +247,10 @@
     return null;
   }
 
-  /* 展示区只在「未搜索且分类命中」时置顶，否则该产品回到网格里正常参与筛选 */
+  /* 展示区只在「未搜索、未按主星筛选」时置顶，否则该产品回到网格里正常参与筛选 */
   function showcaseVisible() {
     var hs = heroSite();
-    return !!hs && !state.query && (state.category === "all" || state.category === hs.category);
+    return !!hs && !state.query && isHubActive();
   }
 
   var GITHUB_ICON = '<svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">' +
@@ -201,7 +275,7 @@
     var query = state.query;
     var host = hostOf(site.url);
     var status = site.status || "live";
-    var isHero = site.size === "hero" && !query;
+    var isHero = site.size === "hero" && !query && isHubActive();
     // 生命周期阶段与部署解耦：只有地址尚未部署（deployed:false）的服务不跳转，以灰底 + 阶段标签呈现
     var planned = site.deployed === false;
 
@@ -312,36 +386,6 @@
     revealRefresh();
   }
 
-  function renderChips() {
-    var chips = el("chips");
-    chips.textContent = "";
-    var sites = state.data.sites || [];
-    var defs = [{ id: "all", name: "全部" }]
-      .concat(state.data.categories || [])
-      .filter(function (c) {
-        return c.id === "all" || sites.some(function (s) { return s.category === c.id; });
-      });
-
-    defs.forEach(function (c) {
-      var count = c.id === "all"
-        ? sites.length
-        : sites.filter(function (s) { return s.category === c.id; }).length;
-      var btn = document.createElement("button");
-      btn.className = "chip";
-      btn.type = "button";
-      btn.setAttribute("aria-pressed", String(state.category === c.id));
-      btn.innerHTML = escapeHtml(c.shortName || c.name) +
-        '<span class="chip__count">' + count + "</span>";
-      btn.addEventListener("click", function () {
-        state.category = c.id;
-        renderChips();
-        renderShowcase();
-        renderGrid();
-      });
-      chips.appendChild(btn);
-    });
-  }
-
   function dividerNode(label, note) {
     var d = document.createElement("div");
     d.className = "grid__divider";
@@ -360,8 +404,8 @@
     var sites = visibleSites();
     if (inShowcase) sites = sites.filter(function (s) { return s.size !== "hero"; });
 
-    // 分隔条来自 sites.json 的 dividerBefore；搜索或已按分类筛选时不插，避免分隔线错位
-    var mayDivide = !state.query && state.category === "all";
+    // 分隔条来自 sites.json 的 dividerBefore；搜索或主星筛选时不插，避免分隔线错位
+    var mayDivide = !state.query && isHubActive();
 
     sites.forEach(function (site, i) {
       var dv = site.dividerBefore;
@@ -383,11 +427,79 @@
     el("empty").hidden = sites.length > 0;
 
     var title = el("board-title");
+    var star = activeStar();
     if (state.query) title.textContent = "搜索「" + state.query + "」· " + sites.length;
-    else if (state.category !== "all") title.textContent = categoryName(state.category) + " · " + sites.length;
-    else title.textContent = "更多服务 · " + sites.length;
+    else if (star && !star.isHub) title.textContent = star.title + " · " + sites.length;
+    else title.textContent = "星图 · 全部服务 · " + sites.length;
 
     revealRefresh();
+  }
+
+  /* 主星筛选：选中一条产品线，再点同一颗星回到总枢纽 */
+  function setStar(id, keep) {
+    var star = starById(id);
+    if (!star) return;
+    var hub = hubId();
+    state.star = (!keep && state.star === id && id !== hub) ? hub : id;
+    if (state.query) {
+      state.query = "";
+      var input = el("search");
+      if (input) input.value = "";
+      el("search-box").classList.remove("is-busy");
+      el("search-clear").hidden = true;
+    }
+    renderShowcase();
+    renderGrid();
+    syncConstellation();
+  }
+
+  function syncConstellation() {
+    var board = document.querySelector("[data-constellation-board]");
+    if (!board) return;
+    var star = activeStar();
+    var hub = !star || !!star.isHub;
+
+    var buttons = [].slice.call(board.querySelectorAll(".cstar"));
+    buttons.forEach(function (btn) {
+      var current = !!star && btn.getAttribute("data-star") === star.id;
+      btn.setAttribute("aria-pressed", String(current));
+      btn.classList.toggle("is-selected", !hub && current);
+      btn.classList.remove("is-hot", "is-dim");
+    });
+
+    var lines = [].slice.call(board.querySelectorAll(".constellation__edges line"));
+    lines.forEach(function (line) {
+      var on = !!star && line.getAttribute("data-link").split(" ").indexOf(star.id) !== -1;
+      line.classList.toggle("is-selected", !hub && on);
+      line.classList.remove("is-active");
+    });
+
+    var auxes = [].slice.call(board.querySelectorAll(".caux"));
+    auxes.forEach(function (btn) {
+      btn.classList.remove("is-hot", "is-hover");
+      btn.classList.toggle("is-dim", !hub && btn.getAttribute("data-parent") !== star.id);
+    });
+    board.classList.remove("is-tracing");
+    board.classList.toggle("has-filter", !hub);
+
+    var groups = [].slice.call(document.querySelectorAll("[data-constellation-groups] [data-group]"));
+    groups.forEach(function (g) {
+      g.hidden = !hub && g.getAttribute("data-group") !== star.id;
+      g.classList.remove("is-hover");
+    });
+
+    var title = document.querySelector("[data-constellation-title]");
+    var count = document.querySelector("[data-constellation-count]");
+    var desc = document.querySelector("[data-constellation-desc]");
+    var reset = document.querySelector("[data-constellation-reset]");
+    if (title) title.textContent = star ? star.title : "";
+    if (count) count.textContent = (star ? starCount(star) : 0) + " 项服务";
+    if (desc) desc.textContent = star ? star.desc : "";
+    if (reset) reset.hidden = hub;
+
+    // 回到总枢纽时收起所有分组；筛选单星时自动展开该组
+    openGroupId = hub ? null : star.id;
+    applyGroupAccordion();
   }
 
   /* ---------- 联想面板与搜索交互 ---------- */
@@ -442,14 +554,13 @@
         items.push({ type: "label", text: "最近搜索" });
         recents.forEach(function (r) { items.push({ type: "keyword", label: r, kind: "历史" }); });
       }
-      items.push({ type: "label", text: state.category === "all" ? "快速进入" : categoryName(state.category) + " · 快速进入" });
-      searchSites("", state.category).forEach(function (h) { items.push({ type: "site", site: h.entry.site }); });
+      items.push({ type: "label", text: "快速进入" });
+      searchSites("").forEach(function (h) { items.push({ type: "site", site: h.entry.site }); });
       meta.textContent = sites.length + " 项服务可用 · 输入关键词即时筛选";
     } else {
-      var siteHits = searchSites(state.query, state.category);
+      var siteHits = searchSites(state.query);
       var capHits = searchCaps(state.query, 4);
-      meta.textContent = siteHits.length + " 个服务 · " + capHits.length + " 个相关能力" +
-        (state.category === "all" ? "" : " · 已限定「" + categoryName(state.category) + "」");
+      meta.textContent = siteHits.length + " 个服务 · " + capHits.length + " 个相关能力";
       if (siteHits.length) {
         items.push({ type: "label", text: "服务" });
         siteHits.slice(0, 5).forEach(function (h) { items.push({ type: "site", site: h.entry.site }); });
@@ -496,7 +607,7 @@
   }
 
   function siteHitsCount() {
-    return searchSites(state.query, state.category).length;
+    return searchSites(state.query).length;
   }
 
   function isOpenable(i) {
@@ -574,17 +685,21 @@
 
   function applyQuery(value) {
     state.query = String(value || "").trim();
+    // 搜索是全局行为：带着关键词时回到总枢纽，避免星位筛选与关键词互相收窄
+    if (state.query && state.star !== hubId()) {
+      state.star = hubId();
+    }
     el("search-box").classList.toggle("is-busy", !!state.query);
     el("search-clear").hidden = !state.query;
     renderShowcase();
     renderGrid();
+    syncConstellation();
   }
 
   function resetAll() {
     el("search").value = "";
-    state.category = "all";
+    state.star = hubId();
     applyQuery("");
-    renderChips();
     renderSuggest();
   }
 
@@ -659,7 +774,8 @@
 
     document.addEventListener("keydown", function (ev) {
       var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
-      if (ev.key === "Escape" && !typing && (state.query || state.category !== "all")) {
+      if (ev.key === "Escape" && !typing &&
+          (state.query || state.star !== hubId())) {
         resetAll();
       } else if ((ev.key === "/" || (ev.key === "k" && (ev.ctrlKey || ev.metaKey))) && !typing) {
         ev.preventDefault();
@@ -758,6 +874,9 @@
 
   /* 首屏渲染完成后统一挂揭示：先让观察器接管，避免和重绘打架 */
   function revealInitial() {
+    revealGroup(".constellation__head > *", 70);
+    revealGroup(".constellation__board", 0);
+    revealGroup(".constellation__panel", 0);
     revealGroup(".story__head > *", 70);
     revealGroup(".flow-pool", 0);
     revealGroup(".arch__head > *", 70);
@@ -1011,6 +1130,124 @@
     });
   }
 
+  /* 北斗阵列：辅星按主星角度展开，悬停可追踪整条产品线 */
+  function bindConstellation() {
+    var board = document.querySelector("[data-constellation-board]");
+    if (!board) return;
+    var auxBox = board.querySelector("[data-constellation-aux]");
+    var starButtons = [].slice.call(board.querySelectorAll(".cstar"));
+    var lines = [].slice.call(board.querySelectorAll(".constellation__edges line"));
+    var groups = [].slice.call(document.querySelectorAll("[data-constellation-groups] [data-group]"));
+    var auxButtons = [];
+
+    stars().forEach(function (star) {
+      var ids = star.projects || [];
+      if (!ids.length || !auxBox) return;
+      var n = ids.length;
+      var base = (star.auxAngle || 0) * Math.PI / 180;
+      var step = n > 1 ? Math.min(0.3, 1.2 / (n - 1)) : 0;
+      var radius = Math.max(5.5, (star.auxSpread || 60) / 10);
+      ids.forEach(function (siteId, i) {
+        var site = siteById(siteId);
+        if (!site) return;
+        var angle = base - step * (n - 1) / 2 + i * step;
+        var x = Math.max(2, Math.min(98, star.x + Math.cos(angle) * radius));
+        var y = Math.max(8, Math.min(92, star.y + Math.sin(angle) * radius * 0.5));
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "caux" + (site.deployed === false ? " caux--planned" : "");
+        btn.setAttribute("data-site", site.id);
+        btn.setAttribute("data-parent", star.id);
+        btn.style.setProperty("--x", x.toFixed(2) + "%");
+        btn.style.setProperty("--y", y.toFixed(2) + "%");
+        btn.style.setProperty("--accent", star.accent || DEFAULT_ACCENT);
+        var tip = site.name + (site.deployed === false ? " · 地址待部署" : " · " + hostOf(site.url));
+        btn.title = tip;
+        btn.setAttribute("aria-label", tip + (site.deployed === false ? "" : "，打开项目"));
+        btn.addEventListener("click", function () {
+          if (site.deployed === false) { setStar(star.id, true); return; }
+          window.open(site.url, "_blank", "noopener");
+        });
+        btn.addEventListener("mouseenter", function () { trace(star.id, site.id); });
+        btn.addEventListener("mouseleave", clearTrace);
+        btn.addEventListener("focus", function () { trace(star.id, site.id); });
+        btn.addEventListener("blur", clearTrace);
+        auxButtons.push(btn);
+        auxBox.appendChild(btn);
+      });
+    });
+
+    function trace(starId, siteId) {
+      board.classList.add("is-tracing");
+      starButtons.forEach(function (btn) {
+        var id = btn.getAttribute("data-star");
+        btn.classList.toggle("is-hot", id === starId);
+        btn.classList.toggle("is-dim", id !== starId);
+      });
+      lines.forEach(function (line) {
+        line.classList.toggle("is-active",
+          line.getAttribute("data-link").split(" ").indexOf(starId) !== -1);
+      });
+      auxButtons.forEach(function (btn) {
+        var same = btn.getAttribute("data-parent") === starId;
+        btn.classList.toggle("is-hot", same);
+        btn.classList.toggle("is-dim", !same);
+        btn.classList.toggle("is-hover", same && !!siteId && btn.getAttribute("data-site") === siteId);
+      });
+      groups.forEach(function (g) {
+        g.classList.toggle("is-hover", g.getAttribute("data-group") === starId);
+      });
+    }
+
+    function clearTrace() {
+      board.classList.remove("is-tracing");
+      starButtons.forEach(function (btn) { btn.classList.remove("is-hot", "is-dim"); });
+      lines.forEach(function (line) { line.classList.remove("is-active"); });
+      auxButtons.forEach(function (btn) { btn.classList.remove("is-hot", "is-dim", "is-hover"); });
+      groups.forEach(function (g) { g.classList.remove("is-hover"); });
+    }
+
+    starButtons.forEach(function (btn) {
+      var id = btn.getAttribute("data-star");
+      btn.addEventListener("click", function () { setStar(id); });
+      btn.addEventListener("mouseenter", function () { trace(id, null); });
+      btn.addEventListener("mouseleave", clearTrace);
+      btn.addEventListener("focus", function () { trace(id, null); });
+      btn.addEventListener("blur", clearTrace);
+    });
+
+    groups.forEach(function (g) {
+      var head = g.querySelector(".cgroup__head");
+      if (!head) return;
+      var id = head.getAttribute("data-star");
+      head.addEventListener("click", function () {
+        // 移动端星卡已承担筛选，组头改为展开/收起，避免一按就只剩一组
+        if (compactMql.matches) {
+          openGroupId = openGroupId === id ? null : id;
+          applyGroupAccordion();
+          return;
+        }
+        setStar(id);
+      });
+      head.addEventListener("mouseenter", function () { trace(id, null); });
+      head.addEventListener("mouseleave", clearTrace);
+      head.addEventListener("focus", function () { trace(id, null); });
+      head.addEventListener("blur", clearTrace);
+    });
+
+    if (compactMql.addEventListener) {
+      compactMql.addEventListener("change", function () {
+        openGroupId = null;
+        syncConstellation();
+      });
+    }
+
+    var reset = document.querySelector("[data-constellation-reset]");
+    if (reset) reset.addEventListener("click", function () { setStar(hubId()); });
+
+    syncConstellation();
+  }
+
   function bindHeader() {
     var brand = state.data.brand || {};
     var sites = state.data.sites || [];
@@ -1027,13 +1264,14 @@
 
   loadData().then(function (data) {
     state.data = data;
-    buildIndex();
-    bindHeader();
+    var hub = hubStar();
+    state.star = (hub && hub.id) || "tianji";
+    buildIndex();    bindHeader();
     bindArchitecture();
     bindFlow();
-    renderChips();
     renderShowcase();
     renderGrid();
+    bindConstellation();
     bindSearch();
     bindStickyHeader();
     revealInitial();

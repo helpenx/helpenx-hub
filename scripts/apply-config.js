@@ -114,7 +114,7 @@ const graph = {
       "@type": "WebSite",
       "@id": url + "#website",
       "name": seo.name || brand.fullName,
-      "alternateName": brand.name,
+      "alternateName": brand.alias || brand.name,
       "url": url,
       "description": desc,
       "inLanguage": seo.language || "zh-CN"
@@ -183,6 +183,18 @@ const eol = "\n";
   ].filter(Boolean);
   const pad = (html.slice(0, a).match(/[ \t]*$/) || [""])[0];
   const body = lines.length ? pad + lines.join(eol + pad) + eol : "";
+  html = html.slice(0, html.indexOf("\n", a) + 1) + body + pad + html.slice(b);
+})();
+
+// 首页品牌副标题：观星象之序，筑数字之基。
+(function () {
+  const START = "<!-- HEROMOTTO:START", END = "<!-- HEROMOTTO:END -->";
+  const a = html.indexOf(START), b = html.indexOf(END);
+  if (a === -1 || b === -1) throw new Error("缺少 HEROMOTTO 标记");
+  const pad = (html.slice(0, a).match(/[ \t]*$/) || [""])[0];
+  const body = brand.motto
+    ? pad + '<p class="hero__motto">' + esc(brand.motto) + "</p>" + eol
+    : "";
   html = html.slice(0, html.indexOf("\n", a) + 1) + body + pad + html.slice(b);
 })();
 
@@ -296,6 +308,141 @@ function fillBlock(startMarker, endMarker, cards) {
 }
 fillBlock("<!-- CARDS-HERO:START", "<!-- CARDS-HERO:END -->", heroSite ? [heroCardOf(heroSite)] : []);
 fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
+
+// 北斗阵列：七主星承载全部服务，辅星与面板清单由同一条配置驱动
+const constellation = cfg.constellation || {};
+const stars = constellation.stars || [];
+const siteById = {};
+sites.forEach((s) => { siteById[s.id] = s; });
+
+// 每项服务必须且只能归属一颗主星，避免漏项与重复入口
+const starOfSite = {};
+stars.forEach((star) => {
+  (star.projects || []).forEach((id) => {
+    if (!siteById[id]) throw new Error("constellation 引用了不存在的服务：" + id);
+    if (starOfSite[id]) throw new Error("服务 " + id + " 同时归属 " + starOfSite[id] + " 与 " + star.id);
+    starOfSite[id] = star.id;
+  });
+});
+const unassigned = sites.filter((s) => !starOfSite[s.id]).map((s) => s.id);
+if (unassigned.length) throw new Error("以下服务未加入北斗阵列：" + unassigned.join(", "));
+
+const starById = {};
+stars.forEach((s) => { starById[s.id] = s; });
+const hubStar = stars.filter((s) => s.isHub)[0] || stars[0] || {};
+if (!hubStar.id) throw new Error("constellation 缺少 isHub 主星");
+const starCount = (s) => (s.isHub ? sites.length : (s.projects || []).length);
+
+function starButtonOf(s) {
+  const count = starCount(s);
+  return '<button class="cstar' + (s.isHub ? " cstar--hub" : "") +
+    " cstar--label-" + esc(s.label || "bottom") + '" type="button" data-star="' + esc(s.id) +
+    '" aria-pressed="' + (s.isHub ? "true" : "false") + '"' +
+    ' aria-label="' + esc(s.title + "，" + count + " 项服务，点击筛选") + '"' +
+    ' style="--accent:' + esc(s.accent || "#4f6ae0") + ";--x:" + s.x + "%;--y:" + s.y + '%">' +
+    '<span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span>' +
+    '<span class="cstar__label"><span class="cstar__name">' + esc(s.name) + "</span>" +
+      '<span class="cstar__short">' + esc(s.short || "") + "</span>" +
+      '<span class="cstar__count">' + count + "</span></span>" +
+    "</button>";
+}
+
+function starLinkOf(pair) {
+  const a = starById[pair[0]], b = starById[pair[1]];
+  if (!a || !b) throw new Error("constellation.links 引用了不存在的主星：" + pair.join(" / "));
+  return '<line data-link="' + esc(pair.join(" ")) + '" x1="' + (a.x * 10).toFixed(1) +
+    '" y1="' + (a.y * 3.4).toFixed(1) + '" x2="' + (b.x * 10).toFixed(1) +
+    '" y2="' + (b.y * 3.4).toFixed(1) + '"></line>';
+}
+
+function projectLinkOf(id) {
+  const site = siteById[id];
+  const planned = site.deployed === false;
+  const tag = planned ? "span" : "a";
+  const attrs = planned
+    ? ' aria-disabled="true"'
+    : ' href="' + esc(site.url) + '" target="_blank" rel="noopener"';
+  return "<" + tag + ' class="clink' + (planned ? " clink--planned" : "") +
+    '" data-site="' + esc(id) + '"' + attrs + ">" +
+    '<span class="clink__name">' + esc(site.name) + "</span>" +
+    '<span class="clink__host">' + esc(planned ? "地址待部署" : hostname(site.url)) + "</span>" +
+    "</" + tag + ">";
+}
+
+function starGroupOf(s) {
+  const links = (s.projects || []).map(projectLinkOf);
+  return '<div class="cgroup" data-group="' + esc(s.id) + '" style="--accent:' +
+    esc(s.accent || "#4f6ae0") + '">' +
+    '<button class="cgroup__head" type="button" data-star="' + esc(s.id) +
+      '" aria-controls="cgroup-links-' + esc(s.id) +
+      '" aria-label="' + esc("筛选 " + s.title) + '">' +
+      '<span class="cgroup__dot" aria-hidden="true"></span>' +
+      '<span class="cgroup__name">' + esc(s.title) + "</span>" +
+      '<span class="cgroup__count">' + links.length + "</span>" +
+      '<span class="cgroup__chev" aria-hidden="true"></span>' +
+    "</button>" +
+    '<div class="cgroup__links" id="cgroup-links-' + esc(s.id) + '">' + links.join("") + "</div>" +
+  "</div>";
+}
+
+(function () {
+  const START = "<!-- CONSTELLATION:START", END = "<!-- CONSTELLATION:END -->";
+  const a = html.indexOf(START), b = html.indexOf(END);
+  if (a === -1 || b === -1) throw new Error("缺少 CONSTELLATION 标记");
+  if (!stars.length) {
+    html = html.slice(0, html.indexOf("\n", a) + 1) + html.slice(b);
+    return;
+  }
+
+  const lines = [];
+  const p = "    ";
+  lines.push(p + '<div class="constellation__head">');
+  if (constellation.eyebrow) {
+    lines.push(p + '  <span class="constellation__eyebrow">' + esc(constellation.eyebrow) + "</span>");
+  }
+  lines.push(p + '  <h2 class="constellation__title" id="constellation-title">' +
+    esc(constellation.title || "") + "</h2>");
+  if (constellation.lead) {
+    lines.push(p + '  <p class="constellation__lead">' + esc(constellation.lead) + "</p>");
+  }
+  if (constellation.hint) {
+    lines.push(p + '  <p class="constellation__hint"><span class="constellation__hintdot" aria-hidden="true"></span>' +
+      esc(constellation.hint) + "</p>");
+  }
+  lines.push(p + "</div>");
+
+  lines.push(p + '<div class="constellation__board" data-constellation-board role="group" aria-label="北斗阵列：点主星筛选服务线，点辅星直达项目">');
+  lines.push(p + '  <svg class="constellation__edges" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
+  (constellation.links || []).forEach((pair) => lines.push(p + "    " + starLinkOf(pair)));
+  lines.push(p + "  </svg>");
+  lines.push(p + '  <div class="constellation__aux" data-constellation-aux></div>');
+  stars.forEach((s) => lines.push(p + "  " + starButtonOf(s)));
+  lines.push(p + '  <span class="constellation__axis" aria-hidden="true">北斗 · BIG DIPPER</span>');
+  lines.push(p + '  <span class="constellation__meta" aria-hidden="true">' + sites.length + " 服务 · " +
+    stars.length + " 主星 · 点按筛选</span>");
+  lines.push(p + "</div>");
+
+  lines.push(p + '<div class="constellation__panel">');
+  lines.push(p + '  <div class="constellation__current">');
+  lines.push(p + '    <span class="constellation__current-eyebrow">CURRENT · 当前星位</span>');
+  lines.push(p + '    <div class="constellation__current-row">');
+  lines.push(p + '      <h3 class="constellation__current-title" data-constellation-title>' +
+    esc(hubStar.title || "") + "</h3>");
+  lines.push(p + '      <span class="constellation__current-count" data-constellation-count>' +
+    sites.length + " 项服务</span>");
+  lines.push(p + "    </div>");
+  lines.push(p + '    <p class="constellation__current-desc" data-constellation-desc>' +
+    esc(hubStar.desc || "") + "</p>");
+  lines.push(p + '    <button class="constellation__reset" type="button" data-constellation-reset hidden>← 回到总枢纽</button>');
+  lines.push(p + "  </div>");
+  lines.push(p + '  <div class="constellation__groups" data-constellation-groups>');
+  stars.filter((s) => !s.isHub).forEach((s) => lines.push(p + "    " + starGroupOf(s)));
+  lines.push(p + "  </div>");
+  lines.push(p + "</div>");
+
+  const body = lines.join(eol) + eol;
+  html = html.slice(0, html.indexOf("\n", a) + 1) + body + p + html.slice(b);
+})();
 
 // AIGC Studio 定位引言与六段流水线：分两块生成，中间的 Studio 卡片由 CARDS-HERO 维护
 (function () {

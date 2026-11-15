@@ -250,6 +250,19 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .caux.is-hover::before { width: 10px; height: 10px; opacity: 1; }
 .caux--planned { cursor: default; }
 .caux--planned::before { background: transparent; border: 1px solid var(--accent); }
+/* 辅星呼吸：柔光按不同节拍明灭，错开闪烁避免整片同步 */
+.caux::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 15px; height: 15px; margin: -7.5px 0 0 -7.5px;
+  border-radius: 50%; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 62%, transparent), transparent 68%);
+  animation: auxTwinkle 5.6s ease-in-out infinite;
+}
+.caux:nth-child(3n + 1)::after { animation-delay: -0.8s; }
+.caux:nth-child(3n + 2)::after { animation-delay: -2.3s; }
+.caux:nth-child(3n)::after { animation-delay: -3.7s; }
+.caux:nth-child(5n)::after { animation-duration: 6.4s; }
+.caux:nth-child(7n)::after { animation-delay: -4.6s; }
 
 .cstar {
   position: absolute; left: var(--x); top: var(--y); z-index: 3;
@@ -279,6 +292,43 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .cstar--hub .cstar__halo { width: 40px; height: 40px; }
 .cstar:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 50%; }
 .cstar.is-dim { opacity: 0.42; }
+/* 主星闪耀：十字星芒 + 柔光，每颗星按自己的节拍偶发一闪 */
+.cstar__point::before,
+.cstar__point::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  pointer-events: none; opacity: 0;
+}
+.cstar__point::before {
+  width: 30px; height: 30px; margin: -15px 0 0 -15px;
+  background:
+    linear-gradient(90deg, transparent 47.5%, color-mix(in srgb, var(--accent) 82%, #fff) 50%, transparent 52.5%),
+    linear-gradient(0deg, transparent 47.5%, color-mix(in srgb, var(--accent) 82%, #fff) 50%, transparent 52.5%);
+  animation: starSparkle 6.8s ease-in-out infinite;
+}
+.cstar__point::after {
+  width: 34px; height: 34px; margin: -17px 0 0 -17px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 55%, transparent), transparent 66%);
+  animation: starGlint 4.9s ease-in-out infinite;
+}
+.cstar--hub .cstar__point::before { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+.cstar--hub .cstar__point::after { width: 46px; height: 46px; margin: -23px 0 0 -23px; }
+.cstar:nth-of-type(2n) .cstar__point::before { animation-duration: 7.4s; }
+.cstar:nth-of-type(3n) .cstar__point::after { animation-duration: 5.6s; }
+.cstar:nth-of-type(1) .cstar__point::before,
+.cstar:nth-of-type(1) .cstar__point::after { animation-delay: -0.3s; }
+.cstar:nth-of-type(2) .cstar__point::before,
+.cstar:nth-of-type(2) .cstar__point::after { animation-delay: -3.4s; }
+.cstar:nth-of-type(3) .cstar__point::before,
+.cstar:nth-of-type(3) .cstar__point::after { animation-delay: -1.7s; }
+.cstar:nth-of-type(4) .cstar__point::before,
+.cstar:nth-of-type(4) .cstar__point::after { animation-delay: -5.1s; }
+.cstar:nth-of-type(5) .cstar__point::before,
+.cstar:nth-of-type(5) .cstar__point::after { animation-delay: -2.6s; }
+.cstar:nth-of-type(6) .cstar__point::before,
+.cstar:nth-of-type(6) .cstar__point::after { animation-delay: -4.4s; }
+.cstar:nth-of-type(7) .cstar__point::before,
+.cstar:nth-of-type(7) .cstar__point::after { animation-delay: -0.9s; }
 
 .cstar__label {
   position: absolute; left: 50%; top: calc(100% + 4px);
@@ -1723,7 +1773,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   width: 4px; height: 4px; border-radius: 50%;
   background: color-mix(in srgb, var(--accent) 45%, transparent);
 }
-.card__repo { font-size: 12.5px; color: var(--text-faint); }
+.card__repo { font-size: 12.5px; color: var(--text-faint); overflow-wrap: anywhere; }
 .card__repo:hover { color: var(--accent); }
 .card__repo svg { vertical-align: -2px; margin-right: 5px; }
 
@@ -1865,6 +1915,21 @@ body::after {
 @keyframes starPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.55; }
+}
+@keyframes starSparkle {
+  0%, 58%, 100% { opacity: 0; transform: scale(0.5); }
+  66% { opacity: 1; transform: scale(1); }
+  74% { opacity: 0; transform: scale(1.18); }
+}
+@keyframes starGlint {
+  0%, 55%, 100% { opacity: 0; transform: scale(0.72); }
+  64% { opacity: 0.62; transform: scale(1); }
+  76% { opacity: 0; transform: scale(1.1); }
+}
+@keyframes auxTwinkle {
+  0%, 100% { opacity: 0; transform: scale(0.6); }
+  44% { opacity: 0.8; transform: scale(1); }
+  58% { opacity: 0; transform: scale(1.15); }
 }
 @keyframes gradShift {
   from { background-position: 0% 50%; }
@@ -2094,6 +2159,7 @@ body::after {
     width: 16px; height: 16px; display: grid; place-items: center;
   }
   .cstar__halo { display: none; }
+  .cstar__point::before, .cstar__point::after { display: none; }
   .cstar__dot, .cstar--hub .cstar__dot {
     width: 9px; height: 9px; transform: none; animation: none;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 13%, transparent);

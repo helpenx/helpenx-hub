@@ -418,14 +418,15 @@
     {
       "id": "jpa-plus",
       "name": "Spring Boot JPA Plus",
-      "url": "https://github.com/neopen/spring-boot-jpa-plus",
+      "url": "https://jpa.helpenx.com/",
       "category": "oss",
       "status": "test",
       "icon": "db",
       "tagline": "Spring Data JPA 增强工具包",
       "description": "基于 Spring Data JPA 的模块化增强工具包：简化 CRUD 与批量读写，封装 Criteria 动态查询、Entity-VO 转换与分页响应，支持 HQL / SQL 扩展与自动装配，starter 一键引入、模块按需选用。",
       "features": ["CRUD 与批量处理", "Criteria 动态查询", "Entity-VO 转换", "分页查询封装", "HQL / SQL 扩展", "自动装配 Starter", "模块化按需引入"],
-      "keywords": ["Spring Boot", "Spring Data JPA", "JPA 增强", "动态查询", "批量操作", "Entity VO 转换", "分页查询", "Java 17", "ORM", "数据访问层", "开源 Java 库"]
+      "keywords": ["Spring Boot", "Spring Data JPA", "JPA 增强", "动态查询", "批量操作", "Entity VO 转换", "分页查询", "Java 17", "ORM", "数据访问层", "开源 Java 库"],
+      "repo": "https://github.com/neopen/spring-boot-jpa-plus"
     },
     {
       "id": "blog",

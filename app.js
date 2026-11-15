@@ -34,6 +34,10 @@
     try { return new URL(url).hostname; } catch (e) { return url; }
   }
 
+  function repoText(url) {
+    return String(url || "").replace(/^https?:\/\//, "").replace(/\/+$/, "");
+  }
+
   var state = { data: null, query: "", star: "tianji", stage: null };
 
   /* sites.json 优先；file:// 打开时回退到页面内嵌数据 */
@@ -340,7 +344,8 @@
     card.style.setProperty("--accent", planned ? PLANNED_ACCENT : accentFor(site));
 
     var repo = site.repo
-      ? '<span class="card__repo">' + GITHUB_ICON + "源码仓库</span>"
+      ? '<span class="card__repo" title="源码仓库：' + escapeHtml(site.repo) + '">' +
+          GITHUB_ICON + escapeHtml(repoText(site.repo)) + "</span>"
       : "";
     var badge = '<span class="status-tag status-tag--' + status + '">' +
       (STATUS_LABEL[status] || "规划中") + "</span>";

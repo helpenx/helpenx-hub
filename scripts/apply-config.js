@@ -538,27 +538,33 @@ function microDecorOf(star, micro) {
   const px = (v) => (v * 10).toFixed(1);
   const py = (v) => (v * 3.4).toFixed(1);
   if (layout === "stack") {
-    (micro.bands || []).forEach((band) => {
+    (micro.bands || []).forEach((band, i) => {
       out.push('<line class="cmicro-band" x1="46" y1="' + py(band.y) + '" x2="954" y2="' + py(band.y) + '"></line>');
+      out.push('<line class="cmicro-band-flow" x1="46" y1="' + py(band.y) + '" x2="954" y2="' + py(band.y) +
+        '" style="animation-delay:' + (-i * 1.9).toFixed(1) + 's"></line>');
       out.push('<text class="cmicro-band__label" x="54" y="' + (py(band.y) - 8) + '">' +
         esc((band.en ? band.en + " · " : "") + (band.cn || "")) + "</text>");
     });
   } else if (layout === "orbit") {
     out.push('<ellipse class="cmicro-orbit" cx="500" cy="170" rx="286" ry="96"></ellipse>');
+    out.push('<ellipse class="cmicro-orbit-flow" cx="500" cy="170" rx="286" ry="96"></ellipse>');
     out.push('<ellipse class="cmicro-orbit cmicro-orbit--inner" cx="500" cy="170" rx="150" ry="50"></ellipse>');
+    out.push('<ellipse class="cmicro-orbit-flow cmicro-orbit-flow--inner" cx="500" cy="170" rx="150" ry="50"></ellipse>');
     out.push('<line class="cmicro-tick" x1="500" y1="138" x2="500" y2="202"></line>');
     out.push('<line class="cmicro-tick" x1="468" y1="170" x2="532" y2="170"></line>');
   } else if (layout === "beacon") {
     const node = nodes[0] || { x: 34, y: 50 };
     const cx = px(node.x), cy = py(node.y);
     [[92, 80], [170, 128], [250, 170]].forEach((r, i) => {
-      out.push('<ellipse class="cmicro-orbit' + (i === 1 ? " cmicro-orbit--inner" : "") +
-        '" cx="' + cx + '" cy="' + cy + '" rx="' + r[0] + '" ry="' + r[1] + '"></ellipse>');
+      out.push('<ellipse class="cmicro-orbit cmicro-breathe' + (i === 1 ? " cmicro-orbit--inner" : "") +
+        '" cx="' + cx + '" cy="' + cy + '" rx="' + r[0] + '" ry="' + r[1] +
+        '" style="animation-delay:' + (-i * 1.3).toFixed(1) + 's"></ellipse>');
     });
     out.push('<path class="cmicro-beam" d="M' + cx + " " + cy + " L900 30 L900 310 Z\"></path>");
   } else if (layout === "matrix") {
     out.push('<line class="cmicro-axis" x1="500" y1="26" x2="500" y2="314"></line>');
     out.push('<line class="cmicro-axis" x1="46" y1="170" x2="954" y2="170"></line>');
+    out.push('<line class="cmicro-scan" x1="46" y1="26" x2="954" y2="26"></line>');
     (micro.quadrants || []).forEach((q) => {
       out.push('<text class="cmicro-quad" x="' + px(q.x) + '" y="' + py(q.y) +
         '" text-anchor="' + (q.anchor || "start") + '">' + esc(q.text) + "</text>");
@@ -569,18 +575,25 @@ function microDecorOf(star, micro) {
     [[190, 58, -150, 40], [280, 86, -160, 30], [370, 112, -168, 22]].forEach((r, i) => {
       out.push('<path class="cmicro-orbit' + (i ? " cmicro-orbit--faint" : "") + '" d="' +
         arcPathOf(cx, cy, r[0], r[1], r[2], r[3]) + '"></path>');
+      out.push('<path class="cmicro-orbit-flow' + (i ? " cmicro-orbit-flow--faint" : "") + '" style="animation-delay:' +
+        (-i * 1.7).toFixed(1) + 's" d="' + arcPathOf(cx, cy, r[0], r[1], r[2], r[3]) + '"></path>');
     });
   } else if (layout === "nexus") {
     out.push('<ellipse class="cmicro-orbit cmicro-orbit--inner" cx="500" cy="170" rx="150" ry="56"></ellipse>');
+    out.push('<ellipse class="cmicro-orbit-flow cmicro-orbit-flow--inner" cx="500" cy="170" rx="150" ry="56"></ellipse>');
     out.push('<ellipse class="cmicro-orbit" cx="500" cy="170" rx="300" ry="110"></ellipse>');
+    out.push('<ellipse class="cmicro-orbit-flow" cx="500" cy="170" rx="300" ry="110"></ellipse>');
     out.push('<circle class="cmicro-node-ring" cx="500" cy="170" r="34"></circle>');
     nodes.forEach((node) => {
       out.push('<line class="cmicro-spoke" x1="500" y1="170" x2="' + px(node.x) + '" y2="' + py(node.y) + '"></line>');
+      out.push('<line class="cmicro-spoke-flow" x1="500" y1="170" x2="' + px(node.x) + '" y2="' + py(node.y) + '"></line>');
     });
   } else if (layout === "track") {
     const rail = railPathOf(nodes);
     out.push('<path class="ctrack-rail" d="' + rail + '"></path>');
     out.push('<path class="ctrack-flow" d="' + rail + '"></path>');
+    out.push('<path class="ctrack-aura" d="' + rail + '"></path>');
+    out.push('<path class="ctrack-comet" d="' + rail + '"></path>');
   }
   return out.join("");
 }

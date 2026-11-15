@@ -332,7 +332,36 @@ stars.forEach((star) => {
     }
   });
 });
-const trackedStars = stars.filter((s) => s.track && (s.track.stages || []).length);
+// 微观星图：track 之外的主星可挂 micro，节点必须覆盖本星全部服务且不重复
+const microLayouts = ["stack", "orbit", "beacon", "matrix", "spiral"];
+stars.forEach((star) => {
+  const micro = star.micro;
+  if (!micro) return;
+  if (star.isHub) throw new Error("总枢纽不需要 micro 星图：" + star.id);
+  if (star.track) throw new Error("track 与 micro 只能二选一：" + star.id);
+  if (microLayouts.indexOf(micro.layout) === -1) {
+    throw new Error("micro.layout 不支持：" + star.id + " / " + micro.layout);
+  }
+  const nodes = micro.nodes || [];
+  if (!nodes.length) throw new Error("micro 缺少 nodes：" + star.id);
+  const seenNode = {}, seenSite = {};
+  nodes.forEach((node) => {
+    if (!node.id || seenNode[node.id]) throw new Error("micro 节点 id 缺失或重复：" + star.id + " / " + node.id);
+    seenNode[node.id] = true;
+    if (!node.char) throw new Error("micro 节点缺少 char：" + node.id);
+    if (!siteById[node.site]) throw new Error("micro 引用了不存在的服务：" + node.site);
+    if (seenSite[node.site]) throw new Error("micro 节点重复引用服务：" + node.site);
+    seenSite[node.site] = true;
+    if ((star.projects || []).indexOf(node.site) === -1) {
+      throw new Error("micro 节点的服务不属于 " + star.id + "：" + node.site);
+    }
+  });
+  const missing = (star.projects || []).filter((id) => !seenSite[id]);
+  if (missing.length) throw new Error("micro 未覆盖 " + star.id + " 的服务：" + missing.join(", "));
+});
+const microStars = stars.filter((s) => !s.isHub && (
+  (s.track && (s.track.stages || []).length) || (s.micro && (s.micro.nodes || []).length)
+));
 
 // 页脚按七星阵列收敛：每颗主星只留一条代表入口，完整清单仍在阵列面板与页面内
 (function () {
@@ -402,15 +431,18 @@ fillBlock("<!-- CARDS-GRID:START", "<!-- CARDS-GRID:END -->", gridCards);
 function starButtonOf(s) {
   const count = starCount(s);
   const hasTrack = !!(s.track && (s.track.stages || []).length);
-  return '<button class="cstar' + (s.isHub ? " cstar--hub" : "") + (hasTrack ? " cstar--track" : "") +
+  const hasMicro = !!(s.micro && (s.micro.nodes || []).length);
+  const hasMap = hasTrack || hasMicro;
+  return '<button class="cstar' + (s.isHub ? " cstar--hub" : "") + (hasMap ? " cstar--track" : "") +
     " cstar--label-" + esc(s.label || "bottom") + '" type="button" data-star="' + esc(s.id) +
     '" aria-pressed="' + (s.isHub ? "true" : "false") + '"' +
-    ' aria-label="' + esc(s.title + "，" + count + " 项服务，" + (hasTrack ? "点击展开七星轨" : "点击筛选")) + '"' +
+    ' aria-label="' + esc(s.title + "，" + count + " 项服务，" +
+      (hasTrack ? "点击展开七星轨" : hasMicro ? "点击展开星图" : "点击筛选")) + '"' +
     ' style="--accent:' + esc(s.accent || "#4f6ae0") + ";--x:" + s.x + "%;--y:" + s.y + '%">' +
     '<span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span>' +
     '<span class="cstar__label"><span class="cstar__name">' + esc(s.name) + "</span>" +
       '<span class="cstar__short">' + esc(s.short || "") + "</span>" +
-      (hasTrack ? '<span class="cstar__track">轨</span>' : "") +
+      (hasMap ? '<span class="cstar__track">' + (hasTrack ? "轨" : "图") + "</span>" : "") +
       '<span class="cstar__count">' + count + "</span></span>" +
     "</button>";
 }
@@ -470,56 +502,181 @@ function railPathOf(stages) {
   return d;
 }
 
-function trackNodeOf(star, stage) {
-  const site = siteById[stage.site];
-  const label = stage.label || site.cn || site.name;
-  return '<button class="ctrack" type="button" data-stage="' + esc(stage.id) +
+// 每颗主星一副微观星图：track 沿用七星轨，其余按 layout 生成不同几何
+function microOf(star) {
+  if (star.track && (star.track.stages || []).length) {
+    const track = star.track;
+    return {
+      layout: "track", nodes: track.stages, eyebrow: track.eyebrow, title: track.title,
+      charLine: track.charLine, lead: track.lead, hint: track.hint, sats: []
+    };
+  }
+  return star.micro || null;
+}
+
+const microLayoutOf = (star) => {
+  const micro = microOf(star);
+  return micro ? (micro.layout || "track") : "track";
+};
+
+function microNodeOf(star, node) {
+  const site = siteById[node.site];
+  const label = node.label || site.cn || site.name;
+  const planned = site.deployed === false;
+  return '<button class="ctrack' + (planned ? " ctrack--planned" : "") + '" type="button" data-stage="' + esc(node.id) +
     '" data-site="' + esc(site.id) + '" data-star="' + esc(star.id) + '" aria-pressed="false"' +
     ' aria-label="' + esc("筛选 " + site.name + "，定位到卡片") + '"' +
-    ' style="--accent:' + esc(stage.accent || star.accent || "#4f6ae0") + ";--x:" + stage.x + "%;--y:" + stage.y + '%">' +
-    '<span class="ctrack__node" aria-hidden="true"><span class="ctrack__char">' + esc(stage.char) + "</span></span>" +
-    '<span class="ctrack__label"><span class="ctrack__name">' + esc(stage.char + " · " + label) + "</span>" +
+    ' style="--accent:' + esc(node.accent || star.accent || "#4f6ae0") + ";--x:" + node.x + "%;--y:" + node.y + '%">' +
+    '<span class="ctrack__node" aria-hidden="true"><span class="ctrack__char">' + esc(node.char) + "</span></span>" +
+    '<span class="ctrack__label"><span class="ctrack__name">' + esc(node.char + " · " + label) + "</span>" +
       '<span class="ctrack__site">' + esc(site.name) + "</span></span>" +
   "</button>";
 }
 
-function trackBoardOf(star) {
-  const track = star.track || {};
-  const stages = track.stages || [];
-  const rail = railPathOf(stages);
+function seededRand(seed) {
+  let s = 2166136261;
+  for (let i = 0; i < seed.length; i++) s = Math.imul(s ^ seed.charCodeAt(i), 16777619) >>> 0;
+  return function () {
+    s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+
+function speckFieldOf(seed) {
+  const rand = seededRand(seed);
+  let out = "";
+  for (let i = 0; i < 24; i++) {
+    const x = (rand() * 1000).toFixed(1);
+    const y = (rand() * 340).toFixed(1);
+    const r = (rand() < 0.28 ? 1.5 : 0.9).toFixed(1);
+    out += '<circle class="cmicro__speck" cx="' + x + '" cy="' + y + '" r="' + r + '"></circle>';
+  }
+  return out;
+}
+
+function arcPathOf(cx, cy, rx, ry, from, to) {
+  const pt = (deg) => [
+    (cx + Math.cos((deg * Math.PI) / 180) * rx).toFixed(1),
+    (cy + Math.sin((deg * Math.PI) / 180) * ry).toFixed(1)
+  ];
+  const a = pt(from), b = pt(to);
+  const large = Math.abs(to - from) > 180 ? 1 : 0;
+  const sweep = to > from ? 1 : 0;
+  return "M" + a[0] + " " + a[1] + " A" + rx + " " + ry + " 0 " + large + " " + sweep + " " + b[0] + " " + b[1];
+}
+
+function microDecorOf(star, micro) {
+  const layout = micro.layout || "track";
+  const nodes = micro.nodes || [];
+  const out = [speckFieldOf(star.id + layout)];
+  const px = (v) => (v * 10).toFixed(1);
+  const py = (v) => (v * 3.4).toFixed(1);
+  if (layout === "stack") {
+    (micro.bands || []).forEach((band) => {
+      out.push('<line class="cmicro-band" x1="46" y1="' + py(band.y) + '" x2="954" y2="' + py(band.y) + '"></line>');
+      out.push('<text class="cmicro-band__label" x="54" y="' + (py(band.y) - 8) + '">' +
+        esc((band.en ? band.en + " · " : "") + (band.cn || "")) + "</text>");
+    });
+  } else if (layout === "orbit") {
+    out.push('<ellipse class="cmicro-orbit" cx="500" cy="170" rx="286" ry="96"></ellipse>');
+    out.push('<ellipse class="cmicro-orbit cmicro-orbit--inner" cx="500" cy="170" rx="150" ry="50"></ellipse>');
+    out.push('<line class="cmicro-tick" x1="500" y1="138" x2="500" y2="202"></line>');
+    out.push('<line class="cmicro-tick" x1="468" y1="170" x2="532" y2="170"></line>');
+  } else if (layout === "beacon") {
+    const node = nodes[0] || { x: 34, y: 50 };
+    const cx = px(node.x), cy = py(node.y);
+    [[92, 80], [170, 128], [250, 170]].forEach((r, i) => {
+      out.push('<ellipse class="cmicro-orbit' + (i === 1 ? " cmicro-orbit--inner" : "") +
+        '" cx="' + cx + '" cy="' + cy + '" rx="' + r[0] + '" ry="' + r[1] + '"></ellipse>');
+    });
+    out.push('<path class="cmicro-beam" d="M' + cx + " " + cy + " L900 30 L900 310 Z\"></path>");
+  } else if (layout === "matrix") {
+    out.push('<line class="cmicro-axis" x1="500" y1="26" x2="500" y2="314"></line>');
+    out.push('<line class="cmicro-axis" x1="46" y1="170" x2="954" y2="170"></line>');
+    (micro.quadrants || []).forEach((q) => {
+      out.push('<text class="cmicro-quad" x="' + px(q.x) + '" y="' + py(q.y) +
+        '" text-anchor="' + (q.anchor || "start") + '">' + esc(q.text) + "</text>");
+    });
+  } else if (layout === "spiral") {
+    const node = nodes[0] || { x: 30, y: 52 };
+    const cx = +px(node.x), cy = +py(node.y);
+    [[190, 58, -150, 40], [280, 86, -160, 30], [370, 112, -168, 22]].forEach((r, i) => {
+      out.push('<path class="cmicro-orbit' + (i ? " cmicro-orbit--faint" : "") + '" d="' +
+        arcPathOf(cx, cy, r[0], r[1], r[2], r[3]) + '"></path>');
+    });
+  } else if (layout === "track") {
+    const rail = railPathOf(nodes);
+    out.push('<path class="ctrack-rail" d="' + rail + '"></path>');
+    out.push('<path class="ctrack-flow" d="' + rail + '"></path>');
+  }
+  return out.join("");
+}
+
+function microSatOf(sat) {
+  return '<span class="cmicro__sat" style="--x:' + sat.x + "%;--y:" + sat.y + '%" aria-hidden="true">' +
+    '<i aria-hidden="true"></i>' + esc(sat.text) + "</span>";
+}
+
+function microCoreOf(core) {
+  return '<span class="cmicro__core" style="--x:' + core.x + "%;--y:" + core.y + '%" aria-hidden="true">' +
+    '<span class="cmicro__core-title">' + esc(core.title || "") + "</span>" +
+    '<span class="cmicro__core-note">' + esc(core.note || "") + "</span></span>";
+}
+
+function microBoardOf(star) {
+  const micro = microOf(star);
+  if (!micro) return [];
+  const layout = micro.layout || "track";
+  const nodes = micro.nodes || [];
+  const kind = layout === "track" ? "环节" : "节点";
   const out = [];
-  out.push('<div class="constellation__board constellation__board--track" data-constellation-track="' +
-    esc(star.id) + '" role="group" aria-label="' +
-    esc((track.title || star.title) + "：点环节筛选并定位工具") + '" hidden>');
+  out.push('<div class="constellation__board constellation__board--micro constellation__board--' + layout +
+    '" data-constellation-micro="' + esc(star.id) + '" data-micro-layout="' + layout +
+    '" role="group" aria-label="' + esc((micro.title || star.title) + "：点" + kind + "筛选并定位工具") +
+    '" style="--accent:' + esc(star.accent || "#4f6ae0") + '" hidden>');
   out.push('  <button class="ctrack__back" type="button" data-constellation-back>← 北斗阵列</button>');
-  out.push('  <span class="ctrack__level" aria-hidden="true">' + esc(track.eyebrow || star.title) + "</span>");
-  out.push('  <svg class="constellation__edges constellation__edges--track" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
-  out.push('    <path class="ctrack-rail" d="' + rail + '"></path>');
-  out.push('    <path class="ctrack-flow" d="' + rail + '"></path>');
+  out.push('  <span class="ctrack__level" aria-hidden="true">' + esc(micro.eyebrow || star.title) + "</span>");
+  out.push('  <svg class="constellation__edges constellation__edges--micro" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
+  out.push("    " + microDecorOf(star, micro));
   out.push("  </svg>");
-  stages.forEach((stage) => out.push("  " + trackNodeOf(star, stage)));
+  if (micro.core) out.push("  " + microCoreOf(micro.core));
+  (micro.sats || []).forEach((sat) => out.push("  " + microSatOf(sat)));
+  nodes.forEach((node) => out.push("  " + microNodeOf(star, node)));
   out.push('  <span class="constellation__axis" aria-hidden="true">' +
-    esc(star.name + " · " + (track.charLine || "七 星 轨")) + "</span>");
-  out.push('  <span class="constellation__meta" aria-hidden="true">' + stages.length + " 环节 · 点按定位</span>");
+    esc(star.name + " · " + (micro.charLine || "微 观 星 图")) + "</span>");
+  out.push('  <span class="constellation__meta" aria-hidden="true">' + nodes.length + " " + kind + " · 点按定位</span>");
   out.push("</div>");
   return out;
 }
 
-function trackPanelOf(star) {
-  const track = star.track || {};
-  const stages = track.stages || [];
+function microChipOf(star, node) {
+  const site = siteById[node.site];
+  return '<button class="ctrack-chip" type="button" data-stage="' + esc(node.id) +
+    '" data-star="' + esc(star.id) + '" aria-pressed="false" style="--accent:' +
+    esc(node.accent || star.accent || "#4f6ae0") + '">' +
+    '<span class="ctrack-chip__char" aria-hidden="true">' + esc(node.char) + "</span>" +
+    '<span class="ctrack-chip__name">' + esc(node.char + " · " + (node.label || site.cn || site.name)) + "</span>" +
+    '<span class="ctrack-chip__site">' + esc(site.name) + "</span>" +
+  "</button>";
+}
+
+function microPanelOf(star) {
+  const micro = microOf(star);
+  if (!micro) return [];
+  const layout = micro.layout || "track";
+  const nodes = micro.nodes || [];
   const out = [];
-  out.push('<div class="constellation__track" data-constellation-track-panel="' + esc(star.id) + '" hidden>');
-  stages.forEach((stage) => {
-    const site = siteById[stage.site];
-    out.push('  <button class="ctrack-chip" type="button" data-stage="' + esc(stage.id) +
-      '" data-star="' + esc(star.id) + '" aria-pressed="false" style="--accent:' +
-      esc(stage.accent || star.accent || "#4f6ae0") + '">' +
-      '<span class="ctrack-chip__char" aria-hidden="true">' + esc(stage.char) + "</span>" +
-      '<span class="ctrack-chip__name">' + esc(stage.char + " · " + (stage.label || site.cn || site.name)) + "</span>" +
-      '<span class="ctrack-chip__site">' + esc(site.name) + "</span>" +
-    "</button>");
-  });
+  out.push('<div class="' + (layout === "track" ? "constellation__track" : "constellation__micro") +
+    '" data-constellation-micro-panel="' + esc(star.id) + '" data-micro-layout="' + layout +
+    '" style="--accent:' + esc(star.accent || "#4f6ae0") + '" hidden>');
+  if (layout !== "track") out.push('  <div class="cmicro-panel__chips">');
+  nodes.forEach((node) => out.push((layout === "track" ? "  " : "    ") + microChipOf(star, node)));
+  if (layout !== "track") out.push("  </div>");
+  if (layout !== "track" && (micro.sats || []).length) {
+    out.push('  <div class="cmicro-panel__sats"><span class="cmicro-panel__label">同域能力</span>');
+    micro.sats.forEach((sat) => out.push('    <span class="cmicro-tag">' + esc(sat.text) + "</span>"));
+    out.push("  </div>");
+  }
   out.push("</div>");
   return out;
 }
@@ -584,24 +741,41 @@ function miniRailPath(points) {
   return d;
 }
 
-function artTrackOf(star) {
-  const track = star.track || {};
-  const stages = track.stages || [];
-  const pts = stages.map((s) => ({
-    x: +(26 + (s.x / 100) * 268).toFixed(1),
-    y: +(30 + ((s.y - 30) / 34) * 32).toFixed(1)
+function artMiniNodesOf(star, micro) {
+  return (micro.nodes || []).map((node) => ({
+    x: +(26 + (node.x / 100) * 268).toFixed(1),
+    y: +(26 + ((node.y - 24) / 60) * 44).toFixed(1),
+    char: node.char,
+    accent: node.accent || star.accent || "#4f6ae0"
   }));
+}
+
+function artMicroOf(star) {
+  const micro = microOf(star);
+  if (!micro) return "";
+  const layout = micro.layout || "track";
+  const pts = artMiniNodesOf(star, micro);
   const out = ['<svg class="c-art" viewBox="0 0 320 96" role="presentation" focusable="false">'];
-  out.push('<path class="c-art__rail" d="' + miniRailPath(pts) + '"></path>');
-  stages.forEach((s, i) => {
-    const pt = pts[i];
-    const accent = esc(s.accent || star.accent || "#4f6ae0");
+  const rand = seededRand(star.id + "-art");
+  for (let i = 0; i < 10; i++) {
+    out.push('<circle class="c-art__speck" cx="' + (rand() * 320).toFixed(1) + '" cy="' + (rand() * 96).toFixed(1) + '" r="0.8"></circle>');
+  }
+  if (layout === "orbit" || layout === "spiral" || layout === "beacon") {
+    const c = layout === "beacon" ? (pts[0] || { x: 117, y: 45 }) : { x: 160, y: 50 };
+    const sizes = layout === "beacon" ? [[58, 24], [92, 34]] : [[74, 28], [112, 38]];
+    sizes.forEach((s) => out.push('<ellipse class="c-art__orbit" cx="' + c.x + '" cy="' + c.y +
+      '" rx="' + s[0] + '" ry="' + s[1] + '"></ellipse>'));
+  } else {
+    out.push('<path class="c-art__rail" d="' + miniRailPath(pts) + '"></path>');
+  }
+  pts.forEach((pt) => {
+    const accent = esc(pt.accent);
     out.push('<circle class="c-art__node" cx="' + pt.x + '" cy="' + pt.y + '" r="10" stroke="' + accent + '"></circle>');
     out.push('<text class="c-art__char" x="' + pt.x + '" y="' + (pt.y + 3.4).toFixed(1) +
-      '" text-anchor="middle" fill="' + accent + '">' + esc(s.char) + "</text>");
+      '" text-anchor="middle" fill="' + accent + '">' + esc(pt.char) + "</text>");
   });
   out.push('<text class="c-art__cap" x="160" y="91" text-anchor="middle">' +
-    esc(track.charLine || "启 · 绘 · 铸 · 韵 · 织 · 鉴 · 藏") + "</text>");
+    esc(micro.charLine || "") + "</text>");
   out.push("</svg>");
   return out.join("");
 }
@@ -633,7 +807,7 @@ function artTrackOf(star) {
   lines.push(p + "</div>");
 
   lines.push(p + '<div class="constellation__flip" data-constellation-flip data-mode="macro">');
-  lines.push(p + '  <div class="constellation__board" data-constellation-board role="group" aria-label="北斗阵列：点主星筛选服务线，点辅星直达项目">');
+  lines.push(p + '  <div class="constellation__board" data-constellation-board role="group" aria-label="北斗阵列：点主星翻开星图，点辅星直达项目">');
   lines.push(p + '    <svg class="constellation__edges" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
   (constellation.links || []).forEach((pair) => lines.push(p + "      " + starLinkOf(pair)));
   lines.push(p + "    </svg>");
@@ -643,8 +817,8 @@ function artTrackOf(star) {
   lines.push(p + '    <span class="constellation__meta" aria-hidden="true">' + sites.length + " 服务 · " +
     stars.length + " 主星 · 点按筛选</span>");
   lines.push(p + "  </div>");
-  trackedStars.forEach((star) => {
-    trackBoardOf(star).forEach((line) => lines.push(p + "  " + line));
+  microStars.forEach((star) => {
+    microBoardOf(star).forEach((line) => lines.push(p + "  " + line));
   });
   lines.push(p + "</div>");
 
@@ -663,9 +837,10 @@ function artTrackOf(star) {
   lines.push(p + '    <div class="constellation__art" data-constellation-art="macro" aria-hidden="true">');
   lines.push(p + '      <div class="constellation__art-frame">' + artStarMap() + "</div>");
   lines.push(p + "    </div>");
-  trackedStars.forEach((star) => {
-    lines.push(p + '    <div class="constellation__art" data-constellation-track-art="' + esc(star.id) + '" aria-hidden="true" hidden>');
-    lines.push(p + '      <div class="constellation__art-frame">' + artTrackOf(star) + "</div>");
+  microStars.forEach((star) => {
+    lines.push(p + '    <div class="constellation__art" data-constellation-micro-art="' + esc(star.id) + '" data-micro-layout="' +
+      microLayoutOf(star) + '" aria-hidden="true" hidden>');
+    lines.push(p + '      <div class="constellation__art-frame">' + artMicroOf(star) + "</div>");
     lines.push(p + "    </div>");
   });
   lines.push(p + "  </div>");
@@ -673,8 +848,8 @@ function artTrackOf(star) {
   lines.push(p + '    <div class="constellation__groups" data-constellation-groups>');
   stars.filter((s) => !s.isHub).forEach((s) => lines.push(p + "      " + starGroupOf(s)));
   lines.push(p + "    </div>");
-  trackedStars.forEach((star) => {
-    trackPanelOf(star).forEach((line) => lines.push(p + "    " + line));
+  microStars.forEach((star) => {
+    microPanelOf(star).forEach((line) => lines.push(p + "    " + line));
   });
   lines.push(p + "  </div>");
   lines.push(p + "</div>");

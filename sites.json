@@ -27,7 +27,7 @@
     "eyebrow": "北斗阵列 · 七主星",
     "title": "七主星领航，18 项服务各归其位",
     "lead": "轻天玑居中调度：天璇管创意生产，天枢管开源引擎，天权管数字工具，玉衡沉淀内容，开阳承载行业演示，摇光试验新可能。",
-    "hint": "点主星筛选服务，点辅星直达项目；点天璇展开七星轨，再点天玑回到全部。",
+    "hint": "点主星翻开各自的星图，点节点筛选服务，点辅星直达项目；点天玑回到全部。",
     "links": [
       ["tianshu", "tianxuan"],
       ["tianxuan", "tianji"],
@@ -50,7 +50,28 @@
         "label": "right",
         "auxAngle": 205,
         "auxSpread": 96,
-        "projects": ["neoflow", "neotask", "jpa-plus"]
+        "projects": ["neoflow", "neotask", "jpa-plus"],
+        "micro": {
+          "layout": "stack",
+          "eyebrow": "ENGINE STACK · 引擎栈",
+          "title": "天枢 · 引擎栈",
+          "charLine": "编排 · 执行 · 持久",
+          "lead": "NeoFlow 把任务拆成 DAG，NeoTask 拉起分布式执行，JPA Plus 落到数据层：三层各守一段。",
+          "bands": [
+            { "y": 28, "en": "ORCHESTRATE", "cn": "编排层" },
+            { "y": 50, "en": "EXECUTE", "cn": "执行层" },
+            { "y": 72, "en": "PERSIST", "cn": "持久层" }
+          ],
+          "nodes": [
+            { "id": "flow", "site": "neoflow", "char": "编", "label": "DAG 编排", "x": 32, "y": 28 },
+            { "id": "task", "site": "neotask", "char": "行", "label": "任务队列", "x": 50, "y": 50 },
+            { "id": "store", "site": "jpa-plus", "char": "存", "label": "数据访问", "x": 68, "y": 72 }
+          ],
+          "sats": [
+            { "x": 88, "y": 12, "text": "CONTROL PLANE" },
+            { "x": 88, "y": 88, "text": "DATA PLANE" }
+          ]
+        }
       },
       {
         "id": "tianxuan",
@@ -107,7 +128,25 @@
         "label": "top",
         "auxAngle": 72,
         "auxSpread": 44,
-        "projects": ["helpoke", "break-reminder"]
+        "projects": ["helpoke", "break-reminder"],
+        "micro": {
+          "layout": "orbit",
+          "eyebrow": "TOOL RING · 工具环",
+          "title": "天权 · 工具环",
+          "charLine": "即开 · 本地 · 零上传",
+          "lead": "两件小工具都跑在浏览器本地：不登录、不上传，打开即用，关掉即走。",
+          "core": { "x": 50, "y": 50, "title": "LOCAL", "note": "浏览器本地处理" },
+          "nodes": [
+            { "id": "tools", "site": "helpoke", "char": "工", "label": "在线工具箱", "x": 24, "y": 50 },
+            { "id": "sit", "site": "break-reminder", "char": "憩", "label": "防久坐提醒", "x": 76, "y": 50 }
+          ],
+          "sats": [
+            { "x": 50, "y": 25, "text": "无需登录" },
+            { "x": 50, "y": 77, "text": "隐私安全" },
+            { "x": 22, "y": 74, "text": "零上传" },
+            { "x": 78, "y": 26, "text": "即开即用" }
+          ]
+        }
       },
       {
         "id": "yuheng",
@@ -121,7 +160,22 @@
         "label": "right",
         "auxAngle": 90,
         "auxSpread": 42,
-        "projects": ["blog"]
+        "projects": ["blog"],
+        "micro": {
+          "layout": "beacon",
+          "eyebrow": "CONTENT BEACON · 内容信标",
+          "title": "玉衡 · 内容信标",
+          "charLine": "AI · Python · 架构",
+          "lead": "一篇篇实践记录汇成一座信标：AI 应用、Python 工程与系统架构，持续向外发信。",
+          "nodes": [
+            { "id": "post", "site": "blog", "char": "文", "label": "技术博客", "x": 34, "y": 50 }
+          ],
+          "sats": [
+            { "x": 58, "y": 27, "text": "AI 应用" },
+            { "x": 75, "y": 64, "text": "Python 工程" },
+            { "x": 91, "y": 32, "text": "系统架构" }
+          ]
+        }
       },
       {
         "id": "kaiyang",
@@ -135,7 +189,29 @@
         "label": "right",
         "auxAngle": -68,
         "auxSpread": 88,
-        "projects": ["demo-city", "demo-aiot", "demo-tms", "demo-erp"]
+        "projects": ["demo-city", "demo-aiot", "demo-tms", "demo-erp"],
+        "micro": {
+          "layout": "matrix",
+          "eyebrow": "DOMAIN MATRIX · 行业象限",
+          "title": "开阳 · 行业象限",
+          "charLine": "城市 · 安检 · 运输 · 电商",
+          "lead": "四个可运行案例分守四象限：城市治理、安全合规、物流运输与业务系统，各有完整流程。",
+          "quadrants": [
+            { "x": 7, "y": 15, "text": "城市治理", "anchor": "start" },
+            { "x": 93, "y": 15, "text": "安全合规", "anchor": "end" },
+            { "x": 7, "y": 85, "text": "物流运输", "anchor": "start" },
+            { "x": 93, "y": 85, "text": "业务系统", "anchor": "end" }
+          ],
+          "nodes": [
+            { "id": "city", "site": "demo-city", "char": "城", "label": "智慧城市", "x": 28, "y": 36 },
+            { "id": "aiot", "site": "demo-aiot", "char": "检", "label": "智慧安检", "x": 72, "y": 36 },
+            { "id": "tms", "site": "demo-tms", "char": "运", "label": "汇通物流 TMS", "x": 28, "y": 66 },
+            { "id": "erp", "site": "demo-erp", "char": "商", "label": "Sailfish ERP", "x": 72, "y": 66 }
+          ],
+          "sats": [
+            { "x": 50, "y": 93, "text": "可运行案例 · 可回溯流程" }
+          ]
+        }
       },
       {
         "id": "yaoguang",
@@ -149,7 +225,22 @@
         "label": "top",
         "auxAngle": 22,
         "auxSpread": 42,
-        "projects": ["demo-lingxi"]
+        "projects": ["demo-lingxi"],
+        "micro": {
+          "layout": "spiral",
+          "eyebrow": "SANDBOX ORBIT · 共创轨道",
+          "title": "摇光 · 共创轨道",
+          "charLine": "角色 · 场景 · 模型",
+          "lead": "灵犀 AIGC 创作台把角色、场景与模型放进同一条试验轨道：先试，再定。",
+          "nodes": [
+            { "id": "lingxi", "site": "demo-lingxi", "char": "犀", "label": "灵犀创作台", "x": 30, "y": 52 }
+          ],
+          "sats": [
+            { "x": 55, "y": 26, "text": "角色资产" },
+            { "x": 72, "y": 66, "text": "场景资产" },
+            { "x": 90, "y": 30, "text": "模型试验" }
+          ]
+        }
       }
     ]
   },

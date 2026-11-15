@@ -1335,20 +1335,21 @@
         if (!center) return;
         var n = cluster.items.length;
         var base = (cluster.star.auxAngle || 0) * Math.PI / 180;
-        var span = n > 1 ? Math.min(2.6, 1 + n * 0.22) : 0;
+        var span = n > 1 ? Math.min(3.4, 1.1 + n * 0.32) : 0;
         var step = n > 1 ? span / (n - 1) : 0;
 
         function arcAt(offset) {
-          var R = 34;
+          var R = 40;
           var pts = [];
-          var out = n;
-          for (var pass = 0; pass < 14; pass++) {
+          var out = 0;
+          var ok = false;
+          for (var pass = 0; pass < 16; pass++) {
             pts = [];
             for (var i = 0; i < n; i++) {
               var angle = base + offset + (i - (n - 1) / 2) * step;
               pts.push({
                 x: center.x + Math.cos(angle) * R,
-                y: center.y + Math.sin(angle) * R * 0.62
+                y: center.y + Math.sin(angle) * R * 0.8
               });
             }
             var minDist = Infinity;
@@ -1360,24 +1361,25 @@
             out = pts.filter(function (pt) {
               return pt.x < edge || pt.x > W - edge || pt.y < edge || pt.y > H - edge;
             }).length;
-            var crowded = n > 1 && minDist < AUX_GAP + 0.8;
+            var crowded = n > 1 && minDist < AUX_GAP + 0.6;
             var covered = ownLabel && pts.some(function (pt) { return hitsLabel(pt, ownLabel); });
-            if ((!crowded && !covered) || R > 170) break;
-            R *= crowded ? Math.max(1.08, Math.min(1.3, AUX_GAP / Math.max(minDist, 1))) : 1.16;
+            ok = !crowded && !covered;
+            if (ok || R >= 96) break;
+            R *= crowded ? Math.min(1.6, AUX_GAP / Math.max(minDist, 1)) : 1.05;
           }
-          return { pts: pts, out: out };
+          return { pts: pts, out: out, R: R, ok: ok };
         }
 
-        // 以最小偏转为先，找一条既保持间距、又不出棋盘与标签的弧线
-        var offsets = [0, 0.22, -0.22, 0.45, -0.45, 0.7, -0.7, 1.0, -1.0, 1.35, -1.35, 1.7, -1.7];
+        // 贴近主星优先：先比是否满足间距与避让，再比半径，最后才接受偏转
+        var offsets = [0, 0.2, -0.2, 0.42, -0.42, 0.66, -0.66, 0.95, -0.95, 1.3, -1.3, 1.7, -1.7, 2.1, -2.1];
         var chosen = null;
-        var chosenOut = Infinity;
+        var best = Infinity;
         offsets.forEach(function (offset) {
-          if (chosen && chosenOut === 0) return;
           var arc = arcAt(offset);
-          if (arc.out < chosenOut) {
+          var score = (arc.ok ? 0 : 1400) + arc.out * 160 + arc.R * 1.5 + Math.abs(offset) * 8;
+          if (score < best) {
+            best = score;
             chosen = arc;
-            chosenOut = arc.out;
           }
         });
         cluster.items.forEach(function (item, i) {

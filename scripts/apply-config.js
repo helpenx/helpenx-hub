@@ -668,6 +668,22 @@ function microBoardOf(star) {
   lines.push(p + '  <svg class="constellation__edges" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
   (constellation.links || []).forEach((pair) => lines.push(p + "      " + starLinkOf(pair)));
   lines.push(p + "  </svg>");
+  // 底色环上的日地月：太阳与地球沿椭圆环公转，月球绕地自转
+  lines.push(p + '  <span class="constellation__orbit" aria-hidden="true">');
+  lines.push(p + '    <i class="corb corb--sun"></i>');
+  lines.push(p + '    <i class="corb corb--earth"><i class="corb__moon"></i></i>');
+  lines.push(p + "  </span>");
+  // 颗粒流星：细长亮粒按各自节拍斜落，取代原来整片扫光
+  const meteors = [
+    [6, 2, 74, 9.4, -1.2, -33], [18, 10, 52, 11.6, -6.4, -29],
+    [27, 1, 64, 10.2, -8.8, -36], [41, 6, 46, 12.4, -3.5, -31],
+    [56, 2, 82, 8.8, -7.1, -34], [66, 12, 58, 10.8, -0.4, -28],
+    [78, 4, 68, 9.8, -5.2, -35], [88, 9, 48, 12.8, -9.6, -30]
+  ];
+  lines.push(p + '  <span class="constellation__meteors" aria-hidden="true">');
+  meteors.forEach(([x, y, len, dur, delay, angle]) => lines.push(p + '    <i style="--x:' + x + "%;--y:" + y +
+    "%;--len:" + len + "px;--dur:" + dur + "s;--delay:" + delay + "s;--angle:" + angle + 'deg"></i>'));
+  lines.push(p + "  </span>");
   lines.push(p + '  <div class="constellation__aux" data-constellation-aux></div>');
   stars.forEach((s) => lines.push(p + "  " + starButtonOf(s)));
   lines.push(p + '  <span class="constellation__axis" aria-hidden="true">北斗 · BIG DIPPER</span>');

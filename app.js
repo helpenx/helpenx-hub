@@ -53,6 +53,13 @@
 
   function accentFor(site) { return ACCENTS[site.category] || DEFAULT_ACCENT; }
 
+  /* 图片固有宽高写进 <img>，避免加载时撑动布局 */
+  function imgSize(site) {
+    return site.imageWidth && site.imageHeight
+      ? ' width="' + Number(site.imageWidth) + '" height="' + Number(site.imageHeight) + '"'
+      : "";
+  }
+
   function iconGlyph(site) {
     return site.icon
       ? '<svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-' + escapeHtml(site.icon) + '"></use></svg>'
@@ -334,7 +341,8 @@
 
     var thumb = site.image && site.span === "full"
       ? '<span class="card__thumb"><img src="' + escapeHtml(site.image) + '" alt="' +
-        escapeHtml(site.imageAlt || site.name + " 示意图") + '" decoding="async"></span>'
+        escapeHtml(site.imageAlt || site.name + " 示意图") + '"' + imgSize(site) +
+        ' loading="lazy" decoding="async"></span>'
       : "";
     var lead = thumb ? '<div class="card__lead">' + idBlock + thumb + "</div>" : idBlock;
 
@@ -368,7 +376,8 @@
 
     var media = hs.image
       ? '<a class="showcase__media" href="' + escapeHtml(hs.url) + '" target="_blank" rel="noopener">' +
-          '<img src="' + escapeHtml(hs.image) + '" alt="' + escapeHtml(hs.name + " 生产链路示意") + '" fetchpriority="high">' +
+          '<img src="' + escapeHtml(hs.image) + '" alt="' + escapeHtml(hs.name + " 生产链路示意") + '"' +
+          imgSize(hs) + ' fetchpriority="high" decoding="async">' +
         "</a>"
       : "";
 

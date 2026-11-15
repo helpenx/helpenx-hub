@@ -17,6 +17,22 @@ const availableSites = sites.filter((s) => s.deployed !== false);
 const esc = (s) => String(s == null ? "" : s)
   .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
+// 取图片固有宽高写进 <img>，避免首屏以下的图片加载时撑动布局
+function imageSize(site) {
+  if (site.imageWidth && site.imageHeight) {
+    return ' width="' + Number(site.imageWidth) + '" height="' + Number(site.imageHeight) + '"';
+  }
+  const m = /^\.\/(.+\.svg)$/i.exec(String(site.image || ""));
+  if (!m) return "";
+  try {
+    const head = fs.readFileSync(path.join(root, m[1]), "utf8").slice(0, 400);
+    const w = /\bwidth="(\d+)"/.exec(head);
+    const h = /\bheight="(\d+)"/.exec(head);
+    if (w && h) return ' width="' + w[1] + '" height="' + h[1] + '"';
+  } catch (e) { /* 文件缺失时退化为不写尺寸 */ }
+  return "";
+}
+
 const title = seo.title || brand.fullName || "HelpEnx";
 const desc = seo.description || brand.tagline || "";
 const url = seo.url || "https://" + (brand.site || "helpenx.com") + "/";
@@ -44,23 +60,41 @@ for (let round = 0; keywords.length < KW_LIMIT; round++) {
 }
 const metaKeywords = keywords.slice(0, KW_LIMIT).join(", ");
 
+const socialTitle = seo.socialTitle || title;
+const imageType = seo.imageType ||
+  (/\.svg($|\?)/i.test(seo.image || "") ? "image/svg+xml" : "image/png");
+
 const og = [
   "<meta property=\"og:type\" content=\"website\" />",
   "<meta property=\"og:url\" content=\"" + esc(url) + "\" />",
-  "<meta property=\"og:title\" content=\"" + esc(title) + "\" />",
+  "<meta property=\"og:title\" content=\"" + esc(socialTitle) + "\" />",
   "<meta property=\"og:description\" content=\"" + esc(desc) + "\" />",
   "<meta property=\"og:site_name\" content=\"" + esc(brand.fullName || brand.name || "") + "\" />",
-  "<meta property=\"og:locale\" content=\"" + esc(seo.locale || "zh_CN") + "\" />",
-  "<meta property=\"og:image\" content=\"" + esc(seo.image) + "\" />",
-  "<meta property=\"og:image:alt\" content=\"" + esc(seo.imageAlt || title) + "\" />",
-  "<meta name=\"twitter:card\" content=\"summary_large_image\" />",
-  "<meta name=\"twitter:title\" content=\"" + esc(title) + "\" />",
-  "<meta name=\"twitter:description\" content=\"" + esc(desc) + "\" />",
-  "<meta name=\"twitter:image\" content=\"" + esc(seo.image) + "\" />"
+  "<meta property=\"og:locale\" content=\"" + esc(seo.locale || "zh_CN") + "\" />"
 ];
-if (!seo.image) {
-  og.splice(6, 2);
-  og.splice(9, 1);
+if (seo.image) {
+  og.push(
+    "<meta property=\"og:image\" content=\"" + esc(seo.image) + "\" />",
+    "<meta property=\"og:image:type\" content=\"" + esc(imageType) + "\" />"
+  );
+  if (seo.imageWidth && seo.imageHeight) {
+    og.push(
+      "<meta property=\"og:image:width\" content=\"" + Number(seo.imageWidth) + "\" />",
+      "<meta property=\"og:image:height\" content=\"" + Number(seo.imageHeight) + "\" />"
+    );
+  }
+  og.push("<meta property=\"og:image:alt\" content=\"" + esc(seo.imageAlt || title) + "\" />");
+}
+og.push(
+  "<meta name=\"twitter:card\" content=\"summary_large_image\" />",
+  "<meta name=\"twitter:title\" content=\"" + esc(socialTitle) + "\" />",
+  "<meta name=\"twitter:description\" content=\"" + esc(desc) + "\" />"
+);
+if (seo.image) {
+  og.push(
+    "<meta name=\"twitter:image\" content=\"" + esc(seo.image) + "\" />",
+    "<meta name=\"twitter:image:alt\" content=\"" + esc(seo.imageAlt || title) + "\" />"
+  );
 }
 
 const head = [
@@ -73,6 +107,7 @@ const head = [
   "<link rel=\"canonical\" href=\"" + esc(url) + "\" />",
   "<link rel=\"alternate\" hreflang=\"" + esc(seo.language || "zh-CN") + "\" href=\"" + esc(url) + "\" />",
   "<link rel=\"alternate\" hreflang=\"x-default\" href=\"" + esc(url) + "\" />",
+  "<link rel=\"sitemap\" type=\"application/xml\" href=\"/sitemap.xml\" />",
   "<meta name=\"theme-color\" content=\"#f6f8fb\" />",
   "<meta name=\"color-scheme\" content=\"light\" />",
   "<meta name=\"format-detection\" content=\"telephone=no\" />",
@@ -129,12 +164,18 @@ const graph = {
       "slogan": brand.motto || "",
       "description": brand.tagline || "",
       "url": url,
+      "logo": {
+        "@type": "ImageObject",
+        "url": seo.logo || (url + "assets/brand-mark.png"),
+        "width": 256,
+        "height": 256
+      },
       "sameAs": brand.github ? [brand.github] : []
     },
     {
       "@type": "ItemList",
       "name": (brand.fullName || "HelpEnx") + " · 北斗阵列服务清单",
-      "numberOfItems": sites.length,
+      "numberOfItems": availableSites.length,
       "itemListElement": availableSites.map((s, i) => entity(s, i + 1))
     }
   ]
@@ -248,7 +289,8 @@ function cardOf(site) {
         starBadgeOf(site) + "</span></span></div>";
   const thumb = site.image && site.span === "full"
     ? '<span class="card__thumb"><img src="' + esc(site.image) + '" alt="' +
-      esc(site.imageAlt || site.name + " 示意图") + '" decoding="async"></span>'
+      esc(site.imageAlt || site.name + " 示意图") + '"' + imageSize(site) +
+      ' loading="lazy" decoding="async"></span>'
     : "";
   const lead = thumb ? '<div class="card__lead">' + idBlock + thumb + "</div>" : idBlock;
   return open +
@@ -266,7 +308,8 @@ function heroCardOf(site) {
   const status = site.status || "live";
   const media = site.image
     ? '<a class="showcase__media" href="' + esc(site.url) + '" target="_blank" rel="noopener">' +
-      '<img src="' + esc(site.image) + '" alt="' + esc(site.name + " 生产链路示意") + '"></a>'
+      '<img src="' + esc(site.image) + '" alt="' + esc(site.name + " 生产链路示意") + '"' +
+      imageSize(site) + ' fetchpriority="high" decoding="async"></a>'
     : "";
   return '<article class="showcase__card" style="--accent:' + (ACCENTS[site.category] || "#0a7494") + '">' +
     '<div class="showcase__head"><div class="showcase__idline">' +
@@ -956,26 +999,21 @@ const sameOrigin = sites.filter((s) => {
   if (s.deployed === false) return false;
   try { return new URL(s.url).host.split(".").slice(-2).join(".") === domain; } catch (e) { return false; }
 });
+// 门户自有页面用 seo.lastmod 标注更新时间；子域内容不由本站维护，不写 lastmod
+const pageNode = (loc, changefreq, priority, dated) => [
+  "  <url>",
+  "    <loc>" + esc(loc) + "</loc>",
+  dated && seo.lastmod ? "    <lastmod>" + esc(seo.lastmod) + "</lastmod>" : "",
+  "    <changefreq>" + changefreq + "</changefreq>",
+  "    <priority>" + priority + "</priority>",
+  "  </url>"
+].filter((x) => x !== "").join("\n");
 write("sitemap.xml", [
   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
   "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">",
-  "  <url>",
-  "    <loc>" + esc(url) + "</loc>",
-  "    <changefreq>weekly</changefreq>",
-  "    <priority>1.0</priority>",
-  "  </url>",
-  "  <url>",
-  "    <loc>https://" + host + "/architecture.html</loc>",
-  "    <changefreq>monthly</changefreq>",
-  "    <priority>0.7</priority>",
-  "  </url>",
-  sameOrigin.map((s) => [
-    "  <url>",
-    "    <loc>" + esc(s.url) + "/</loc>",
-    "    <changefreq>monthly</changefreq>",
-    "    <priority>0.8</priority>",
-    "  </url>"
-  ].join("\n")).join("\n"),
+  pageNode(url, "weekly", "1.0", true),
+  pageNode("https://" + host + "/architecture.html", "monthly", "0.7", true),
+  sameOrigin.map((s) => pageNode(String(s.url).replace(/\/+$/, "") + "/", "monthly", "0.8", false)).join("\n"),
   "</urlset>",
   ""
 ].filter((x) => x !== "").join("\n"));

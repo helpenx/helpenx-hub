@@ -17,8 +17,14 @@
     "description": "HelpEnx Hub 星阵工坊：聚七星之阵，筑数字工坊。以北斗七星为引，天枢开源引擎、天璇 AIGC Studio（启绘铸韵织鉴藏七星轨）、天玑平台中枢、天权数字工具、玉衡内容与知识、开阳行业方案、摇光实验共创，22 项服务一触即达。",
     "keywords": ["HelpEnx", "HelpEnx Hub", "星阵工坊", "北斗七星", "北斗阵列", "七星阵列", "七星生态", "七主星", "天枢", "天璇", "天玑", "天权", "玉衡", "开阳", "摇光", "轻天枢", "轻天璇 Studio", "轻天玑", "平台中枢", "统一账号", "AI 网关", "模型网关", "开放平台", "MCP", "轻天权", "轻玉衡", "轻开阳", "轻摇光", "七星轨", "天璇七星轨", "AIGC Studio", "AIGC 创意", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "工作流编排", "DAG 调度", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
     "url": "https://helpenx.com/",
-    "image": "https://helpenx.com/assets/studio-pipeline.svg",
-    "imageAlt": "轻天璇 Studio 短剧 AI 生产链路示意图",
+    "socialTitle": "HelpEnx Hub · 星阵工坊 | 北斗七星生态服务枢纽",
+    "image": "https://helpenx.com/assets/og-cover.png",
+    "imageAlt": "HelpEnx Hub · 星阵工坊：聚七星之阵，筑数字工坊，北斗七星生态 22 项服务一触即达",
+    "imageWidth": 1200,
+    "imageHeight": 630,
+    "imageType": "image/png",
+    "logo": "https://helpenx.com/assets/brand-mark.png",
+    "lastmod": "2026-11-15",
     "name": "HelpEnx Hub · 星阵工坊",
     "locale": "zh_CN",
     "language": "zh-CN"
@@ -388,6 +394,8 @@
       "size": "hero",
       "status": "design",
       "image": "./assets/studio-pipeline.svg",
+      "imageWidth": 680,
+      "imageHeight": 460,
       "ctaLabel": "进入轻天璇 Studio（演示版）",
       "tagline": "AIGC 创意工坊",
       "description": "以轻盈之技，筑云端之梦。从剧本到成片的全链路多 Agent 编排，让创意如美玉般落地：角色、场景、道具、模型沉淀为可复用资产库，跨镜头、跨集保持同一张脸，换一部剧不必从零重画。整集可一键生成，也能在任意节点人工介入改写。",
@@ -408,6 +416,8 @@
       "features": ["DAG 依赖拆解", "并行与条件分支", "任务下发与分派", "事件监听与消费", "状态机推进", "失败重试与补偿", "与 NeoTask 拉取式解耦"],
       "keywords": ["工作流编排", "DAG 调度", "任务编排", "事件驱动", "状态机推进", "任务下发", "依赖管理", "工作流引擎", "异步编排", "流程编排", "AI 工作流", "Orchestration", "Workflow Engine", "NeoFlow"],
       "image": "./assets/neoflow-dag.svg",
+      "imageWidth": 480,
+      "imageHeight": 300,
       "imageAlt": "NeoFlow 编排示意：DAG 拆解并下发任务，NeoTask 拉取执行 Handler 后回传事件，NeoFlow 据此推进状态"
     },
     {
@@ -422,6 +432,8 @@
       "features": ["优先级插队", "Cron / 延迟任务", "多 Worker 并发", "失败自动重试", "内存 / SQLite / Redis", "分布式锁与节点心跳", "进度与事件上报"],
       "keywords": ["Python 任务队列", "异步任务", "Celery 替代", "Redis 队列", "任务调度", "定时任务", "后台任务", "分布式任务", "消息队列", "asyncio 并发", "失败重试", "Task Queue", "Python 开源库"],
       "image": "./assets/neotask-queue.svg",
+      "imageWidth": 480,
+      "imageHeight": 300,
       "imageAlt": "NeoTask 异步任务队列示意：业务代码投递任务、优先级队列、多 Worker 消费与失败退避重试",
       "repo": "https://github.com/neopen/neotask"
     },

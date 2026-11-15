@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>HelpEnx Hub · 星阵工坊 社交分享图</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1200px; height: 630px; overflow: hidden;
+    font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    color: #0f172a; background: #f8fafc;
+    -webkit-font-smoothing: antialiased;
+  }
+  .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(15, 34, 67, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 34, 67, 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000, transparent 78%);
+  }
+  .glow {
+    position: absolute; width: 900px; height: 620px; right: -160px; top: -220px;
+    background: radial-gradient(ellipse at center, rgba(10, 116, 148, 0.16), rgba(101, 88, 211, 0.1) 46%, transparent 70%);
+    filter: blur(50px);
+  }
+  .glow2 {
+    position: absolute; width: 620px; height: 420px; left: -120px; bottom: -240px;
+    background: radial-gradient(ellipse at center, rgba(180, 105, 14, 0.12), transparent 68%);
+    filter: blur(50px);
+  }
+  .frame { position: absolute; inset: 22px; border: 1px solid rgba(15, 23, 42, 0.07); border-radius: 26px; }
+  .wrap { position: relative; height: 100%; padding: 58px 66px 50px; display: flex; flex-direction: column; }
+
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .site { margin-left: auto; font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 16px; color: #0a7494; font-weight: 600; letter-spacing: 0.5px; }
+  .brand svg { width: 46px; height: 46px; color: #0f172a; }
+  .brand__name { font-size: 25px; font-weight: 800; letter-spacing: -0.2px; }
+  .brand__sub {
+    font-size: 14px; font-weight: 600; letter-spacing: 4px; color: #475569;
+    padding: 4px 12px; border: 1px solid rgba(15, 23, 42, 0.12); border-radius: 999px;
+  }
+
+  .eyebrow {
+    margin-top: 46px; font-size: 15px; font-weight: 700; letter-spacing: 3px;
+    color: #0a7494; text-transform: uppercase;
+  }
+  h1 { margin-top: 18px; font-size: 50px; line-height: 1.22; font-weight: 800; letter-spacing: -0.5px; }
+  h1 .grad {
+    background: linear-gradient(96deg, #0a7494 0%, #6558d3 62%, #8a6ba8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .lead { margin-top: 20px; max-width: 680px; font-size: 21px; line-height: 1.62; color: #475569; }
+  .lead b { color: #0f172a; font-weight: 700; }
+
+  .chips { margin-top: auto; display: flex; flex-wrap: wrap; gap: 10px; max-width: 640px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 15px 7px 12px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78); border: 1px solid rgba(15, 23, 42, 0.08);
+    font-size: 15px; font-weight: 600; color: #334155;
+  }
+  .chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 18%, transparent); }
+
+  .art { position: absolute; right: 52px; top: 156px; width: 580px; height: 330px; }
+  .art svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .star { position: absolute; width: 0; height: 0; }
+  .star b {
+    position: absolute; left: 0; top: 0; width: 15px; height: 15px; margin: -7.5px 0 0 -7.5px;
+    border-radius: 50%; background: var(--c);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 16%, transparent), 0 0 22px color-mix(in srgb, var(--c) 55%, transparent);
+  }
+  .star b::after {
+    content: ""; position: absolute; inset: 4.5px; border-radius: 50%; background: #fff; opacity: 0.85;
+  }
+  .star span {
+    position: absolute; white-space: nowrap; font-size: 14px; font-weight: 700; color: #475569;
+    letter-spacing: 1px;
+  }
+  .star[data-side="right"] span { left: 16px; top: -9px; }
+  .star[data-side="left"] span { right: 16px; top: -9px; }
+  .star[data-side="top"] span { left: 50%; transform: translateX(-50%); bottom: 16px; }
+  .star[data-side="bottom"] span { left: 50%; transform: translateX(-50%); top: 16px; }
+  .ring { position: absolute; right: 6px; top: 20px; width: 360px; height: 360px; border: 1px dashed rgba(79, 106, 224, 0.16); border-radius: 50%; }
+</style>
+</head>
+<body>
+<div class="grid"></div>
+<div class="glow"></div>
+<div class="glow2"></div>
+<div class="frame"></div>
+
+<div class="wrap">
+  <div class="brand">
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7.5 12.5 15.5 7.5 20.5 16.5 11 20.5Z" />
+        <path d="M20.5 16.5 26.5 23 31.5 30.5 34 24" />
+      </g>
+      <g fill="currentColor">
+        <circle cx="7.5" cy="12.5" r="1.9" />
+        <circle cx="15.5" cy="7.5" r="1.6" />
+        <circle cx="20.5" cy="16.5" r="2.4" />
+        <circle cx="11" cy="20.5" r="1.6" />
+        <circle cx="26.5" cy="23" r="1.8" />
+        <circle cx="31.5" cy="30.5" r="1.5" />
+        <circle cx="34" cy="24" r="1.9" />
+      </g>
+    </svg>
+    <span class="brand__name">HelpEnx Hub</span>
+    <span class="brand__sub">星阵工坊</span>
+    <span class="site">helpenx.com</span>
+  </div>
+
+  <p class="eyebrow">北斗七星生态 · 22 项服务</p>
+  <h1>聚七星之阵，<span class="grad">筑数字工坊。</span></h1>
+  <p class="lead">天枢开源引擎、天璇 AIGC Studio、天玑平台中枢、天权数字工具、玉衡内容知识、开阳行业方案、摇光实验共创——<b>一揽全局，一触即达。</b></p>
+
+  <div class="chips">
+    <span class="chip" style="--c:#6f5bb8"><i></i>天枢 · 开源引擎</span>
+    <span class="chip" style="--c:#0a7494"><i></i>天璇 · AIGC Studio</span>
+    <span class="chip" style="--c:#4f6ae0"><i></i>天玑 · 平台中枢</span>
+    <span class="chip" style="--c:#b4690e"><i></i>天权 · 数字工具</span>
+    <span class="chip" style="--c:#96650a"><i></i>玉衡 · 内容知识</span>
+    <span class="chip" style="--c:#4d6484"><i></i>开阳 · 行业方案</span>
+    <span class="chip" style="--c:#8a6ba8"><i></i>摇光 · 实验共创</span>
+  </div>
+</div>
+
+<div class="art" aria-hidden="true">
+  <div class="ring"></div>
+  <svg viewBox="0 0 500 330" preserveAspectRatio="none">
+    <polyline points="40,89 62,198 147,208 152,96 250,155 347,99 460,125"
+      fill="none" stroke="rgba(79,106,224,0.34)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+  <div class="star" style="left:8%;top:27%;--c:#6f5bb8" data-side="left"><b></b><span>天枢</span></div>
+  <div class="star" style="left:12.5%;top:60%;--c:#0a7494" data-side="left"><b></b><span>天璇</span></div>
+  <div class="star" style="left:29.5%;top:63%;--c:#4f6ae0" data-side="bottom"><b></b><span>天玑</span></div>
+  <div class="star" style="left:30.5%;top:29%;--c:#b4690e" data-side="top"><b></b><span>天权</span></div>
+  <div class="star" style="left:50%;top:47%;--c:#96650a" data-side="bottom"><b></b><span>玉衡</span></div>
+  <div class="star" style="left:69.5%;top:30%;--c:#4d6484" data-side="top"><b></b><span>开阳</span></div>
+  <div class="star" style="left:92%;top:38%;--c:#8a6ba8" data-side="right"><b></b><span>摇光</span></div>
+</div>
+</body>
+</html>

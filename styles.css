@@ -256,33 +256,52 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   background: #fff; box-shadow: 0 0 6px rgba(11, 134, 172, 0.8);
 }
 
-/* 底色内环底部的日地月：太阳固定在环上，地球绕日公转，月球绕地球转 */
+/* 右下角的日地月：太阳为静止中心，地球绕日公转，月球绕地球转 */
 .constellation__orbit { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .constellation__orbit::before {
-  content: ""; position: absolute; left: 50%; top: 83.5%;
-  width: 92px; height: 92px; margin: -46px 0 0 -46px;
+  content: ""; position: absolute; left: 78%; top: 70%;
+  width: 172px; height: 172px; margin: -86px 0 0 -86px;
   border: 1px dashed rgba(79, 106, 224, 0.16); border-radius: 50%;
 }
-.corb { position: absolute; left: 50%; top: 83.5%; border-radius: 50%; }
+.corb { position: absolute; left: 78%; top: 70%; border-radius: 50%; }
 .corb--sun {
-  width: 19px; height: 19px; margin: -9.5px 0 0 -9.5px;
+  width: 66px; height: 66px; margin: -33px 0 0 -33px;
   background: radial-gradient(circle at 34% 32%, #fff2c4, #f8bd3e 56%, #e08c14);
-  box-shadow: 0 0 0 3px rgba(248, 189, 62, 0.16), 0 0 18px rgba(248, 189, 62, 0.5);
+  box-shadow: 0 0 0 5px rgba(248, 189, 62, 0.16), 0 0 42px rgba(248, 189, 62, 0.55);
   animation: sunGlow 6.4s ease-in-out infinite;
 }
+/* 日冕：三道柔光缓慢绕日自转 */
+.corb--sun::before {
+  content: ""; position: absolute; inset: -20px; border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 214, 110, 0) 0deg,
+    rgba(255, 224, 130, 0.64) 26deg,
+    rgba(248, 189, 62, 0) 64deg,
+    rgba(255, 214, 110, 0) 140deg,
+    rgba(255, 208, 96, 0.5) 176deg,
+    rgba(248, 189, 62, 0) 214deg,
+    rgba(255, 214, 110, 0) 292deg,
+    rgba(255, 224, 130, 0.58) 322deg,
+    rgba(248, 189, 62, 0) 360deg
+  );
+  -webkit-mask: radial-gradient(circle closest-side, transparent 48%, #000 64%, #000 84%, transparent 100%);
+  mask: radial-gradient(circle closest-side, transparent 48%, #000 64%, #000 84%, transparent 100%);
+  animation: coronaSpin 24s linear infinite;
+}
 .corb--earth {
-  width: 10px; height: 10px; margin: -5px 0 0 -5px;
+  width: 14px; height: 14px; margin: -7px 0 0 -7px;
   background: radial-gradient(circle at 32% 30%, #a8dcf5, #2f8fd0 52%, #1b5c98);
-  box-shadow: 0 0 0 2px rgba(79, 106, 224, 0.12), 0 0 9px rgba(47, 143, 208, 0.45);
-  transform: rotate(-28deg) translateX(46px);
+  box-shadow: 0 0 0 2px rgba(79, 106, 224, 0.12), 0 0 10px rgba(47, 143, 208, 0.45);
+  transform: rotate(-28deg) translateX(86px);
   animation: earthOrbit 28s linear infinite;
 }
 .corb__moon {
   position: absolute; left: 50%; top: 50%;
-  width: 4.5px; height: 4.5px; margin: -2.25px 0 0 -2.25px;
+  width: 6.5px; height: 6.5px; margin: -3.25px 0 0 -3.25px;
   border-radius: 50%; background: #cfd8e4;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5), 0 0 4px rgba(15, 23, 42, 0.24);
-  transform: translateX(11px);
+  transform: translateX(14px);
   animation: moonOrbit 6s linear infinite;
 }
 .constellation__edges {
@@ -2091,12 +2110,13 @@ body::after {
   100% { opacity: 0; transform: rotate(var(--angle, -32deg)) translate3d(0, 300px, 0); }
 }
 @keyframes earthOrbit {
-  from { transform: rotate(0deg) translateX(46px); }
-  to { transform: rotate(360deg) translateX(46px); }
+  from { transform: rotate(0deg) translateX(86px); }
+  to { transform: rotate(360deg) translateX(86px); }
 }
+@keyframes coronaSpin { to { transform: rotate(360deg); } }
 @keyframes moonOrbit {
-  from { transform: rotate(0deg) translateX(11px); }
-  to { transform: rotate(360deg) translateX(11px); }
+  from { transform: rotate(0deg) translateX(14px); }
+  to { transform: rotate(360deg) translateX(14px); }
 }
 @keyframes sunGlow {
   0%, 100% { opacity: 1; }

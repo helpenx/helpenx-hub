@@ -1261,26 +1261,19 @@
       });
     }
 
+    var clusters = [];
     stars().forEach(function (star) {
       var ids = star.projects || [];
       if (!ids.length || !auxBox) return;
-      var n = ids.length;
-      var base = (star.auxAngle || 0) * Math.PI / 180;
-      var step = n > 1 ? Math.min(0.3, 1.2 / (n - 1)) : 0;
-      var radius = Math.max(5.5, (star.auxSpread || 60) / 10);
-      ids.forEach(function (siteId, i) {
+      var items = [];
+      ids.forEach(function (siteId) {
         var site = siteById(siteId);
         if (!site) return;
-        var angle = base - step * (n - 1) / 2 + i * step;
-        var x = Math.max(2, Math.min(98, star.x + Math.cos(angle) * radius));
-        var y = Math.max(8, Math.min(92, star.y + Math.sin(angle) * radius * 0.5));
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "caux" + (site.deployed === false ? " caux--planned" : "");
         btn.setAttribute("data-site", site.id);
         btn.setAttribute("data-parent", star.id);
-        btn.style.setProperty("--x", x.toFixed(2) + "%");
-        btn.style.setProperty("--y", y.toFixed(2) + "%");
         btn.style.setProperty("--accent", star.accent || DEFAULT_ACCENT);
         var tip = site.name + (site.deployed === false ? " · 地址待部署" : " · " + hostOf(site.url));
         btn.title = tip;
@@ -1295,8 +1288,187 @@
         btn.addEventListener("blur", clearTrace);
         auxButtons.push(btn);
         auxBox.appendChild(btn);
+        items.push({ btn: btn, x: 0, y: 0 });
       });
+      if (items.length) clusters.push({ star: star, items: items });
     });
+
+    // 辅星按像素排布：弧线上保持最小点击间距，并让开主星标签；尺寸变化后重排
+    var AUX_R = 12;
+    var AUX_GAP = 32;
+    var LABEL_CLEAR = 6;
+    var layoutRaf = 0;
+
+    function hitsLabel(pt, label) {
+      var nx = Math.max(label.x, Math.min(pt.x, label.x + label.w));
+      var ny = Math.max(label.y, Math.min(pt.y, label.y + label.h));
+      return Math.hypot(pt.x - nx, pt.y - ny) < AUX_R + LABEL_CLEAR;
+    }
+
+    function layoutAux() {
+      var parX = board.style.getPropertyValue("--par-x");
+      var parY = board.style.getPropertyValue("--par-y");
+      board.style.setProperty("--par-x", "0");
+      board.style.setProperty("--par-y", "0");
+      var br = board.getBoundingClientRect();
+      var W = br.width;
+      var H = br.height;
+      var starPts = starButtons.map(function (btn) {
+        var r = btn.getBoundingClientRect();
+        return { id: btn.getAttribute("data-star"), x: r.left + r.width / 2 - br.left, y: r.top + r.height / 2 - br.top, r: r.width / 2 };
+      });
+      var labelRects = starButtons.map(function (btn) {
+        var r = btn.querySelector(".cstar__label").getBoundingClientRect();
+        return { id: btn.getAttribute("data-star"), x: r.left - br.left, y: r.top - br.top, w: r.width, h: r.height };
+      });
+      board.style.setProperty("--par-x", parX || "0");
+      board.style.setProperty("--par-y", parY || "0");
+      if (!W || !H) return;
+
+      var placed = [];
+      var edge = AUX_R + 10;
+      clusters.forEach(function (cluster) {
+        var center = null;
+        var ownLabel = null;
+        starPts.forEach(function (pt) { if (pt.id === cluster.star.id) center = pt; });
+        labelRects.forEach(function (rect) { if (rect.id === cluster.star.id) ownLabel = rect; });
+        if (!center) return;
+        var n = cluster.items.length;
+        var base = (cluster.star.auxAngle || 0) * Math.PI / 180;
+        var span = n > 1 ? Math.min(2.6, 1 + n * 0.22) : 0;
+        var step = n > 1 ? span / (n - 1) : 0;
+
+        function arcAt(offset) {
+          var R = 34;
+          var pts = [];
+          var out = n;
+          for (var pass = 0; pass < 14; pass++) {
+            pts = [];
+            for (var i = 0; i < n; i++) {
+              var angle = base + offset + (i - (n - 1) / 2) * step;
+              pts.push({
+                x: center.x + Math.cos(angle) * R,
+                y: center.y + Math.sin(angle) * R * 0.62
+              });
+            }
+            var minDist = Infinity;
+            for (var a = 0; a < n; a++) {
+              for (var b = a + 1; b < n; b++) {
+                minDist = Math.min(minDist, Math.hypot(pts[a].x - pts[b].x, pts[a].y - pts[b].y));
+              }
+            }
+            out = pts.filter(function (pt) {
+              return pt.x < edge || pt.x > W - edge || pt.y < edge || pt.y > H - edge;
+            }).length;
+            var crowded = n > 1 && minDist < AUX_GAP + 0.8;
+            var covered = ownLabel && pts.some(function (pt) { return hitsLabel(pt, ownLabel); });
+            if ((!crowded && !covered) || R > 170) break;
+            R *= crowded ? Math.max(1.08, Math.min(1.3, AUX_GAP / Math.max(minDist, 1))) : 1.16;
+          }
+          return { pts: pts, out: out };
+        }
+
+        // 以最小偏转为先，找一条既保持间距、又不出棋盘与标签的弧线
+        var offsets = [0, 0.22, -0.22, 0.45, -0.45, 0.7, -0.7, 1.0, -1.0, 1.35, -1.35, 1.7, -1.7];
+        var chosen = null;
+        var chosenOut = Infinity;
+        offsets.forEach(function (offset) {
+          if (chosen && chosenOut === 0) return;
+          var arc = arcAt(offset);
+          if (arc.out < chosenOut) {
+            chosen = arc;
+            chosenOut = arc.out;
+          }
+        });
+        cluster.items.forEach(function (item, i) {
+          item.x = chosen.pts[i].x;
+          item.y = chosen.pts[i].y;
+          placed.push(item);
+        });
+      });
+
+      // 松弛：互相推开，直到都躲开标签、主星与彼此
+      for (var iter = 0; iter < 48; iter++) {
+        var moved = false;
+        placed.forEach(function (item) {
+          labelRects.forEach(function (label) {
+            var need = AUX_R + LABEL_CLEAR;
+            var nx = Math.max(label.x, Math.min(item.x, label.x + label.w));
+            var ny = Math.max(label.y, Math.min(item.y, label.y + label.h));
+            var vx = item.x - nx;
+            var vy = item.y - ny;
+            var d = Math.hypot(vx, vy);
+            if (d >= need) return;
+            if (d < 0.5) {
+              var left = item.x - label.x;
+              var right = label.x + label.w - item.x;
+              var top = item.y - label.y;
+              var bottom = label.y + label.h - item.y;
+              var edge = Math.min(left, right, top, bottom);
+              if (edge === left) item.x = label.x - need;
+              else if (edge === right) item.x = label.x + label.w + need;
+              else if (edge === top) item.y = label.y - need;
+              else item.y = label.y + label.h + need;
+            } else {
+              var k = (need - d) / d;
+              item.x += vx * k;
+              item.y += vy * k;
+            }
+            moved = true;
+          });
+          starPts.forEach(function (starPt) {
+            var need = starPt.r + AUX_R + 6;
+            var vx = item.x - starPt.x;
+            var vy = item.y - starPt.y;
+            var d = Math.hypot(vx, vy);
+            if (d >= need) return;
+            if (d < 0.5) { item.x += need; moved = true; return; }
+            var k = (need - d) / d;
+            item.x += vx * k;
+            item.y += vy * k;
+            moved = true;
+          });
+          placed.forEach(function (other) {
+            if (other === item) return;
+            var vx = item.x - other.x;
+            var vy = item.y - other.y;
+            var d = Math.hypot(vx, vy);
+            if (d >= AUX_GAP || d < 0.01) return;
+            var k = (AUX_GAP - d) / d * 0.6;
+            item.x += vx * k;
+            item.y += vy * k;
+            moved = true;
+          });
+          var bx = Math.max(edge, Math.min(W - edge, item.x));
+          var by = Math.max(edge, Math.min(H - edge, item.y));
+          if (bx !== item.x || by !== item.y) {
+            item.x = bx;
+            item.y = by;
+            moved = true;
+          }
+        });
+        if (!moved) break;
+      }
+
+      placed.forEach(function (item) {
+        item.btn.style.setProperty("--x", (item.x / W * 100).toFixed(2) + "%");
+        item.btn.style.setProperty("--y", (item.y / H * 100).toFixed(2) + "%");
+      });
+    }
+
+    layoutAux();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { layoutAux(); });
+    }
+    if (window.ResizeObserver) {
+      new ResizeObserver(function () {
+        if (layoutRaf) return;
+        layoutRaf = window.requestAnimationFrame(function () {
+          layoutRaf = 0;
+          layoutAux();
+        });
+      }).observe(board);
+    }
 
     function trace(starId, siteId) {
       board.classList.add("is-tracing");

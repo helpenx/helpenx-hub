@@ -157,7 +157,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 
 /* ---------- 北斗阵列 ---------- */
 .constellation { padding: 10px 0 26px; }
-.constellation__head { max-width: 860px; }
+.constellation__head { max-width: 1100px; }
 .constellation__eyebrow {
   display: inline-flex; align-items: center; gap: 10px;
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
@@ -442,7 +442,8 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
     transform: translate3d(calc(var(--par-x) * 4px), calc(var(--par-y) * 2.5px), 0);
   }
   .constellation__board.is-parallax .constellation__aux {
-    transform: translate3d(calc(var(--par-x) * 6px), calc(var(--par-y) * 4px), 0);
+    /* 与主星同速视差，避免错位吃掉标签避让的间距 */
+    transform: translate3d(calc(var(--par-x) * -8px), calc(var(--par-y) * -5px), 0);
   }
   .constellation__board.is-parallax .cstar {
     transform: translate(-50%, -50%)
@@ -794,7 +795,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .story[hidden] { display: none; }
 /* 流水线在前，Studio 服务卡作为编排落点在其后 */
 .story > .showcase { padding: 40px 0 46px; }
-.story__head { max-width: 880px; margin-bottom: 36px; }
+.story__head { max-width: 1000px; margin-bottom: 36px; }
 .story__eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 12.5px; font-weight: 600; letter-spacing: 0.06em;
@@ -809,7 +810,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   letter-spacing: -0.015em; line-height: 1.3; color: var(--ink);
 }
 .story__lead {
-  margin: 0 0 12px; max-width: 108ch;
+  margin: 0 0 12px; max-width: 118ch;
   font-size: 15px; line-height: 1.9; color: var(--text-dim);
 }
 .story__lead:last-child { margin-bottom: 0; }

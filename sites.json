@@ -4,7 +4,7 @@
     "fullName": "HelpEnx Hub · 星阵工坊",
     "alias": "星阵工坊",
     "motto": "聚七星之阵，筑数字工坊。",
-    "tagline": "从底层调度到 AIGC 创意落地，开源项目、在线工具与行业演示，在星阵工坊一揽全局、一触即达。",
+    "tagline": "从底层引擎到 AIGC 创意落地，开源项目、平台能力、在线工具与行业演示，在星阵工坊一揽全局、一触即达。",
     "site": "helpenx.com",
     "github": "https://github.com/neopen",
     "cta": {
@@ -13,9 +13,9 @@
     }
   },
   "seo": {
-    "title": "HelpEnx Hub · 星阵工坊 | 北斗七星生态 · AIGC 创意与开源工具枢纽",
-    "description": "HelpEnx Hub 星阵工坊：聚七星之阵，筑数字工坊。以北斗七星为引，天玑总枢纽居中，天枢开源引擎、天璇 AIGC Studio（启绘铸韵织鉴藏七星轨）、天权数字工具、玉衡内容洞察、开阳行业演示、摇光实验共创，18 项服务一触即达。",
-    "keywords": ["HelpEnx", "HelpEnx Hub", "星阵工坊", "北斗七星", "北斗阵列", "七星阵列", "七星生态", "七主星", "天枢", "天璇", "天玑", "天权", "玉衡", "开阳", "摇光", "轻天枢", "轻天璇 Studio", "轻天玑", "轻天权", "轻玉衡", "轻开阳", "轻摇光", "七星轨", "天璇七星轨", "AIGC Studio", "AIGC 创意", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "工作流编排", "DAG 调度", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
+    "title": "HelpEnx Hub · 星阵工坊 | 北斗七星生态 · AIGC 创意、平台中枢与开源工具枢纽",
+    "description": "HelpEnx Hub 星阵工坊：聚七星之阵，筑数字工坊。以北斗七星为引，天枢开源引擎、天璇 AIGC Studio（启绘铸韵织鉴藏七星轨）、天玑平台中枢、天权数字工具、玉衡内容与知识、开阳行业方案、摇光实验共创，22 项服务一触即达。",
+    "keywords": ["HelpEnx", "HelpEnx Hub", "星阵工坊", "北斗七星", "北斗阵列", "七星阵列", "七星生态", "七主星", "天枢", "天璇", "天玑", "天权", "玉衡", "开阳", "摇光", "轻天枢", "轻天璇 Studio", "轻天玑", "平台中枢", "统一账号", "AI 网关", "模型网关", "开放平台", "MCP", "轻天权", "轻玉衡", "轻开阳", "轻摇光", "七星轨", "天璇七星轨", "AIGC Studio", "AIGC 创意", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "工作流编排", "DAG 调度", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
     "url": "https://helpenx.com/",
     "image": "https://helpenx.com/assets/studio-pipeline.svg",
     "imageAlt": "轻天璇 Studio 短剧 AI 生产链路示意图",
@@ -25,9 +25,9 @@
   },
   "constellation": {
     "eyebrow": "北斗阵列 · 七主星",
-    "title": "七主星领航，18 项服务各归其位",
-    "lead": "轻天玑居中调度：天璇管创意生产，天枢管开源引擎，天权管数字工具，玉衡沉淀内容，开阳承载行业演示，摇光试验新可能。",
-    "hint": "点主星翻开各自的星图，点节点筛选服务，点辅星直达项目；点天玑回到全部。",
+    "title": "七主星领航，22 项服务各归其位",
+    "lead": "七星各司其职：天枢管开源引擎，天璇管 AIGC 生产，天玑管平台中枢，天权管数字工具，玉衡沉淀内容与知识，开阳承载行业方案，摇光试验新可能。",
+    "hint": "点主星在下方展开各自的星图，点节点筛选服务，点辅星直达项目；点同一颗主星或「收起星图」回到全部。",
     "links": [
       ["tianshu", "tianxuan"],
       ["tianxuan", "tianji"],
@@ -87,11 +87,11 @@
         "auxSpread": 92,
         "projects": ["studio", "penplot", "penshot", "pengen", "pendub", "penclip", "penfix"],
         "track": {
-          "eyebrow": "天璇 · 七星轨",
+          "eyebrow": "PIPELINE RAIL · 七星轨",
           "title": "天璇 · 七星轨",
           "charLine": "启 · 绘 · 铸 · 韵 · 织 · 鉴 · 藏",
           "lead": "从一句念头到一部成片，七颗星位各守一段工序。点星位筛选并定位对应工具，再点一次回到整轨。",
-          "hint": "点环节定位工具，左上角返回北斗阵列。",
+          "hint": "点环节定位工具，点「收起星图」回到全部。",
           "stages": [
             { "id": "qi", "char": "启", "site": "penplot", "label": "剧情创作", "accent": "#2f8a63", "x": 7, "y": 64 },
             { "id": "hui", "char": "绘", "site": "penshot", "label": "剧本分镜", "accent": "#2f6fb0", "x": 21, "y": 46 },
@@ -106,15 +106,34 @@
       {
         "id": "tianji",
         "name": "天玑",
-        "title": "轻天玑 · 总枢纽",
-        "short": "总枢纽",
-        "desc": "六条主线在此汇合：一揽全局，一触即达。",
+        "title": "轻天玑 · 平台中枢",
+        "short": "平台中枢",
+        "desc": "统一账号、模型网关与开放能力：七个模块共用的一条平台总线。",
         "accent": "#4f6ae0",
         "x": 29,
         "y": 63,
         "label": "right",
-        "isHub": true,
-        "projects": []
+        "auxAngle": 95,
+        "auxSpread": 80,
+        "projects": ["helpenx-id", "ai-gateway", "open-platform"],
+        "micro": {
+          "layout": "nexus",
+          "eyebrow": "PLATFORM NEXUS · 平台中枢",
+          "title": "天玑 · 平台中枢",
+          "charLine": "账号 · 网关 · 开放",
+          "lead": "七个模块共用一套账号、一条模型网关与一个开放平台：登录、调用与配额都在这里收口。",
+          "core": { "x": 50, "y": 50, "title": "HUB", "note": "统一接入" },
+          "nodes": [
+            { "id": "identity", "site": "helpenx-id", "char": "户", "label": "统一账号", "x": 22, "y": 52 },
+            { "id": "gateway", "site": "ai-gateway", "char": "网", "label": "模型网关", "x": 50, "y": 22 },
+            { "id": "open", "site": "open-platform", "char": "开", "label": "开放平台", "x": 78, "y": 52 }
+          ],
+          "sats": [
+            { "x": 50, "y": 84, "text": "配额计费" },
+            { "x": 14, "y": 18, "text": "状态监控" },
+            { "x": 86, "y": 18, "text": "审计合规" }
+          ]
+        }
       },
       {
         "id": "tianquan",
@@ -151,24 +170,25 @@
       {
         "id": "yuheng",
         "name": "玉衡",
-        "title": "轻玉衡 · 内容与洞察",
-        "short": "内容洞察",
-        "desc": "AI、Python 与系统架构的一手实践记录。",
+        "title": "轻玉衡 · 内容与知识",
+        "short": "内容知识",
+        "desc": "技术博客与产品文档：AI、Python 与系统架构的一手记录。",
         "accent": "#96650a",
         "x": 47,
         "y": 47,
         "label": "right",
         "auxAngle": 90,
         "auxSpread": 42,
-        "projects": ["blog"],
+        "projects": ["blog", "docs"],
         "micro": {
           "layout": "beacon",
           "eyebrow": "CONTENT BEACON · 内容信标",
           "title": "玉衡 · 内容信标",
           "charLine": "AI · Python · 架构",
-          "lead": "一篇篇实践记录汇成一座信标：AI 应用、Python 工程与系统架构，持续向外发信。",
+          "lead": "一篇篇实践记录与一套产品文档汇成信标：AI 应用、Python 工程与系统架构，持续向外发信。",
           "nodes": [
-            { "id": "post", "site": "blog", "char": "文", "label": "技术博客", "x": 34, "y": 50 }
+            { "id": "post", "site": "blog", "char": "文", "label": "技术博客", "x": 34, "y": 50 },
+            { "id": "docs", "site": "docs", "char": "册", "label": "文档中心", "x": 64, "y": 62 }
           ],
           "sats": [
             { "x": 58, "y": 27, "text": "AI 应用" },
@@ -354,6 +374,7 @@
   "categories": [
     { "id": "studio", "name": "AIGC Studio" },
     { "id": "oss", "name": "开源项目" },
+    { "id": "platform", "name": "平台服务" },
     { "id": "tools", "name": "效率工具" },
     { "id": "content", "name": "内容与扩展" },
     { "id": "demo", "name": "演示项目" }
@@ -520,16 +541,70 @@
       "repo": "https://github.com/neopen/spring-boot-jpa-plus"
     },
     {
+      "id": "helpenx-id",
+      "name": "HelpEnx ID",
+      "url": "https://id.helpenx.com",
+      "category": "platform",
+      "status": "planned",
+      "deployed": false,
+      "icon": "id",
+      "dividerBefore": { "label": "平台服务", "note": "账号 · 网关 · 开放能力", "countCategory": "platform" },
+      "tagline": "统一账号与身份中心",
+      "description": "七个模块共用一套身份：单点登录、设备与密钥管理、授权范围控制，一次登录即可在 Studio、工具箱与开放平台之间切换，不必为每个产品单独注册。",
+      "features": ["单点登录 SSO", "统一用户与设备", "API Key 与密钥托管", "授权范围与角色", "登录审计", "跨产品会话同步"],
+      "keywords": ["统一账号", "单点登录", "SSO", "身份认证", "账号中心", "API Key", "密钥管理", "权限控制"]
+    },
+    {
+      "id": "ai-gateway",
+      "name": "AI Gateway 模型网关",
+      "url": "https://gateway.helpenx.com",
+      "category": "platform",
+      "status": "planned",
+      "deployed": false,
+      "icon": "gateway",
+      "tagline": "多模型路由与降级",
+      "description": "把模型调用收敛到一个出口：按任务路由到不同厂商与模型，失败自动降级重试，统一限流、配额与成本统计，Studio 与各工具不必各自维护密钥。",
+      "features": ["多模型路由", "失败降级与重试", "限流与配额", "成本与调用审计", "密钥集中托管", "OpenAI 兼容接口"],
+      "keywords": ["AI 网关", "模型网关", "多模型路由", "模型降级", "API 网关", "限流配额", "调用审计", "LLM Gateway"]
+    },
+    {
+      "id": "open-platform",
+      "name": "开放平台",
+      "url": "https://open.helpenx.com",
+      "category": "platform",
+      "status": "planned",
+      "deployed": false,
+      "icon": "openapi",
+      "tagline": "API · MCP · Webhook",
+      "description": "把星阵能力开放给外部：申请 API Key、接入 MCP Server、订阅 Webhook、使用 SDK 与沙箱，在控制台查看调用量、错误与剩余配额。",
+      "features": ["API Key 与沙箱", "MCP Server", "Webhook 订阅", "多语言 SDK", "调用日志与配额", "开发者控制台"],
+      "keywords": ["开放平台", "API 开放", "开发者平台", "MCP Server", "Webhook", "SDK", "沙箱环境", "API 控制台"]
+    },
+    {
       "id": "blog",
       "name": "余一叶知秋尽",
       "url": "https://pengline.cn",
       "category": "content",
       "status": "live",
+      "dividerBefore": { "label": "内容与知识", "note": "博客 · 文档", "countCategory": "content" },
       "tagline": "技术博客",
       "description": "AI、Python 与系统架构的第一手记录：RAG 与向量检索实测、Agent 与 AIGC 落地细节、热门框架源码解析、项目中的架构演进与选型取舍，把踩过的坑沉淀为可复用的方法与结论。",
       "features": ["RAG / 向量检索评测", "Agent 与 AIGC 实践", "Python 工程", "源码解析", "架构演进与选型", "踩坑复盘"],
       "keywords": ["技术博客", "AI 工程实践", "RAG 评测", "向量检索", "AI Agent", "AIGC 实践", "Python 工程", "源码解析", "系统架构", "架构演进", "技术选型", "pengline"],
       "schemaType": "Blog"
+    },
+    {
+      "id": "docs",
+      "name": "HelpEnx 文档中心",
+      "url": "https://docs.helpenx.com",
+      "category": "content",
+      "status": "planned",
+      "deployed": false,
+      "icon": "book",
+      "tagline": "产品文档与 API 参考",
+      "description": "七个模块的使用文档、API 参考与更新日志集中在一处：从快速开始到进阶配置，按产品分卷，随版本同步更新，遇到问题先从这里找答案。",
+      "features": ["快速开始", "产品使用文档", "API / SDK 参考", "更新日志", "版本迁移指南", "常见问题"],
+      "keywords": ["文档中心", "产品文档", "API 文档", "开发者文档", "快速开始", "更新日志"]
     },
     {
       "id": "demo-city",

@@ -177,13 +177,30 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   margin-top: 12px; 
   font-size: 15px; line-height: 1.8; color: var(--text-dim);
 }
-.constellation__hint {
+.constellation__toolrow {
   margin-top: 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px 18px; flex-wrap: wrap;
+}
+.constellation__hint {
   display: flex; align-items: center; gap: 8px;
   font-size: 12.5px; color: var(--text-faint);
 }
 .constellation__hintdot {
   flex: none; width: 5px; height: 5px; border-radius: 50%; background: var(--cyan);
+}
+.constellation__all {
+  flex: none; padding: 7px 14px;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); cursor: pointer;
+  font-family: inherit; font-size: 12px; font-weight: 600; color: var(--text-dim);
+  transition: color .18s ease, border-color .18s ease, background .18s ease;
+}
+.constellation__all:hover { color: var(--ink); border-color: var(--border-hover); background: #fff; }
+.constellation__all:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.constellation__all.is-current {
+  color: var(--cyan); border-color: color-mix(in srgb, var(--cyan) 34%, transparent);
+  background: color-mix(in srgb, var(--cyan) 6%, var(--surface));
 }
 
 .constellation__board {
@@ -288,8 +305,6 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .cstar[aria-pressed="true"] .cstar__dot, .cstar.is-hot .cstar__dot { transform: scale(1.28); }
 .cstar:hover .cstar__halo, .cstar:focus-visible .cstar__halo,
 .cstar[aria-pressed="true"] .cstar__halo { transform: scale(1.22); opacity: 1; }
-.cstar--hub .cstar__dot { width: 16px; height: 16px; animation: starPulse 4.5s ease-in-out infinite; }
-.cstar--hub .cstar__halo { width: 40px; height: 40px; }
 .cstar:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 50%; }
 .cstar.is-dim { opacity: 0.42; }
 /* 主星闪耀：十字星芒 + 柔光，每颗星按自己的节拍偶发一闪 */
@@ -311,8 +326,6 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
   background: radial-gradient(circle, color-mix(in srgb, var(--accent) 55%, transparent), transparent 66%);
   animation: starGlint 4.9s ease-in-out infinite;
 }
-.cstar--hub .cstar__point::before { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
-.cstar--hub .cstar__point::after { width: 46px; height: 46px; margin: -23px 0 0 -23px; }
 .cstar:nth-of-type(2n) .cstar__point::before { animation-duration: 7.4s; }
 .cstar:nth-of-type(3n) .cstar__point::after { animation-duration: 5.6s; }
 .cstar:nth-of-type(1) .cstar__point::before,
@@ -401,23 +414,11 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
     radial-gradient(ellipse 54% 110% at 72% 46%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 66%),
     linear-gradient(180deg, #fcfdff, #f3f8fd);
 }
-.ctrack__back {
-  position: absolute; left: 18px; top: 16px; z-index: 4;
-  padding: 6px 12px;
-  border: 1px solid var(--border); border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  font-family: inherit; font-size: 12px; font-weight: 600; color: var(--text-dim);
-  cursor: pointer;
-  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-}
-.ctrack__back:hover { color: var(--ink); border-color: var(--border-hover); background: #fff; }
-.ctrack__back:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 .ctrack__level {
   position: absolute; left: 50%; top: 22px; transform: translateX(-50%); z-index: 1;
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
   color: rgba(15, 23, 42, 0.3); white-space: nowrap;
 }
-.constellation__edges--track { z-index: 1; }
 .ctrack-rail, .ctrack-flow { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; }
 .ctrack-rail {
   stroke: color-mix(in srgb, var(--cyan) 28%, transparent);
@@ -446,6 +447,15 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 }
 .cmicro-orbit--inner { stroke-dasharray: 3 7; opacity: 0.7; }
 .cmicro-orbit--faint { stroke: color-mix(in srgb, var(--accent) 14%, transparent); }
+.cmicro-spoke {
+  stroke: color-mix(in srgb, var(--accent) 24%, transparent);
+  stroke-width: 1; stroke-dasharray: 2 6; vector-effect: non-scaling-stroke;
+}
+.cmicro-node-ring {
+  fill: color-mix(in srgb, var(--accent) 5%, transparent);
+  stroke: color-mix(in srgb, var(--accent) 18%, transparent);
+  stroke-width: 1; stroke-dasharray: 4 6; vector-effect: non-scaling-stroke;
+}
 .cmicro-axis {
   stroke: color-mix(in srgb, var(--accent) 22%, transparent);
   stroke-width: 1; stroke-dasharray: 2 7; vector-effect: non-scaling-stroke;
@@ -516,170 +526,44 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .ctrack.is-dim { opacity: 0.45; }
 .ctrack--planned .ctrack__node { border-style: dashed; }
 
-.constellation__track {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px; align-content: start;
-}
-.constellation__track[hidden] { display: none; }
-.ctrack-chip {
-  display: flex; align-items: center; gap: 8px; min-width: 0;
-  padding: 8px 10px;
-  border: 1px solid var(--border); border-radius: 10px;
-  background: var(--bg); cursor: pointer;
-  font-family: inherit; font-size: 12px; color: var(--text-dim); text-align: left;
-  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-}
-.ctrack-chip__char {
-  flex: none; display: grid; place-items: center;
-  width: 22px; height: 22px; border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  background: color-mix(in srgb, var(--accent) 9%, transparent);
-  font-size: 11px; font-weight: 700; color: var(--accent);
-}
-.ctrack-chip__name { font-weight: 650; color: var(--text); white-space: nowrap; }
-.ctrack-chip__site {
-  margin-left: auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  font-family: var(--mono); font-size: 9.5px; color: var(--text-faint);
-}
-.ctrack-chip:hover { border-color: var(--border-hover); background: #fff; }
-.ctrack-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.ctrack-chip.is-active {
-  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
-  background: color-mix(in srgb, var(--accent) 6%, #fff);
-}
-.ctrack-chip.is-active .ctrack-chip__name { color: color-mix(in srgb, var(--accent) 70%, var(--ink)); }
-
-/* 星图右栏：节点清单按布局换排列，卫星能力单独成行 */
-.constellation__micro { display: grid; gap: 12px; align-content: start; }
-.constellation__micro[hidden] { display: none; }
-.cmicro-panel__chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.constellation__micro[data-micro-layout="stack"] .cmicro-panel__chips {
-  grid-template-columns: 1fr; position: relative;
-}
-.constellation__micro[data-micro-layout="stack"] .cmicro-panel__chips::before {
-  content: ""; position: absolute; left: 21px; top: 14px; bottom: 14px; width: 1px;
-  background: linear-gradient(180deg,
-    transparent, color-mix(in srgb, var(--accent) 36%, transparent) 22%,
-    color-mix(in srgb, var(--accent) 36%, transparent) 78%, transparent);
-}
-.cmicro-panel__sats {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
-  padding-top: 2px;
-}
-.cmicro-panel__label {
-  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; color: var(--text-faint);
-}
-.cmicro-tag {
-  padding: 3px 8px; border-radius: 999px;
-  border: 1px dashed color-mix(in srgb, var(--accent) 24%, transparent);
-  background: rgba(255, 255, 255, 0.6);
-  font-size: 11px; color: var(--text-faint);
-}
-
-.constellation__body { min-width: 0; }
-
-.constellation__panel {
-  margin-top: 16px;
-  display: grid; grid-template-columns: minmax(230px, 0.85fr) minmax(0, 2fr);
-  gap: 22px 26px; padding: 22px 24px;
+/* 星图舞台：七主星棋盘常驻，选中主星后在下方展开对应星图 */
+.constellation__stage {
+  margin-top: 18px;
+  padding: 20px 22px 22px;
   border: 1px solid var(--border); border-radius: 20px;
   background:
     radial-gradient(120% 140% at 0% 0%, rgba(10, 116, 148, 0.05), transparent 55%),
     var(--surface);
   box-shadow: var(--shadow);
 }
-.constellation__current-eyebrow {
+.constellation__stage[hidden] { display: none; }
+.constellation__stage-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 18px;
+  padding-bottom: 14px; margin-bottom: 14px;
+  border-bottom: 1px dashed rgba(15, 34, 67, 0.12);
+}
+.constellation__stage-info { min-width: 0; }
+.constellation__stage-eyebrow {
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text-faint);
 }
-.constellation__current-row {
+.constellation__stage-row {
   margin-top: 8px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
 }
-.constellation__current-title {
-  font-size: 19px; font-weight: 680; letter-spacing: -0.01em; color: var(--ink);
+.constellation__stage-title {
+  font-size: 21px; font-weight: 680; letter-spacing: -0.01em; color: var(--ink);
 }
-.constellation__current-count { font-family: var(--mono); font-size: 11px; color: var(--text-faint); }
-.constellation__current-desc { margin-top: 8px; font-size: 13px; line-height: 1.75; color: var(--text-dim); }
+.constellation__stage-count { font-family: var(--mono); font-size: 11px; color: var(--text-faint); }
+.constellation__stage-desc { margin-top: 6px; max-width: 820px; font-size: 13px; line-height: 1.75; color: var(--text-dim); }
 .constellation__reset {
-  margin-top: 12px; padding: 5px 0;
-  border: 0; background: none; cursor: pointer;
-  font-family: inherit; font-size: 12.5px; font-weight: 600; color: var(--cyan);
-}
-.constellation__reset { align-self: flex-start; }
-.constellation__reset:hover { color: var(--violet); }
-.constellation__reset:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
-
-/* 面板左栏配图：总枢纽七星定位图 / 七星轨迷你轨道 */
-.constellation__current { display: flex; flex-direction: column; }
-.constellation__art {
-  flex: 1 1 auto; min-height: 0; margin-top: 16px;
-  display: flex; flex-direction: column;
-}
-.constellation__art[hidden] { display: none; }
-.constellation__art-frame {
-  flex: 1 1 auto; min-height: 0;
-  display: flex; align-items: center; justify-content: center;
-  padding: 10px 8px;
-  border: 1px dashed rgba(79, 106, 224, 0.24); border-radius: 14px;
-  background:
-    radial-gradient(85% 70% at 50% 6%, rgba(79, 106, 224, 0.055), transparent 62%),
-    radial-gradient(85% 80% at 50% 100%, rgba(10, 116, 148, 0.045), transparent 62%),
-    rgba(255, 255, 255, 0.62);
-}
-.constellation__art[data-constellation-art="macro"] .constellation__art-frame { min-height: 210px; }
-.constellation__art[data-constellation-track-art] .constellation__art-frame { min-height: 104px; }
-.constellation__art svg { display: block; width: 100%; height: auto; }
-.c-art text { font-family: var(--sans); }
-.c-art__speck { fill: rgba(15, 23, 42, 0.16); }
-.c-art__link { stroke: rgba(15, 34, 67, 0.16); stroke-width: 0.9; }
-.c-art__ring { fill: none; stroke-width: 1.2; opacity: 0; transition: opacity 0.25s ease; }
-.c-art__halo { opacity: 0.12; }
-.c-art__dot { stroke: #fff; stroke-width: 1.4; }
-.c-art__name { font-size: 10px; font-weight: 650; fill: var(--ink); }
-.c-art__count { font-family: var(--mono); font-size: 8px; fill: var(--text-faint); }
-.c-art__cap { font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.18em; fill: var(--text-faint); }
-.c-art__rail { fill: none; stroke: rgba(15, 34, 67, 0.2); stroke-width: 1.2; stroke-dasharray: 4 5; animation: cArtFlow 18s linear infinite; }
-.c-art__orbit { fill: none; stroke: rgba(15, 34, 67, 0.18); stroke-width: 1.1; stroke-dasharray: 3 5; }
-.c-art__node { fill: #fff; stroke-width: 1.8; }
-.c-art__char { font-size: 10.5px; font-weight: 700; }
-[data-art-star].is-hot .c-art__ring { opacity: 1; }
-[data-art-star].is-hot .c-art__dot { stroke-width: 2.2; }
-@keyframes cArtFlow { to { stroke-dashoffset: -90; } }
-
-.constellation__groups {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px 22px; align-content: start;
-}
-.cgroup {
-  min-width: 0; padding-left: 11px;
-  border-left: 2px solid color-mix(in srgb, var(--accent) 26%, transparent);
-}
-.cgroup[hidden] { display: none; }
-.cgroup.is-hover { border-left-color: var(--accent); }
-.cgroup.is-hover .cgroup__name { color: var(--ink); }
-.cgroup__head {
-  display: flex; align-items: center; gap: 7px; width: 100%;
-  padding: 0; border: 0; background: none; cursor: pointer;
-  font-family: inherit; text-align: left; color: var(--text);
-}
-.cgroup__head:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-.cgroup__dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-.cgroup__name { font-size: 12.5px; font-weight: 650; }
-.cgroup__count { margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--text-faint); }
-.cgroup__chev { display: none; }
-.cgroup.is-open .cgroup__name { color: var(--ink); }
-.cgroup__links { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
-.clink {
-  display: inline-flex; align-items: baseline; gap: 6px;
-  padding: 4px 8px;
-  border: 1px solid var(--border); border-radius: 7px;
-  background: var(--bg);
-  font-size: 12px; color: var(--text-dim); text-decoration: none;
+  flex: none; margin-top: 2px; padding: 7px 14px;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: var(--bg); cursor: pointer;
+  font-family: inherit; font-size: 12.5px; font-weight: 600; color: var(--text-dim);
   transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
-.clink:hover { color: var(--ink); border-color: var(--border-hover); background: #fff; }
-.clink:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-.clink__host { font-family: var(--mono); font-size: 9.5px; color: var(--text-faint); }
-.clink--planned { opacity: 0.55; border-style: dashed; cursor: default; }
+.constellation__reset:hover { color: var(--ink); border-color: var(--border-hover); background: #fff; }
+.constellation__reset:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.constellation__stage .constellation__board--micro { margin-top: 0; }
 
 /* ---------- 页眉搜索 ---------- */
 .hsearch { position: relative; flex: 1 1 auto; max-width: 430px; margin: 0 26px; }
@@ -1757,7 +1641,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 }
 .card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 
-/* 筛选态直接复用首页展示卡：与总枢纽下的轻天璇 Studio 保持同一套版式 */
+/* 筛选态直接复用首页展示卡：与轻天璇 Studio 保持同一套版式 */
 .showcase__card--grid { grid-column: 1 / -1; }
 
 /* 通栏卡：用于被单独强调的服务（如 NeoTask） */
@@ -2199,7 +2083,6 @@ body::after {
   .hero { padding: 36px 0 32px; }
   .hero__constellation { display: none; }
   .constellation__board { min-height: 0; }
-  .constellation__panel { grid-template-columns: 1fr; gap: 18px; }
   .site-header { flex-wrap: wrap; row-gap: 10px; padding: 14px 24px; }
   .hsearch { order: 3; flex: 1 1 100%; max-width: none; margin: 0; }
   .suggest { min-width: 0; }
@@ -2223,6 +2106,8 @@ body::after {
 }
 @media (max-width: 760px) {
   .constellation { padding-top: 4px; }
+  .constellation__toolrow { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .constellation__all { align-self: flex-start; }
   .constellation__board {
     aspect-ratio: auto; min-height: 0; margin-top: 18px;
     display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2242,14 +2127,14 @@ body::after {
     border: 1px solid var(--border); border-radius: 12px;
     background: var(--surface); text-align: left;
   }
-  .cstar--hub { grid-column: 1 / -1; order: -1; }
+  .cstar:nth-of-type(7) { grid-column: 1 / -1; }
   .cstar__point {
     position: relative; inset: auto; flex: none;
     width: 16px; height: 16px; display: grid; place-items: center;
   }
   .cstar__halo { display: none; }
   .cstar__point::before, .cstar__point::after { display: none; }
-  .cstar__dot, .cstar--hub .cstar__dot {
+  .cstar__dot {
     width: 9px; height: 9px; transform: none; animation: none;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 13%, transparent);
   }
@@ -2279,7 +2164,6 @@ body::after {
     position: static; display: block; transform: none;
     margin: 4px 2px 10px;
   }
-  .ctrack__back { position: static; display: inline-flex; margin: 12px 0 0; }
   .ctrack {
     position: relative; left: auto; top: auto;
     width: 100%; transform: none;
@@ -2300,30 +2184,10 @@ body::after {
     border-color: color-mix(in srgb, var(--accent) 45%, transparent);
     background: color-mix(in srgb, var(--accent) 6%, var(--surface));
   }
-  .constellation__track { grid-template-columns: 1fr; }
-  .constellation__micro .cmicro-panel__chips { grid-template-columns: 1fr; }
-  .ctrack-chip__site { max-width: 40%; }
-  .constellation__panel { padding: 18px; border-radius: 16px; }
-  .constellation__groups { grid-template-columns: 1fr; gap: 14px; }
-  .constellation__current-title { font-size: 17px; }
-  .constellation__art[data-constellation-art="macro"] .constellation__art-frame { min-height: 0; }
-  .constellation__art[data-constellation-art="macro"] svg { max-height: 240px; }
-  /* 分组在移动端默认收起，点组头展开；无 JS 时保持全展开 */
-  .js .cgroup__head {
-    margin: 0 -6px; padding: 10px 6px 9px; border-radius: 8px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .js .cgroup__head:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
-  .js .cgroup__chev {
-    display: block; flex: none; width: 7px; height: 7px;
-    margin: 0 3px 3px 8px;
-    border-right: 1.5px solid var(--text-faint); border-bottom: 1.5px solid var(--text-faint);
-    transform: rotate(45deg);
-    transition: transform 0.2s;
-  }
-  .js .cgroup.is-open .cgroup__chev { transform: rotate(-135deg); margin-bottom: -1px; }
-  .js .cgroup__links { display: none; margin-top: 2px; padding: 0 0 6px 0; }
-  .js .cgroup.is-open .cgroup__links { display: flex; }
+  .constellation__stage { padding: 16px; border-radius: 16px; }
+  .constellation__stage-head { flex-direction: column; align-items: stretch; gap: 12px; }
+  .constellation__stage-title { font-size: 18px; }
+  .constellation__reset { align-self: flex-start; }
 }
 @media (max-width: 680px) {
   main { padding: 0 20px; }

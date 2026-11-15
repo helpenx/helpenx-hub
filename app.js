@@ -1236,6 +1236,31 @@
     var lines = [].slice.call(board.querySelectorAll(".constellation__edges line"));
     var auxButtons = [];
 
+    // 桌面指针视差：棋盘四层按不同幅度错位，离开后归位
+    var finePointer = window.matchMedia && window.matchMedia("(min-width: 761px) and (hover: hover) and (pointer: fine)").matches;
+    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (finePointer && !reduceMotion) {
+      board.classList.add("is-parallax");
+      var parRaf = 0;
+      var parX = 0;
+      var parY = 0;
+      board.addEventListener("pointermove", function (ev) {
+        var rect = board.getBoundingClientRect();
+        parX = Math.max(-1, Math.min(1, ((ev.clientX - rect.left) / rect.width - 0.5) * 2));
+        parY = Math.max(-1, Math.min(1, ((ev.clientY - rect.top) / rect.height - 0.5) * 2));
+        if (parRaf) return;
+        parRaf = window.requestAnimationFrame(function () {
+          parRaf = 0;
+          board.style.setProperty("--par-x", parX.toFixed(3));
+          board.style.setProperty("--par-y", parY.toFixed(3));
+        });
+      });
+      board.addEventListener("pointerleave", function () {
+        board.style.setProperty("--par-x", "0");
+        board.style.setProperty("--par-y", "0");
+      });
+    }
+
     stars().forEach(function (star) {
       var ids = star.projects || [];
       if (!ids.length || !auxBox) return;

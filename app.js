@@ -1542,7 +1542,82 @@
     if (brand.github) el("github-link").href = brand.github;
   }
 
+  function bindShare() {
+    var btn = el("share-btn");
+    var toast = el("share-toast");
+    if (!btn || !toast) return;
+
+    var hideTimer, resetTimer;
+    function showToast(message, ok) {
+      clearTimeout(hideTimer);
+      clearTimeout(resetTimer);
+      toast.textContent = message;
+      toast.classList.toggle("is-error", !ok);
+      toast.hidden = false;
+      toast.classList.remove("is-visible");
+      void toast.offsetWidth;
+      toast.classList.add("is-visible");
+      hideTimer = setTimeout(function () {
+        toast.classList.remove("is-visible");
+        resetTimer = setTimeout(function () { toast.hidden = true; }, 240);
+      }, 2400);
+    }
+
+    function metaContent(selector) {
+      var node = document.querySelector(selector);
+      return node ? node.getAttribute("content") || "" : "";
+    }
+
+    function shareUrl() {
+      var canonical = document.querySelector('link[rel="canonical"]');
+      return (canonical && canonical.href ? canonical.href : location.href).split("#")[0];
+    }
+
+    // 非安全上下文或权限被拒时，退回 execCommand 复制
+    function legacyCopy(text) {
+      var area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.top = "-1000px";
+      document.body.appendChild(area);
+      area.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { /* 浏览器不支持时按失败处理 */ }
+      document.body.removeChild(area);
+      return ok;
+    }
+
+    function copyLink(url) {
+      var task = navigator.clipboard && navigator.clipboard.writeText
+        ? navigator.clipboard.writeText(url).then(function () { return true; }, function () { return legacyCopy(url); })
+        : Promise.resolve(legacyCopy(url));
+      task.then(function (ok) {
+        showToast(ok ? "链接已复制，发给朋友吧" : "复制失败，请手动复制地址栏链接", ok);
+      });
+    }
+
+    btn.addEventListener("click", function () {
+      var url = shareUrl();
+      var motto = document.querySelector(".hero__motto");
+      var data = {
+        title: metaContent('meta[property="og:title"]') || document.title,
+        text: motto ? motto.textContent.trim() : metaContent('meta[name="description"]'),
+        url: url
+      };
+      if (navigator.share) {
+        navigator.share(data).catch(function (err) {
+          if (err && err.name === "AbortError") return;
+          copyLink(url);
+        });
+      } else {
+        copyLink(url);
+      }
+    });
+  }
+
   setupScrollChrome();
+  bindShare();
 
   loadData().then(function (data) {
     state.data = data;

@@ -370,7 +370,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
 <link rel="mask-icon" href="./assets/icons/favicon-mask.svg" color="#0a7494" />
-<link rel="stylesheet" href="./styles.css?v=202611151640" />
+<link rel="stylesheet" href="./styles.css?v=202611151805" />
 </head>
 <body>
 <svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
@@ -537,6 +537,13 @@
       <a class="btn btn-primary" id="cta-primary" href="https://studio.helpenx.com" target="_blank" rel="noopener">轻天璇 Studio（演示版）</a>
       <a class="btn btn-ghost" id="cta-secondary" href="#board">查看全部服务</a>
       <!-- HEROCTA:END -->
+      <button class="btn btn-ghost btn-share" id="share-btn" type="button" aria-label="分享本页链接">
+        <svg class="btn__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
+          <path d="m8.6 10.7 6.8-4.1M8.6 13.3l6.8 4.1" />
+        </svg>
+        分享本页
+      </button>
     </div>
 
   </section>
@@ -1635,6 +1642,7 @@
   ]
 }
 </script>
-<script src="./app.js?v=202611151640"></script>
+<div class="share-toast" id="share-toast" role="status" aria-live="polite" hidden></div>
+<script src="./app.js?v=202611151805"></script>
 </body>
 </html>

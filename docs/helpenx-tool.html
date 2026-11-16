@@ -1,0 +1,1438 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星阵工坊 · STARFORGE ATELIER — 七星阵列徽章调校台</title>
+<meta name="description" content="七颗星闭合连线，围合出中心工作台的负空间。深空蓝底、星金线条的圆形/六边形徽章，可实时调校并导出 SVG / PNG。">
+<link id="favicon" rel="icon" type="image/svg+xml" href="">
+<style>
+/* ============================================================
+   STARFORGE ATELIER — deep-space blue × star gold
+   ============================================================ */
+:root{
+  --bg:#04091C; --bg2:#060D24;
+  --surface:#0A1533; --surface2:#0E1B42; --overlay:#101F45;
+  --line:rgba(245,197,66,.16); --line2:rgba(245,197,66,.32);
+  --gold:#F5C542; --gold-hi:#FFD86B; --gold-deep:#C9932B; --gold-dim:#8A6A1E;
+  --blue:#57B0FF; --indigo:#3D5BD9; --amber:#FFB35C;
+  --ok:#3DDC97; --warn:#FFB020; --danger:#FF5470; --info:#57B0FF;
+  --ink:#EDF1FE; --ink2:#C7D0EE; --ink3:#8FA0CC; --ink4:#5A6C9E;
+  --serif:"Songti SC","STSong","Noto Serif CJK SC","SimSun",Georgia,serif;
+  --sans:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+  --nav-h:64px; --r:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--ink2); font-family:var(--sans);
+  font-size:15px; line-height:1.7; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(245,197,66,.32); color:#FFF6DC}
+/* ---- custom scrollbars, in the badge's own language ---- */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#060D24;border-left:1px solid rgba(245,197,66,.08)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#C9932B,#8A6A1E);border-radius:6px;border:2px solid #060D24}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#FFD86B,#C9932B)}
+*{scrollbar-width:thin;scrollbar-color:#C9932B #060D24}
+.panel-scroll::-webkit-scrollbar,pre::-webkit-scrollbar{width:8px;height:8px}
+.panel-scroll::-webkit-scrollbar-thumb,pre::-webkit-scrollbar-thumb{border-width:1px}
+
+/* ---- layered background: aurora + grain ---- */
+.aurora{position:fixed;inset:-15%;z-index:-2;pointer-events:none;filter:blur(80px);opacity:.85}
+.aurora span{position:absolute;border-radius:50%}
+.aurora .a1{width:62vw;height:62vw;left:-14vw;top:-18vw;background:radial-gradient(circle,rgba(35,58,140,.55),transparent 68%);animation:drift1 46s ease-in-out infinite alternate}
+.aurora .a2{width:46vw;height:46vw;right:-12vw;top:22vh;background:radial-gradient(circle,rgba(160,110,26,.20),transparent 66%);animation:drift2 38s ease-in-out infinite alternate}
+.aurora .a3{width:52vw;height:52vw;left:6vw;bottom:-24vh;background:radial-gradient(circle,rgba(24,74,120,.38),transparent 66%);animation:drift3 52s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(9vw,7vh) scale(1.12)}}
+@keyframes drift2{to{transform:translate(-7vw,-9vh) scale(1.18)}}
+@keyframes drift3{to{transform:translate(6vw,-6vh) scale(.92)}}
+.grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E")}
+
+/* ---- nav ---- */
+#topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:80;
+  display:flex;align-items:center;
+  background:rgba(4,9,28,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;transition:background .35s,border-color .35s}
+#topbar.scrolled{background:rgba(4,9,28,.88);border-bottom-color:var(--line)}
+.nav-inner{width:min(1320px,100% - 40px);margin:0 auto;display:flex;align-items:center;gap:26px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0}
+.brand-badge{width:32px;height:32px;display:block;filter:drop-shadow(0 0 8px rgba(245,197,66,.35))}
+.brand-name{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);letter-spacing:2px;line-height:1.15}
+.brand-sub{font-family:var(--mono);font-size:8.5px;letter-spacing:2.6px;color:var(--gold-deep);line-height:1}
+.nav-links{display:flex;gap:4px;list-style:none;margin-left:8px}
+.nav-links a{display:block;padding:7px 13px;border-radius:9px;color:var(--ink3);text-decoration:none;font-size:13.5px;letter-spacing:1px;transition:.25s;position:relative}
+.nav-links a:hover{color:var(--gold-hi);background:rgba(245,197,66,.07)}
+.nav-links a.active{color:var(--gold-hi)}
+.nav-links a.active::after{content:"";position:absolute;left:13px;right:13px;bottom:2px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--gold),transparent)}
+.nav-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+.sound-btn{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(10,21,51,.6);color:var(--ink3);font-size:12px;font-family:var(--mono);letter-spacing:1px;cursor:pointer;transition:.25s}
+.sound-btn:hover{border-color:var(--line2);color:var(--gold-hi)}
+.sound-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sound-btn .off-ic{display:none}
+.sound-btn[aria-pressed="false"]{color:var(--ink4)}
+.sound-btn[aria-pressed="false"] .on-ic{display:none}
+.sound-btn[aria-pressed="false"] .off-ic{display:block}
+
+/* ---- buttons ---- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;
+  font-family:var(--sans);font-weight:700;font-size:14px;letter-spacing:1.5px;border-radius:12px;
+  padding:11px 20px;transition:transform .18s,box-shadow .25s,filter .2s,background .25s;text-decoration:none}
+.btn:active{transform:translateY(1px) scale(.985)}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.btn-gold{background:linear-gradient(135deg,#FFD86B 0%,#F5C542 45%,#E8A93C 100%);color:#221604;
+  box-shadow:0 4px 22px rgba(245,197,66,.28),inset 0 1px 0 rgba(255,255,255,.5)}
+.btn-gold:hover{filter:brightness(1.07);transform:translateY(-1px);box-shadow:0 8px 30px rgba(245,197,66,.4),inset 0 1px 0 rgba(255,255,255,.5)}
+.btn-ghost{background:rgba(245,197,66,.05);border:1px solid var(--line2);color:var(--gold)}
+.btn-ghost:hover{background:rgba(245,197,66,.12);border-color:var(--gold);transform:translateY(-1px)}
+.btn-blue{background:rgba(87,176,255,.08);border:1px solid rgba(87,176,255,.4);color:var(--blue)}
+.btn-blue:hover{background:rgba(87,176,255,.16);transform:translateY(-1px)}
+.btn-sm{padding:8px 14px;font-size:12.5px;border-radius:10px}
+.btn-lg{padding:15px 26px;font-size:15.5px;border-radius:14px;width:100%}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+
+/* ---- layout ---- */
+main{position:relative;z-index:1}
+.sec{width:min(1320px,100% - 40px);margin:0 auto;padding:74px 0 30px;scroll-margin-top:calc(var(--nav-h) + 14px)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:4px;color:var(--gold-deep);display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.sec-head h2{font-family:var(--serif);font-size:clamp(24px,3vw,32px);color:var(--ink);letter-spacing:3px;font-weight:700}
+.sec-head p{color:var(--ink3);font-size:14px;margin-top:6px;max-width:640px}
+.sec-head{margin-bottom:30px}
+.divider{width:min(1320px,100% - 40px);margin:44px auto 0;display:flex;align-items:center;gap:14px;color:var(--gold-dim);font-size:9px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(245,197,66,.22),transparent)}
+
+/* ---- hero ---- */
+#stage{padding-top:calc(var(--nav-h) + 46px)}
+.hero-head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:20px 40px;margin-bottom:30px}
+.hero-head h1{font-family:var(--serif);font-size:clamp(32px,4.6vw,54px);line-height:1.25;color:var(--ink);letter-spacing:4px;font-weight:700}
+.hero-head h1 em{font-style:normal;color:var(--gold-hi);text-shadow:0 0 26px rgba(245,197,66,.55)}
+.hero-sub{color:var(--ink3);font-size:15px;max-width:560px;margin-top:12px;letter-spacing:.5px}
+.hero-sub b{color:var(--ink2);font-weight:600}
+.hero-meta{margin-left:auto;display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+.meta-chip{font-family:var(--mono);font-size:10px;letter-spacing:2.4px;color:var(--ink4);border:1px solid rgba(90,108,158,.3);padding:4px 11px;border-radius:99px}
+.meta-chip.gold{color:var(--gold);border-color:var(--line2)}
+.hero-ctas{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+
+.stage-grid{display:grid;grid-template-columns:minmax(0,1fr) 384px;gap:22px;align-items:start}
+
+/* stage card */
+.stage-card{position:relative;border-radius:24px;border:1px solid var(--line);overflow:hidden;
+  background:
+    repeating-linear-gradient(0deg,rgba(87,176,255,.035) 0 1px,transparent 1px 34px),
+    repeating-linear-gradient(90deg,rgba(87,176,255,.035) 0 1px,transparent 1px 34px),
+    radial-gradient(120% 90% at 50% 0%,#0D1B42 0%,#081230 46%,#050B22 100%);
+  min-height:660px;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04)}
+.crop{position:absolute;width:15px;height:15px;border-color:rgba(245,197,66,.5);border-style:solid;border-width:0;z-index:3}
+.crop.tl{top:13px;left:13px;border-top-width:1.5px;border-left-width:1.5px}
+.crop.tr{top:13px;right:13px;border-top-width:1.5px;border-right-width:1.5px}
+.crop.bl{bottom:13px;left:13px;border-bottom-width:1.5px;border-left-width:1.5px}
+.crop.br{bottom:13px;right:13px;border-bottom-width:1.5px;border-right-width:1.5px}
+.side-label{position:absolute;top:50%;transform:translateY(-50%);writing-mode:vertical-rl;font-family:var(--mono);font-size:9px;letter-spacing:4px;color:var(--ink4);z-index:3;user-select:none}
+.side-label.l{left:16px}.side-label.r{right:16px}
+.stage-top{display:flex;justify-content:space-between;align-items:center;padding:18px 26px 0;font-family:var(--mono);font-size:10px;letter-spacing:2.5px;color:var(--ink4);z-index:3}
+.stage-top .live{color:var(--ok);display:flex;align-items:center;gap:7px}
+.led{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:led 2.4s ease-in-out infinite}
+@keyframes led{50%{opacity:.35}}
+.stage-body{flex:1;display:flex;align-items:center;justify-content:center;padding:26px 40px;position:relative}
+.stage-halo{position:absolute;width:66%;aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(245,197,66,.13) 0%,rgba(61,91,217,.12) 42%,transparent 68%);filter:blur(34px)}
+#stageTilt{perspective:1300px;width:min(560px,86%);position:relative;z-index:2}
+.badge-float{animation:floaty 7.5s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-9px)}}
+#badgeTilt{transform-style:preserve-3d;will-change:transform}
+#badgeMount svg{display:block;width:100%;height:auto;filter:drop-shadow(0 18px 44px rgba(0,0,0,.55))}
+.spec-strip{display:flex;flex-wrap:wrap;gap:8px 18px;padding:15px 26px 19px;border-top:1px solid rgba(245,197,66,.1);font-family:var(--mono);font-size:10.5px;letter-spacing:1.6px;color:var(--ink4);z-index:3;background:rgba(4,9,28,.35)}
+.spec-strip b{color:var(--gold);font-weight:600}
+.spec-strip .sw{display:inline-block;width:9px;height:9px;border-radius:3px;vertical-align:-1px;margin-right:5px;border:1px solid rgba(255,255,255,.25)}
+
+/* draw-in sequence */
+.badge-draw .ln{stroke-dasharray:1;stroke-dashoffset:1;animation:drawln .85s cubic-bezier(.6,0,.2,1) forwards;animation-delay:calc(var(--i)*85ms + 200ms)}
+.badge-draw .star{opacity:0;animation:starpop .6s cubic-bezier(.18,1.5,.35,1) forwards;animation-delay:calc(var(--i)*95ms + 1000ms)}
+.badge-draw .fade{opacity:0;animation:fadein 1s ease forwards;animation-delay:1.45s}
+.badge-draw .fade2{opacity:0;animation:fadein 1.1s ease forwards;animation-delay:1.75s}
+@keyframes drawln{to{stroke-dashoffset:0}}
+@keyframes starpop{0%{opacity:0;transform:scale(.15)}62%{opacity:1}100%{opacity:1;transform:scale(1)}}
+@keyframes fadein{to{opacity:1}}
+.star{transform-box:fill-box;transform-origin:center}
+
+/* ---- console panel ---- */
+.panel{position:sticky;top:calc(var(--nav-h) + 16px);border-radius:20px;border:1px solid var(--line);
+  background:linear-gradient(170deg,rgba(16,31,69,.92),rgba(8,17,42,.94));
+  box-shadow:0 24px 60px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.05);
+  display:flex;flex-direction:column;max-height:calc(100vh - var(--nav-h) - 32px);overflow:hidden;transition:box-shadow .4s}
+.panel.pulse{box-shadow:0 0 0 2px var(--gold),0 24px 70px rgba(245,197,66,.25)}
+.panel-head{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid rgba(245,197,66,.12)}
+.panel-head .t{font-family:var(--serif);font-size:17px;color:var(--ink);letter-spacing:3px;font-weight:700}
+.panel-head .s{font-family:var(--mono);font-size:9px;letter-spacing:2.6px;color:var(--gold-deep)}
+.panel-head .led{margin-left:auto}
+.panel-scroll{overflow-y:auto;padding:6px 20px 14px;flex:1}
+.grp{padding:14px 0 6px;border-bottom:1px dashed rgba(245,197,66,.12)}
+.grp:last-child{border-bottom:none}
+.grp-t{font-family:var(--mono);font-size:9.5px;letter-spacing:3px;color:var(--gold-deep);margin-bottom:13px;display:flex;align-items:center;gap:8px}
+.grp-t::before{content:"▸";color:var(--gold);font-size:10px}
+.ctl{margin-bottom:15px}
+.ctl-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.ctl-head label,.ctl-name{font-size:13px;color:var(--ink2);letter-spacing:1.5px}
+.ctl-head output{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.5px}
+.ctl-sub{font-size:10.5px;color:var(--ink4);letter-spacing:.5px;margin-top:1px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:linear-gradient(90deg,rgba(61,91,217,.55),rgba(245,197,66,.65));border:1px solid rgba(245,197,66,.2)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;margin-top:-6px;background:linear-gradient(135deg,#FFD86B,#C9932B);border:1px solid #FFE9A8;border-radius:4px;transform:rotate(45deg);box-shadow:0 0 10px rgba(245,197,66,.6);transition:box-shadow .2s}
+input[type=range]::-webkit-slider-thumb:hover{box-shadow:0 0 16px rgba(245,197,66,.95)}
+input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:linear-gradient(90deg,rgba(61,91,217,.55),rgba(245,197,66,.65));border:1px solid rgba(245,197,66,.2)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;background:linear-gradient(135deg,#FFD86B,#C9932B);border:1px solid #FFE9A8;border-radius:4px;transform:rotate(45deg);box-shadow:0 0 10px rgba(245,197,66,.6)}
+.seg{display:flex;background:rgba(4,9,28,.6);border:1px solid rgba(245,197,66,.18);border-radius:11px;padding:3px;gap:3px}
+.seg button{flex:1;border:none;background:transparent;color:var(--ink3);font-family:var(--sans);font-size:12.5px;letter-spacing:1.5px;padding:8px 4px;border-radius:8px;cursor:pointer;transition:.22s}
+.seg button:hover{color:var(--gold-hi)}
+.seg button.on{background:linear-gradient(135deg,#FFD86B,#E8A93C);color:#221604;font-weight:700;box-shadow:0 2px 10px rgba(245,197,66,.35)}
+.ctl-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}
+.switch{position:relative;width:42px;height:23px;border-radius:99px;border:1px solid rgba(245,197,66,.3);background:rgba(4,9,28,.7);cursor:pointer;transition:.25s;flex-shrink:0}
+.switch .knob{position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#5A6C9E;transition:.25s cubic-bezier(.3,1.4,.4,1)}
+.switch[aria-checked="true"]{background:linear-gradient(90deg,rgba(201,147,43,.5),rgba(245,197,66,.65));border-color:var(--gold)}
+.switch[aria-checked="true"] .knob{left:21px;background:#FFF3CE;box-shadow:0 0 9px rgba(245,197,66,.9)}
+.swatches{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.swatch{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.14);cursor:pointer;transition:.2s;position:relative;flex-shrink:0}
+.swatch:hover{transform:scale(1.12)}
+.swatch.on{border-color:#FFF3CE;box-shadow:0 0 0 2px rgba(245,197,66,.55),0 0 14px rgba(245,197,66,.5)}
+.swatch.on::after{content:"";position:absolute;inset:8px;border-radius:50%;border:1.5px solid rgba(4,9,28,.65)}
+.swatch-name{font-family:var(--mono);font-size:9.5px;color:var(--ink4);letter-spacing:1px;width:100%;margin-top:2px}
+.color-well{position:relative;width:30px;height:30px;border-radius:50%;overflow:hidden;border:2px dashed rgba(245,197,66,.45);cursor:pointer;flex-shrink:0;background:conic-gradient(#F5C542,#FF7A59,#E05FD0,#57B0FF,#3DDC97,#F5C542)}
+.color-well:hover{transform:scale(1.12)}
+.color-well input{position:absolute;inset:-8px;width:200%;height:200%;opacity:0;cursor:pointer}
+.panel-actions{display:flex;gap:10px;padding:14px 20px;border-top:1px solid rgba(245,197,66,.14);background:rgba(4,9,28,.45)}
+.panel-actions .btn{flex:1;padding:10px 8px;font-size:13px}
+
+/* ---- anatomy ---- */
+.anatomy-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:22px;align-items:start}
+.blueprint-card{border-radius:22px;border:1px solid rgba(87,176,255,.22);overflow:hidden;position:relative;
+  background:
+    repeating-linear-gradient(0deg,rgba(87,176,255,.05) 0 1px,transparent 1px 26px),
+    repeating-linear-gradient(90deg,rgba(87,176,255,.05) 0 1px,transparent 1px 26px),
+    linear-gradient(165deg,#0A1738,#060E28)}
+.blueprint-card .bp-stage{padding:26px}
+.blueprint-card svg{display:block;width:100%;height:auto}
+.titleblock{display:flex;flex-wrap:wrap;border-top:1px solid rgba(87,176,255,.22);font-family:var(--mono);font-size:9.5px;letter-spacing:1.8px;color:var(--ink4)}
+.titleblock div{padding:9px 16px;border-right:1px solid rgba(87,176,255,.14)}
+.titleblock b{color:var(--blue);font-weight:600}
+.anatomy-side{display:flex;flex-direction:column;gap:18px}
+.card{border-radius:18px;border:1px solid var(--line);background:linear-gradient(170deg,rgba(14,27,66,.75),rgba(8,17,42,.85));padding:20px 22px;box-shadow:0 16px 44px rgba(0,0,0,.35)}
+.card h3{font-family:var(--serif);font-size:16.5px;color:var(--ink);letter-spacing:2.5px;margin-bottom:13px;display:flex;align-items:center;gap:9px}
+.card h3 .tag{font-family:var(--mono);font-size:8.5px;letter-spacing:2px;color:var(--gold-deep);border:1px solid var(--line);padding:2px 8px;border-radius:99px;font-weight:400}
+table.coords{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px}
+table.coords th{text-align:left;color:var(--ink4);font-weight:500;letter-spacing:1.5px;padding:5px 8px;border-bottom:1px solid rgba(245,197,66,.18);font-size:9.5px}
+table.coords td{padding:5.5px 8px;border-bottom:1px dashed rgba(90,108,158,.18);color:var(--ink2)}
+table.coords tr:last-child td{border-bottom:none}
+table.coords td:first-child{color:var(--gold);font-weight:600}
+table.coords td:nth-child(2){font-family:var(--sans);letter-spacing:1px;color:var(--ink3)}
+table.coords tr:hover td{background:rgba(245,197,66,.05)}
+.checks{display:flex;flex-direction:column;gap:11px}
+.check{display:flex;gap:12px;align-items:flex-start;padding:11px 13px;border-radius:12px;background:rgba(61,220,151,.05);border:1px solid rgba(61,220,151,.18)}
+.check svg{width:19px;height:19px;flex-shrink:0;margin-top:2px;stroke:var(--ok);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.check .ct{font-size:13.5px;color:var(--ink);letter-spacing:1px;font-weight:600}
+.check .cd{font-size:12px;color:var(--ink3);line-height:1.6;margin-top:2px}
+.palette-row{display:flex;gap:10px;flex-wrap:wrap}
+.pal{flex:1;min-width:104px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+.pal .chip{height:44px}
+.pal .pl{padding:7px 10px;background:rgba(4,9,28,.6);font-family:var(--mono);font-size:9.5px;letter-spacing:1px;color:var(--ink3)}
+.pal .pl b{display:block;color:var(--ink2);font-size:10px;font-weight:600}
+
+/* ---- scale ---- */
+.ladder-wrap{display:flex;flex-direction:column;gap:16px}
+.ladder{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;padding:26px 26px 20px;border-radius:20px;border:1px solid var(--line);background:linear-gradient(170deg,rgba(14,27,66,.7),rgba(6,13,36,.9))}
+.ladder.light{background:linear-gradient(170deg,#EDF1FA,#DCE3F4);border-color:rgba(10,21,51,.2)}
+.ladder .cell{display:flex;flex-direction:column;align-items:center;gap:9px}
+.ladder .cell svg{display:block}
+.ladder .px{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--ink4)}
+.ladder.light .px{color:#5A6690}
+.ladder .note{margin-left:auto;align-self:center;font-family:var(--mono);font-size:10px;letter-spacing:1.6px;color:var(--ink4);max-width:180px;line-height:1.9;text-align:right}
+.ladder.light .note{color:#5A6690}
+.ladder .note b{color:var(--gold)}
+.ladder.light .note b{color:#9A6E12}
+
+/* ---- applications ---- */
+.mock-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.mock{border-radius:20px;border:1px solid var(--line);background:linear-gradient(170deg,rgba(14,27,66,.8),rgba(7,15,38,.92));overflow:hidden;display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s,border-color .3s}
+.mock:hover{transform:translateY(-4px);border-color:var(--line2);box-shadow:0 22px 54px rgba(0,0,0,.5)}
+.mock-stage{flex:1;min-height:218px;display:flex;align-items:center;justify-content:center;padding:22px;position:relative}
+.mock-label{padding:11px 18px;border-top:1px solid rgba(245,197,66,.12);font-family:var(--mono);font-size:9.5px;letter-spacing:2.4px;color:var(--ink4);display:flex;justify-content:space-between}
+.mock-label b{color:var(--gold-deep);font-weight:500}
+/* app icon */
+.dock{background:radial-gradient(90% 90% at 50% 10%,#13234F 0%,#081230 70%);border-radius:16px;padding:20px 26px;display:flex;flex-direction:column;align-items:center;gap:9px;border:1px solid rgba(87,176,255,.14)}
+.app-tile{width:104px;height:104px;border-radius:25px;background:linear-gradient(150deg,#12224E,#060D24);border:1px solid rgba(245,197,66,.3);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08)}
+.app-tile svg{width:86px;height:86px}
+.dock .an{font-size:12px;color:var(--ink2);letter-spacing:2px}
+.dock-dots{display:flex;gap:5px;margin-top:2px}
+.dock-dots i{width:4px;height:4px;border-radius:50%;background:var(--ink4)}
+.dock-dots i:first-child{background:var(--gold)}
+/* browser */
+.browser{width:100%;border-radius:13px;overflow:hidden;border:1px solid rgba(90,108,158,.35);background:#0A1430;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.tabstrip{display:flex;align-items:flex-end;gap:5px;padding:8px 8px 0;background:#060D24}
+.tab{display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:9px 9px 0 0;font-size:11px;color:var(--ink3);max-width:172px;white-space:nowrap;overflow:hidden}
+.tab.on{background:#101F45;color:var(--ink2)}
+.tab svg{width:15px;height:15px;flex-shrink:0}
+.tab .x{margin-left:auto;color:var(--ink4);font-size:12px}
+.tab.ghost{opacity:.4}
+.toolbar{display:flex;align-items:center;gap:9px;padding:8px 11px;background:#101F45;font-family:var(--mono);font-size:10.5px;color:var(--ink4)}
+.toolbar .nav-arrows{letter-spacing:4px;color:var(--ink3)}
+.addr{flex:1;display:flex;align-items:center;gap:7px;background:#060D24;border-radius:99px;padding:5px 12px;color:var(--ink3);letter-spacing:.5px;overflow:hidden;white-space:nowrap}
+.addr svg{width:11px;height:11px;stroke:var(--ok);fill:none;stroke-width:2;flex-shrink:0}
+.page-sliver{height:46px;background:linear-gradient(120deg,#0D1B42,#081230);display:flex;align-items:center;padding:0 14px;font-family:var(--mono);font-size:9.5px;letter-spacing:2px;color:var(--gold-deep)}
+/* chat */
+.chat{width:100%;display:flex;flex-direction:column;gap:10px}
+.chat-head{display:flex;align-items:center;gap:11px}
+.avatar{width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid rgba(245,197,66,.5);box-shadow:0 0 16px rgba(245,197,66,.3);flex-shrink:0}
+.avatar svg{width:100%;height:100%;display:block}
+.chat-name{font-size:13.5px;color:var(--ink);letter-spacing:1px;font-weight:600;display:flex;align-items:center;gap:7px}
+.bot-chip{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:#221604;background:linear-gradient(135deg,#FFD86B,#E8A93C);padding:2px 6px;border-radius:5px;font-weight:700}
+.chat-time{font-family:var(--mono);font-size:9.5px;color:var(--ink4);letter-spacing:1px}
+.bubble{background:rgba(16,31,69,.9);border:1px solid rgba(87,176,255,.16);border-radius:4px 14px 14px 14px;padding:10px 13px;font-size:12.5px;color:var(--ink2);line-height:1.65}
+.bubble .att{display:flex;align-items:center;gap:8px;margin-top:8px;background:rgba(4,9,28,.6);border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-family:var(--mono);font-size:10px;color:var(--gold)}
+.bubble .att svg{width:13px;height:13px;stroke:var(--gold);fill:none;stroke-width:1.8;flex-shrink:0}
+.bubble .att span{color:var(--ink4);margin-left:auto}
+/* certificate */
+.cert{width:100%;border:1px solid rgba(245,197,66,.4);outline:1px solid rgba(245,197,66,.15);outline-offset:4px;border-radius:6px;padding:20px 18px 24px;position:relative;background:linear-gradient(160deg,#0E1B42,#081230);min-height:186px}
+.cert .ct{font-family:var(--serif);font-size:19px;color:var(--gold-hi);letter-spacing:6px;font-weight:700}
+.cert .cl{width:44px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:9px 0}
+.cert .cd{font-size:11px;color:var(--ink3);line-height:1.8;max-width:70%}
+.cert .serial{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--ink4);margin-top:12px}
+.stamp{position:absolute;right:8px;bottom:6px;width:104px;height:104px;transform:rotate(-11deg);opacity:.92;filter:drop-shadow(0 0 10px rgba(245,197,66,.25))}
+.stamp svg{width:100%;height:100%}
+
+/* ---- export ---- */
+.export-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:22px;align-items:start}
+.export-actions{display:flex;flex-direction:column;gap:14px}
+.exp-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.exp-row .seg{flex:1;min-width:150px}
+select{background:rgba(4,9,28,.7);border:1px solid rgba(245,197,66,.3);color:var(--gold);font-family:var(--mono);font-size:12.5px;letter-spacing:1px;border-radius:10px;padding:9px 12px;cursor:pointer}
+select:hover{border-color:var(--gold)}
+.exp-note{font-size:12px;color:var(--ink4);line-height:1.8;border-left:2px solid var(--line2);padding-left:12px}
+.exp-note b{color:var(--ink3)}
+.keys{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+.key{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--ink3);border:1px solid rgba(90,108,158,.35);border-radius:7px;padding:4px 9px;background:rgba(4,9,28,.5)}
+.key b{color:var(--gold);font-weight:600}
+.code-card{border-radius:18px;border:1px solid var(--line);overflow:hidden;background:#050B20}
+.code-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid rgba(245,197,66,.14);font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--ink3);background:rgba(14,27,66,.6)}
+.code-head .dotset{display:flex;gap:5px}
+.code-head .dotset i{width:8px;height:8px;border-radius:50%}
+.code-head .dotset i:nth-child(1){background:var(--danger)}
+.code-head .dotset i:nth-child(2){background:var(--warn)}
+.code-head .dotset i:nth-child(3){background:var(--ok)}
+.code-head .bytes{margin-left:auto;color:var(--gold-deep)}
+.code-card pre{max-height:352px;overflow:auto;padding:16px 18px;font-family:var(--mono);font-size:11px;line-height:1.75;color:#7E90C2;tab-size:2}
+.code-card pre .t{color:var(--gold)}
+.code-card pre .a{color:var(--blue)}
+.code-card pre .v{color:#FFCE8A}
+
+/* ---- footer ---- */
+footer{margin-top:70px;border-top:1px solid var(--line);background:linear-gradient(180deg,rgba(6,13,36,.4),rgba(3,7,20,.9));position:relative;z-index:1}
+.foot-inner{width:min(1320px,100% - 40px);margin:0 auto;padding:34px 0 40px;display:flex;flex-wrap:wrap;gap:22px;align-items:center}
+.foot-brand{display:flex;align-items:center;gap:12px}
+.foot-brand svg{width:44px;height:44px}
+.foot-tag{font-family:var(--serif);font-size:15px;color:var(--ink2);letter-spacing:2px}
+.foot-mono{font-family:var(--mono);font-size:9.5px;letter-spacing:2.2px;color:var(--ink4);margin-top:3px}
+.foot-right{margin-left:auto;text-align:right;font-family:var(--mono);font-size:9.5px;letter-spacing:2px;color:var(--ink4);line-height:2.1}
+.foot-right a{color:var(--gold-deep);text-decoration:none}
+.foot-right a:hover{color:var(--gold-hi)}
+
+/* ---- toasts ---- */
+#toasts{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:120;display:flex;flex-direction:column;gap:9px;align-items:center;pointer-events:none}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:10px;background:rgba(8,17,42,.96);border:1px solid var(--line2);border-left:3px solid var(--gold);border-radius:12px;padding:11px 17px;font-size:13px;color:var(--ink2);letter-spacing:.8px;box-shadow:0 14px 40px rgba(0,0,0,.6);animation:toastin .32s cubic-bezier(.2,1.2,.35,1);backdrop-filter:blur(8px);max-width:min(92vw,480px)}
+.toast.ok{border-left-color:var(--ok)}
+.toast.warn{border-left-color:var(--warn)}
+.toast.danger{border-left-color:var(--danger)}
+.toast .ti{font-size:14px}
+.toast.ok .ti{color:var(--ok)}.toast.warn .ti{color:var(--warn)}.toast.danger .ti{color:var(--danger)}.toast .ti{color:var(--gold)}
+.toast button{border:1px solid var(--line2);background:rgba(245,197,66,.08);color:var(--gold);border-radius:8px;padding:4px 11px;font-size:12px;cursor:pointer;letter-spacing:1px;flex-shrink:0}
+.toast button:hover{background:rgba(245,197,66,.2)}
+.toast.out{animation:toastout .3s ease forwards}
+@keyframes toastin{from{opacity:0;transform:translateY(16px) scale(.94)}}
+@keyframes toastout{to{opacity:0;transform:translateY(10px) scale(.96)}}
+
+/* ---- reveals ---- */
+.reveal{opacity:0;transform:translateY(26px)}
+.reveal.in{opacity:1;transform:none;transition:opacity .85s ease var(--d,0s),transform .85s cubic-bezier(.2,.8,.25,1) var(--d,0s)}
+
+/* ---- responsive ---- */
+@media (max-width:1120px){
+  .stage-grid{grid-template-columns:1fr}
+  .panel{position:static;max-height:none}
+  .panel-scroll{max-height:560px}
+  .stage-card{min-height:540px}
+  .anatomy-grid,.export-grid{grid-template-columns:1fr}
+  .mock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:880px){
+  .nav-links{display:none}
+  .hero-meta{display:none}
+  .sec{padding-top:56px}
+}
+@media (max-width:640px){
+  body{font-size:14px}
+  .nav-inner{width:calc(100% - 28px);gap:12px}
+  .brand-sub{display:none}
+  .sound-btn .sl{display:none}
+  .sec{width:calc(100% - 28px)}
+  .stage-body{padding:18px 22px}
+  #stageTilt{width:96%}
+  .stage-card{min-height:440px}
+  .side-label{display:none}
+  .mock-grid{grid-template-columns:1fr}
+  .ladder{gap:12px;padding:20px 16px 16px}
+  .ladder .note{width:100%;text-align:left;margin-left:0}
+  .hero-head h1{letter-spacing:2px}
+  .panel-actions{flex-wrap:wrap}
+  .cert .cd{max-width:62%}
+  .foot-right{text-align:left;margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .aurora span,.badge-float,.led{animation:none}
+  .badge-draw .ln,.badge-draw .star,.badge-draw .fade,.badge-draw .fade2{animation:none;opacity:1;stroke-dashoffset:0}
+  .reveal{opacity:1;transform:none}
+  *{transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ======================= NAV ======================= -->
+<nav id="topbar">
+  <div class="nav-inner">
+    <a class="brand" href="#stage" aria-label="星阵工坊 首页">
+      <span class="brand-badge" id="navBadge"></span>
+      <span><span class="brand-name">星阵工坊</span><br><span class="brand-sub">STARFORGE&nbsp;ATELIER</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#stage" data-nav="stage" class="active">徽章台</a></li>
+      <li><a href="#anatomy" data-nav="anatomy">构造</a></li>
+      <li><a href="#scale" data-nav="scale">尺度</a></li>
+      <li><a href="#apply" data-nav="apply">应用</a></li>
+      <li><a href="#export" data-nav="export">导出</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="sound-btn" id="soundBtn" aria-pressed="true" title="开关全部音效 (M)">
+        <svg class="on-ic" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        <svg class="off-ic" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m16 9 5 6M21 9l-5 6"/></svg>
+        <span class="sl" id="soundLabel">音效 开</span>
+      </button>
+      <button class="btn btn-gold btn-sm" id="navExport">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        导出 SVG
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main>
+<!-- ======================= STAGE ======================= -->
+<section class="sec" id="stage">
+  <div class="hero-head">
+    <div>
+      <div class="eyebrow">BADGE NO.07 — SEVEN-STAR ARRAY</div>
+      <h1>以<em>七星</em>，围一座工坊。</h1>
+      <p class="hero-sub">七颗星沿结构顶点<b>闭合连线</b>：屋脊、双檐、台面、双足——线阵围合出的<b>负空间</b>里，亮起一盏工坊的灯。深空蓝为底，星金为线，既是星空阵列，也是数字工坊。</p>
+      <div class="hero-ctas">
+        <button class="btn btn-gold" id="ctaConsole">
+          <svg viewBox="0 0 24 24"><path d="M4 8h10M18 8h2M4 16h2M10 16h10"/><circle cx="16" cy="8" r="2.4"/><circle cx="8" cy="16" r="2.4"/></svg>
+          进入调校台
+        </button>
+        <button class="btn btn-ghost" id="ctaExport">
+          <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          直接导出 SVG
+        </button>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <span class="meta-chip gold">7 STARS · CLOSED LOOP</span>
+      <span class="meta-chip">NEGATIVE-SPACE WORKBENCH</span>
+      <span class="meta-chip">DEEP SPACE × STAR GOLD</span>
+    </div>
+  </div>
+
+  <div class="stage-grid">
+    <div class="stage-card reveal in">
+      <span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <span class="side-label l">SEVEN-STAR ARRAY · 七星阵列</span>
+      <span class="side-label r">NEGATIVE SPACE WORKSHOP · 负空间工坊</span>
+      <div class="stage-top">
+        <span>SF-07 / 512 × 512 / VECTOR</span>
+        <span class="live"><span class="led"></span>LIVE RENDER</span>
+      </div>
+      <div class="stage-body">
+        <div class="stage-halo" aria-hidden="true"></div>
+        <div id="stageTilt"><div class="badge-float"><div id="badgeTilt">
+          <div id="badgeMount" role="img" aria-label="七星阵列徽章：七颗星闭合连线围合出中心工作台的负空间"></div>
+        </div></div></div>
+      </div>
+      <div class="spec-strip" id="specStrip"></div>
+    </div>
+
+    <aside class="panel reveal in" id="console" style="--d:.12s" aria-label="徽章调校台">
+      <div class="panel-head">
+        <span class="t">调校台</span><span class="s">CONSOLE · SF-07</span><span class="led"></span>
+      </div>
+      <div class="panel-scroll">
+
+        <div class="grp">
+          <div class="grp-t">01 · 形态 FORM</div>
+          <div class="ctl">
+            <div class="ctl-head"><label>徽章外形</label><output id="shapeOut">圆形</output></div>
+            <div class="seg" id="shapeSeg" role="group" aria-label="徽章外形">
+              <button data-val="circle" class="on">圆形</button>
+              <button data-val="hex">六边形</button>
+              <button data-val="hybrid">复合</button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="ctl-head"><label for="starScale">星芒大小</label><output id="starScaleOut">1.00×</output></div>
+            <input type="range" id="starScale" min="0.6" max="1.6" step="0.05" value="1">
+          </div>
+          <div class="ctl">
+            <div class="ctl-head"><label for="strokeW">阵列线宽</label><output id="strokeOut">2.6 px</output></div>
+            <input type="range" id="strokeW" min="1.4" max="5" step="0.1" value="2.6">
+          </div>
+        </div>
+
+        <div class="grp">
+          <div class="grp-t">02 · 光色 LIGHT &amp; METAL</div>
+          <div class="ctl">
+            <div class="ctl-head"><label for="metalPick">星金色调</label><output id="metalOut">#F5C542</output></div>
+            <div class="swatches" id="metalSw">
+              <button class="swatch on" data-metal="#F5C542" style="background:radial-gradient(circle at 32% 30%,#FFE9A8,#F5C542 55%,#C9932B)" title="星金" aria-label="星金"></button>
+              <button class="swatch" data-metal="#FFB35C" style="background:radial-gradient(circle at 32% 30%,#FFE0B8,#FFB35C 55%,#C97F2B)" title="琥珀" aria-label="琥珀"></button>
+              <button class="swatch" data-metal="#CDD9F5" style="background:radial-gradient(circle at 32% 30%,#FFFFFF,#CDD9F5 55%,#8FA0CC)" title="月银" aria-label="月银"></button>
+              <button class="swatch" data-metal="#5FE3C0" style="background:radial-gradient(circle at 32% 30%,#C8FFF0,#5FE3C0 55%,#2B9A7C)" title="极光青" aria-label="极光青"></button>
+              <span class="color-well" title="自定义金属色"><input type="color" id="metalPick" value="#F5C542" aria-label="自定义金属色"></span>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="ctl-head"><label>深空底色</label><output id="fieldOut">深空蓝</output></div>
+            <div class="swatches" id="fieldSw">
+              <button class="swatch on" data-field="deep" style="background:radial-gradient(circle at 35% 30%,#1A2C5E,#0A1533 60%,#050B1E)" title="深空蓝" aria-label="深空蓝"></button>
+              <button class="swatch" data-field="midnight" style="background:radial-gradient(circle at 35% 30%,#12224A,#070F28 60%,#03071A)" title="子夜蓝" aria-label="子夜蓝"></button>
+              <button class="swatch" data-field="nebula" style="background:radial-gradient(circle at 35% 30%,#332A70,#141040 60%,#080620)" title="星云紫蓝" aria-label="星云紫蓝"></button>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="ctl-head"><label for="glowR">辉光强度</label><output id="glowOut">60%</output></div>
+            <input type="range" id="glowR" min="0" max="100" step="1" value="60">
+          </div>
+          <div class="ctl-row">
+            <div><div class="ctl-name">星芒呼吸</div><div class="ctl-sub">七颗星错峰微闪 · 导出可携带</div></div>
+            <button class="switch" role="switch" aria-checked="true" data-key="breathe" aria-label="星芒呼吸"><span class="knob"></span></button>
+          </div>
+        </div>
+
+        <div class="grp">
+          <div class="grp-t">03 · 工坊细节 WORKSHOP</div>
+          <div class="ctl-row">
+            <div><div class="ctl-name">工坊吊灯</div><div class="ctl-sub">暖琥珀光锥洒向台面</div></div>
+            <button class="switch" role="switch" aria-checked="true" data-key="lamp" aria-label="工坊吊灯"><span class="knob"></span></button>
+          </div>
+          <div class="ctl-row">
+            <div><div class="ctl-name">台面刻度</div><div class="ctl-sub">工作台沿口的精密标尺</div></div>
+            <button class="switch" role="switch" aria-checked="true" data-key="ruler" aria-label="台面刻度"><span class="knob"></span></button>
+          </div>
+          <div class="ctl-row">
+            <div><div class="ctl-name">铭文环</div><div class="ctl-sub">七星阵列 · STARFORGE ATELIER</div></div>
+            <button class="switch" role="switch" aria-checked="true" data-key="inscription" aria-label="铭文环"><span class="knob"></span></button>
+          </div>
+          <div class="ctl-row">
+            <div><div class="ctl-name">轨道环</div><div class="ctl-sub">外圈缓转的虚线星轨</div></div>
+            <button class="switch" role="switch" aria-checked="true" data-key="orbit" aria-label="轨道环"><span class="knob"></span></button>
+          </div>
+        </div>
+
+        <div class="grp">
+          <div class="grp-t">04 · 视图 VIEW</div>
+          <div class="ctl-row">
+            <div><div class="ctl-name">构造网格</div><div class="ctl-sub">轴线 · 构造圆 · 星位标注 (G)</div></div>
+            <button class="switch" role="switch" aria-checked="false" data-key="guides" aria-label="构造网格"><span class="knob"></span></button>
+          </div>
+        </div>
+
+      </div>
+      <div class="panel-actions">
+        <button class="btn btn-ghost" id="resetBtn">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+          重置
+        </button>
+        <button class="btn btn-gold" id="randBtn">
+          <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.6" cy="8.6" r="1.15" fill="currentColor" stroke="none"/><circle cx="15.4" cy="15.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="15.4" cy="8.6" r="1.15" fill="currentColor" stroke="none"/><circle cx="8.6" cy="15.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.15" fill="currentColor" stroke="none"/></svg>
+          随机灵感
+        </button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<div class="divider" aria-hidden="true">✦</div>
+
+<!-- ======================= ANATOMY ======================= -->
+<section class="sec" id="anatomy">
+  <div class="sec-head reveal">
+    <div class="eyebrow">CONSTRUCTION — 构造与约束</div>
+    <h2>每一颗星，都在结构上。</h2>
+    <p>七边形工坊轮廓左右镜像对称：屋脊星定轴，双檐星开屋面，台面星横陈工作台，双足星落地。连线闭合率 100%，无一颗游离。</p>
+  </div>
+  <div class="anatomy-grid">
+    <div class="blueprint-card reveal">
+      <div class="bp-stage"><div id="anatomyMount" role="img" aria-label="徽章构造蓝图：标注七星坐标、负空间与尺寸"></div></div>
+      <div class="titleblock">
+        <div>图号 <b>SF-07</b></div><div>比例 <b>1 : 1</b></div><div>单位 <b>px / 512</b></div><div>投影 <b>正视</b></div><div>制图 <b>STARFORGE</b></div>
+      </div>
+    </div>
+    <div class="anatomy-side">
+      <div class="card reveal" style="--d:.08s">
+        <h3>星位坐标表 <span class="tag">S1 – S7</span></h3>
+        <table class="coords" aria-label="七星坐标">
+          <thead><tr><th>星位</th><th>结构角色</th><th>X</th><th>Y</th><th>半径 R</th><th>方位角</th></tr></thead>
+          <tbody id="coordBody"></tbody>
+        </table>
+      </div>
+      <div class="card reveal" style="--d:.14s">
+        <h3>约束校验 <span class="tag">PASSED 3 / 3</span></h3>
+        <div class="checks">
+          <div class="check">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="m8 12.4 2.7 2.7L16.4 9"/></svg>
+            <div><div class="ct">无散星 · 仅七颗结构星</div><div class="cd">全部星芒位于轮廓顶点，彼此以直线相连；背景不含任何游离星点。</div></div>
+          </div>
+          <div class="check">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="m8 12.4 2.7 2.7L16.4 9"/></svg>
+            <div><div class="ct">非北斗 · 镜像闭合阵列</div><div class="cd">左右对称的七边工坊构型，与北斗的非对称勺形彻底区分，阵列感来自结构而非巧合。</div></div>
+          </div>
+          <div class="check">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="m8 12.4 2.7 2.7L16.4 9"/></svg>
+            <div><div class="ct">无齿轮 · 直线阵列语言</div><div class="cd">仅直线段、星芒与刻度，无齿圈与机械拟物；工坊温度由吊灯与负空间传达。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal" style="--d:.2s">
+        <h3>色彩规格 <span class="tag">LIVE</span></h3>
+        <div class="palette-row" id="paletteRow"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider" aria-hidden="true">✦</div>
+
+<!-- ======================= SCALE ======================= -->
+<section class="sec" id="scale">
+  <div class="sec-head reveal">
+    <div class="eyebrow">SCALE TEST — 七档尺度</div>
+    <h2>从 128 到 16，阵列依然成立。</h2>
+    <p>小尺寸自动进入精简模式：隐去铭文、刻度与吊灯，线宽与星芒按像素补偿加粗——16px 的favicon里，七颗星与工作台负空间仍清晰可辨。</p>
+  </div>
+  <div class="ladder-wrap">
+    <div class="ladder reveal" id="ladderDark"></div>
+    <div class="ladder light reveal" style="--d:.1s" id="ladderLight"></div>
+  </div>
+</section>
+
+<div class="divider" aria-hidden="true">✦</div>
+
+<!-- ======================= APPLICATIONS ======================= -->
+<section class="sec" id="apply">
+  <div class="sec-head reveal">
+    <div class="eyebrow">IN SITU — 应用场景</div>
+    <h2>同一枚徽章，四种在场方式。</h2>
+    <p>以下场景全部实时跟随调校台的当前状态——换一种金属色或外形，四处应用即刻同步。</p>
+  </div>
+  <div class="mock-grid">
+    <div class="mock reveal">
+      <div class="mock-stage">
+        <div class="dock">
+          <div class="app-tile"><span id="mockApp"></span></div>
+          <span class="an">星阵工坊</span>
+          <span class="dock-dots"><i></i><i></i><i></i></span>
+        </div>
+      </div>
+      <div class="mock-label"><span>应用图标</span><b>APP ICON</b></div>
+    </div>
+    <div class="mock reveal" style="--d:.07s">
+      <div class="mock-stage">
+        <div class="browser">
+          <div class="tabstrip">
+            <div class="tab on"><span id="mockFavicon"></span><span>星阵工坊 · 调校台</span><span class="x">×</span></div>
+            <div class="tab ghost"><span>新建标签页</span></div>
+          </div>
+          <div class="toolbar">
+            <span class="nav-arrows">‹ › ⟳</span>
+            <span class="addr"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>starforge.atelier/console</span>
+          </div>
+          <div class="page-sliver">SF-07 · 七星阵列已点亮 ✦ 工坊灯已亮起</div>
+        </div>
+      </div>
+      <div class="mock-label"><span>浏览器标签</span><b>FAVICON 16px</b></div>
+    </div>
+    <div class="mock reveal" style="--d:.14s">
+      <div class="mock-stage">
+        <div class="chat">
+          <div class="chat-head">
+            <span class="avatar" id="mockAvatar"></span>
+            <div>
+              <div class="chat-name">星阵工坊 <span class="bot-chip">BOT</span></div>
+              <div class="chat-time">今天 09:41 · 构建频道</div>
+            </div>
+          </div>
+          <div class="bubble">构建完成 ✦ 七星阵列已点亮，负空间工坊灯已亮起。当前方案已同步至全部应用位。
+            <div class="att"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>badge_sf07.svg<span id="mockBytes">— KB</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mock-label"><span>团队头像</span><b>AVATAR</b></div>
+    </div>
+    <div class="mock reveal" style="--d:.21s">
+      <div class="mock-stage">
+        <div class="cert">
+          <div class="ct">出品认证</div>
+          <div class="cl"></div>
+          <div class="cd">兹证明此徽章由七星阵列调校台生成，七颗星闭合连线，负空间工坊完整。</div>
+          <div class="serial" id="certSerial">NO. SF-07-C-F5C542</div>
+          <span class="stamp" id="mockStamp"></span>
+        </div>
+      </div>
+      <div class="mock-label"><span>暗面钢印</span><b>STAMP</b></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider" aria-hidden="true">✦</div>
+
+<!-- ======================= EXPORT ======================= -->
+<section class="sec" id="export">
+  <div class="sec-head reveal">
+    <div class="eyebrow">EXPORT — 带走这枚徽章</div>
+    <h2>所见即所得，导出当前状态。</h2>
+    <p>SVG 携带全部当前参数与呼吸动画（若开启）；PNG 以矢量重绘，透明底保留圆形/六边形之外的净空。右侧源码与徽章逐帧同步。</p>
+  </div>
+  <div class="export-grid">
+    <div class="export-actions reveal">
+      <button class="btn btn-gold btn-lg" id="dlSvg">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        下载 SVG · 当前状态
+      </button>
+      <div class="exp-row">
+        <select id="pngSize" aria-label="PNG 尺寸">
+          <option value="512">512 × 512</option>
+          <option value="1024" selected>1024 × 1024</option>
+          <option value="2048">2048 × 2048</option>
+        </select>
+        <div class="seg" id="pngBgSeg" role="group" aria-label="PNG 背景">
+          <button data-val="transparent" class="on">透明底</button>
+          <button data-val="field">深空方底</button>
+        </div>
+      </div>
+      <button class="btn btn-blue btn-lg" id="dlPng">
+        <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="m4 17 5-5 4 4 3-3 4.5 4.5"/></svg>
+        下载 PNG · 矢量重绘
+      </button>
+      <button class="btn btn-ghost btn-lg" id="copySvg">
+        <svg viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5v-3a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></svg>
+        复制 SVG 源码
+      </button>
+      <p class="exp-note"><b>导出说明</b> — SVG 为独立文件（含 xmlns），可直接投入生产；开启「星芒呼吸」时动画以 SMIL 内嵌，静态渲染器自动落回第一帧。铭文使用系统中文字体。</p>
+      <div class="keys">
+        <span class="key"><b>G</b> 构造网格</span><span class="key"><b>M</b> 静音</span><span class="key"><b>E</b> 导出 SVG</span><span class="key"><b>R</b> 随机灵感</span><span class="key"><b>1/2/3</b> 外形</span>
+      </div>
+    </div>
+    <div class="code-card reveal" style="--d:.1s">
+      <div class="code-head">
+        <span class="dotset"><i></i><i></i><i></i></span>
+        <span>badge_sf07.svg · LIVE</span>
+        <span class="bytes" id="codeBytes">— KB</span>
+        <button class="btn btn-ghost btn-sm" id="copySvg2">复制</button>
+      </div>
+      <pre id="codeView" tabindex="0" aria-label="SVG 源码预览"></pre>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ======================= FOOTER ======================= -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <span id="footBadge"></span>
+      <div>
+        <div class="foot-tag">七星闭合阵列 · 负空间工坊</div>
+        <div class="foot-mono">DEEP SPACE BLUE × STAR GOLD — SF-07</div>
+      </div>
+    </div>
+    <div class="foot-right">
+      STARFORGE ATELIER · EST. 2026<br>
+      <a href="#stage">回到徽章台 ↑</a>
+    </div>
+  </div>
+</footer>
+
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   STARFORGE — single source of truth
+   ============================================================ */
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const clamp = (v,a,b) => Math.min(b, Math.max(a,v));
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- color utils ---------- */
+function hexToHsl(hex){
+  let h = hex.replace("#","");
+  if(h.length===3) h = h.split("").map(c=>c+c).join("");
+  const r=parseInt(h.slice(0,2),16)/255, g=parseInt(h.slice(2,4),16)/255, b=parseInt(h.slice(4,6),16)/255;
+  const mx=Math.max(r,g,b), mn=Math.min(r,g,b); let hh=0,s=0; const l=(mx+mn)/2;
+  if(mx!==mn){ const d=mx-mn; s=l>0.5? d/(2-mx-mn) : d/(mx+mn);
+    hh = mx===r ? (g-b)/d+(g<b?6:0) : mx===g ? (b-r)/d+2 : (r-g)/d+4; hh*=60; }
+  return [hh,s*100,l*100];
+}
+function hslToHex(h,s,l){
+  s/=100; l/=100; const k=n=>(n+h/30)%12, a=s*Math.min(l,1-l);
+  const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+  const to=x=>Math.round(255*x).toString(16).padStart(2,"0");
+  return "#"+to(f(0))+to(f(8))+to(f(4));
+}
+function shift(hex,dl,ds=0){ const [h,s,l]=hexToHsl(hex); return hslToHex(h,clamp(s+ds,0,100),clamp(l+dl,0,97)); }
+function rgba(hex,a){
+  let h=hex.replace("#",""); if(h.length===3) h=h.split("").map(c=>c+c).join("");
+  return `rgba(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)},${a})`;
+}
+
+/* ---------- geometry : seven structural stars ---------- */
+const CX=256, CY=256;
+const STARS=[
+  {id:"S1",name:"屋脊",x:256,y: 92,s:20},
+  {id:"S2",name:"右檐",x:386,y:170,s:15},
+  {id:"S3",name:"右台面",x:398,y:262,s:16},
+  {id:"S4",name:"右足",x:338,y:386,s:13},
+  {id:"S5",name:"左足",x:174,y:386,s:13},
+  {id:"S6",name:"左台面",x:114,y:262,s:16},
+  {id:"S7",name:"左檐",x:126,y:170,s:15},
+];
+const SILHOUETTE = "M256,92 L386,170 L398,262 L338,386 L174,386 L114,262 L126,170 Z";
+const LINES=[ // [a,b,widthFactor,alpha] — draw order = entrance order
+  [6,0,1,1],[0,1,1,1],          // roof slopes
+  [1,2,1,.95],[6,5,1,.95],      // walls
+  [2,3,1,1],[5,4,1,1],          // legs
+  [4,3,1,1],                    // ground
+  [6,1,.8,.8],                  // tie beam
+  [5,2,1,1],                    // workbench top  ★
+];
+const FIELDS={
+  deep:    {name:"深空蓝", a:"#1A2C5E", b:"#0A1533", c:"#050B1E"},
+  midnight:{name:"子夜蓝", a:"#12224A", b:"#070F28", c:"#03071A"},
+  nebula:  {name:"星云紫蓝",a:"#332A70", b:"#141040", c:"#080620"},
+};
+const SHAPE_NAMES={circle:"圆形",hex:"六边形",hybrid:"复合"};
+const METAL_NAMES={"#F5C542":"星金","#FFB35C":"琥珀","#CDD9F5":"月银","#5FE3C0":"极光青"};
+
+const DEFAULTS={
+  shape:"circle", starScale:1, stroke:2.6, glow:60,
+  metal:"#F5C542", field:"deep",
+  lamp:true, ruler:true, inscription:true, orbit:true, breathe:true, guides:false,
+  pngSize:1024, pngBg:"transparent",
+};
+let state={...DEFAULTS};
+let schemeNo=0;
+
+/* ---------- frame geometry per shape ---------- */
+function roundedPoly(pts,r){
+  const n=pts.length; let d="";
+  for(let i=0;i<n;i++){
+    const p=pts[i], prev=pts[(i-1+n)%n], next=pts[(i+1)%n];
+    const v1=[p[0]-prev[0],p[1]-prev[1]], v2=[next[0]-p[0],next[1]-p[1]];
+    const l1=Math.hypot(...v1), l2=Math.hypot(...v2);
+    const a=[p[0]-v1[0]/l1*r, p[1]-v1[1]/l1*r], b=[p[0]+v2[0]/l2*r, p[1]+v2[1]/l2*r];
+    d += (i===0?`M${a[0].toFixed(1)},${a[1].toFixed(1)}`:`L${a[0].toFixed(1)},${a[1].toFixed(1)}`);
+    d += `Q${p[0]},${p[1]} ${b[0].toFixed(1)},${b[1].toFixed(1)}`;
+  }
+  return d+"Z";
+}
+function hexPts(R){ const p=[]; for(let k=0;k<6;k++){ const a=Math.PI/2+k*Math.PI/3; p.push([CX+R*Math.cos(a), CY-R*Math.sin(a)]); } return p; }
+function frameFor(shape){
+  if(shape==="hex") return {
+    outer:roundedPoly(hexPts(248),14), echo:roundedPoly(hexPts(236),12),
+    outerKind:"path", dialR:196, orbitR:183, textR:176, clip:roundedPoly(hexPts(248),14), clipKind:"path"
+  };
+  if(shape==="hybrid") return {
+    outer:null, outerR:244, echo:roundedPoly(hexPts(224),12),
+    outerKind:"circle", dialR:210, orbitR:196, textR:181, clip:null, clipR:244, clipKind:"circle"
+  };
+  return {
+    outer:null, outerR:244, echo:null, echoR:231,
+    outerKind:"circle", dialR:214, orbitR:196, textR:181, clip:null, clipR:244, clipKind:"circle"
+  };
+}
+
+/* ============================================================
+   badgeSVG — builds the entire badge as an SVG string
+   ============================================================ */
+function badgeSVG(st, o={}){
+  const uid=o.uid||"b", size=o.size||512;
+  const detail=o.detail||"full";
+  const full = detail==="full" || (detail==="auto" && size>=44);
+  const guides=o.guides||false;             // false | "light" | "full"
+  const mono=!!o.mono;
+  const breathe = o.breathe!==undefined ? o.breathe : st.breathe;
+  const anim = breathe && !REDUCED;
+  const F=FIELDS[st.field]||FIELDS.deep;
+  const M=st.metal, HI=shift(M,16), LO=shift(M,-14), DEEP=shift(M,-26);
+  const AMBER="#FFB35C", AMBER_HI="#FFDFA8";
+  const boost=clamp(460/size,1,15);
+  const sw=st.stroke*boost*(full?1:1.12);
+  const ss=st.starScale*(full?1:(size<26?1.7:1.45));
+  const glow=st.glow/100;
+  const fr=frameFor(st.shape);
+  const P=[]; // parts
+
+  /* ---- defs ---- */
+  const clipEl = fr.clipKind==="circle"
+    ? `<circle cx="${CX}" cy="${CY}" r="${fr.clipR}"/>`
+    : `<path d="${fr.clip}"/>`;
+  P.push(`<defs>
+  <clipPath id="${uid}-clip">${clipEl}</clipPath>
+  <radialGradient id="${uid}-field" cx="50%" cy="36%" r="78%">
+    <stop offset="0%" stop-color="${F.a}"/><stop offset="52%" stop-color="${F.b}"/><stop offset="100%" stop-color="${F.c}"/>
+  </radialGradient>
+  <radialGradient id="${uid}-inner" cx="50%" cy="41%" r="52%">
+    <stop offset="0%" stop-color="${rgba(AMBER,.11)}"/><stop offset="46%" stop-color="${rgba("#4A6FD0",.10)}"/><stop offset="100%" stop-color="${rgba("#4A6FD0",0)}"/>
+  </radialGradient>
+  <radialGradient id="${uid}-vig" cx="50%" cy="50%" r="50%">
+    <stop offset="62%" stop-color="rgba(2,6,16,0)"/><stop offset="100%" stop-color="rgba(2,6,16,.52)"/>
+  </radialGradient>
+  <linearGradient id="${uid}-line" gradientUnits="userSpaceOnUse" x1="0" y1="64" x2="0" y2="448">
+    <stop offset="0%" stop-color="${HI}"/><stop offset="52%" stop-color="${M}"/><stop offset="100%" stop-color="${LO}"/>
+  </linearGradient>
+  <radialGradient id="${uid}-starfill" cx="50%" cy="42%" r="62%">
+    <stop offset="0%" stop-color="#FFFDF2"/><stop offset="42%" stop-color="${HI}"/><stop offset="100%" stop-color="${M}"/>
+  </radialGradient>
+  <radialGradient id="${uid}-halo" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="${rgba(M,.55)}"/><stop offset="55%" stop-color="${rgba(M,.16)}"/><stop offset="100%" stop-color="${rgba(M,0)}"/>
+  </radialGradient>
+  <radialGradient id="${uid}-bulb" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="${rgba(AMBER_HI,.85)}"/><stop offset="45%" stop-color="${rgba(AMBER,.32)}"/><stop offset="100%" stop-color="${rgba(AMBER,0)}"/>
+  </radialGradient>
+  <linearGradient id="${uid}-cone" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="${rgba(AMBER,.17)}"/><stop offset="100%" stop-color="${rgba(AMBER,0)}"/>
+  </linearGradient>
+  <filter id="${uid}-blur" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="${(2+glow*5.5).toFixed(1)}"/>
+  </filter>
+  <filter id="${uid}-grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 .86  0 0 0 0 .55  0 0 0 .05 0"/></filter>
+  <pattern id="${uid}-hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+    <line x1="0" y1="0" x2="0" y2="7" stroke="rgba(87,176,255,.20)" stroke-width="1.1"/>
+  </pattern>
+  <path id="${uid}-arcT" d="M ${CX-fr.textR},${CY} A ${fr.textR},${fr.textR} 0 0 1 ${CX+fr.textR},${CY}" fill="none"/>
+  <path id="${uid}-arcB" d="M ${CX-fr.textR},${CY} A ${fr.textR},${fr.textR} 0 0 0 ${CX+fr.textR},${CY}" fill="none"/>
+</defs>`);
+
+  /* ---- field ---- */
+  if(!mono){
+    P.push(`<g clip-path="url(#${uid}-clip)">
+  <rect x="0" y="0" width="512" height="512" fill="url(#${uid}-field)"/>
+  <path d="${SILHOUETTE}" fill="url(#${uid}-inner)"/>
+  <rect x="0" y="0" width="512" height="512" filter="url(#${uid}-grain)" opacity=".8"/>
+  <rect x="0" y="0" width="512" height="512" fill="url(#${uid}-vig)"/>
+</g>`);
+  }
+
+  /* ---- frame rings ---- */
+  const outerEl = fr.outerKind==="circle"
+    ? `<circle cx="${CX}" cy="${CY}" r="${fr.outerR}" fill="none" stroke="url(#${uid}-line)" stroke-width="${(2.4*boost).toFixed(1)}" pathLength="1"/>`
+    : `<path d="${fr.outer}" fill="none" stroke="url(#${uid}-line)" stroke-width="${(2.4*boost).toFixed(1)}" stroke-linejoin="round" pathLength="1"/>`;
+  const echoEl = fr.echo
+    ? `<path d="${fr.echo}" fill="none" stroke="${rgba(M,.34)}" stroke-width="${(1.1*boost).toFixed(1)}" stroke-linejoin="round"/>`
+    : `<circle cx="${CX}" cy="${CY}" r="${fr.echoR}" fill="none" stroke="${rgba(M,.34)}" stroke-width="${(1.1*boost).toFixed(1)}"/>`;
+  P.push(`<g class="fade">${outerEl}${echoEl}</g>`);
+
+  /* ---- dial ticks (28 = 4 × 7) ---- */
+  if(full){
+    let ticks="";
+    for(let k=0;k<28;k++){
+      const a=k*(Math.PI*2/28)-Math.PI/2, major=k%4===0;
+      const r1=fr.dialR+(major?-2:0), r2=fr.dialR+(major?8:5);
+      ticks+=`<line x1="${(CX+r1*Math.cos(a)).toFixed(1)}" y1="${(CY+r1*Math.sin(a)).toFixed(1)}" x2="${(CX+r2*Math.cos(a)).toFixed(1)}" y2="${(CY+r2*Math.sin(a)).toFixed(1)}" stroke="${rgba(M,major?.7:.32)}" stroke-width="${major?2:1.1}"/>`;
+    }
+    P.push(`<g class="fade">${ticks}</g>`);
+  }
+
+  /* ---- orbit ring ---- */
+  if(full && st.orbit && guides!=="full"){
+    const rot = anim ? `<animateTransform attributeName="transform" type="rotate" from="0 ${CX} ${CY}" to="360 ${CX} ${CY}" dur="160s" repeatCount="indefinite"/>` : "";
+    P.push(`<g class="fade"><g>${rot}<circle cx="${CX}" cy="${CY}" r="${fr.orbitR}" fill="none" stroke="${rgba(M,.24)}" stroke-width="1.4" stroke-dasharray="1.5 9.5" stroke-linecap="round"/></g></g>`);
+  }
+
+  /* ---- inscription ---- */
+  if(full && st.inscription && guides!=="full"){
+    P.push(`<g class="fade2">
+  <text font-family="'PingFang SC','Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="11.5" font-weight="600" letter-spacing="5" fill="${rgba(M,.74)}"><textPath href="#${uid}-arcT" xlink:href="#${uid}-arcT" startOffset="50%" text-anchor="middle">七星阵列 · 负空间工坊</textPath></text>
+  <text font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="9.5" letter-spacing="2.6" fill="${rgba(M,.58)}"><textPath href="#${uid}-arcB" xlink:href="#${uid}-arcB" startOffset="50%" text-anchor="middle">STARFORGE ATELIER · SEVEN-STAR ARRAY</textPath></text>
+  <rect x="${CX-fr.textR-2.4}" y="${CY-2.4}" width="4.8" height="4.8" transform="rotate(45 ${CX-fr.textR} ${CY})" fill="${rgba(M,.55)}"/>
+  <rect x="${CX+fr.textR-2.4}" y="${CY-2.4}" width="4.8" height="4.8" transform="rotate(45 ${CX+fr.textR} ${CY})" fill="${rgba(M,.55)}"/>
+</g>`);
+  }
+
+  /* ---- constellation glow underlay ---- */
+  if(glow>0.02){
+    let gl=`<path d="${SILHOUETTE}" fill="none" stroke="${M}" stroke-width="${(sw*2.1).toFixed(1)}" stroke-linejoin="round"/>`;
+    gl+=`<line x1="114" y1="262" x2="398" y2="262" stroke="${M}" stroke-width="${(sw*2.1).toFixed(1)}"/>`;
+    gl+=`<line x1="126" y1="170" x2="386" y2="170" stroke="${M}" stroke-width="${(sw*1.7).toFixed(1)}"/>`;
+    P.push(`<g class="fade" filter="url(#${uid}-blur)" opacity="${(0.14+glow*0.5).toFixed(2)}">${gl}</g>`);
+  }
+
+  /* ---- king post + lamp ---- */
+  if(full){
+    const postEnd = st.lamp ? 188 : 170;
+    P.push(`<g class="fade"><line x1="256" y1="92" x2="256" y2="${postEnd}" stroke="${rgba(M,.8)}" stroke-width="${(sw*.7).toFixed(1)}" stroke-linecap="round"/>`);
+    if(st.lamp){
+      const pulse = anim ? `<animate attributeName="opacity" values=".55;.95;.55" dur="4.2s" repeatCount="indefinite"/>` : "";
+      const pulse2= anim ? `<animate attributeName="opacity" values=".75;1;.75" dur="4.2s" repeatCount="indefinite"/>` : "";
+      P.push(`<path d="M256,205 L208,262 L304,262 Z" fill="url(#${uid}-cone)">${pulse2}</path>
+  <path d="M248,188 L264,188 L270,200 L242,200 Z" fill="${F.b}" stroke="${HI}" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="256" cy="170" r="2.5" fill="${HI}" stroke="${DEEP}" stroke-width=".6"/>
+  <circle cx="256" cy="205" r="13" fill="url(#${uid}-bulb)">${pulse}</circle>
+  <circle cx="256" cy="205" r="3.3" fill="${AMBER_HI}"/>`);
+    }
+    P.push(`</g>`);
+  }
+
+  /* ---- ruler ticks on the bench edge ---- */
+  if(full && st.ruler){
+    let rt="";
+    for(let k=0;k<=18;k++){
+      const x=130+k*14, len = x===256?9 : (k%4===0?7:4.5);
+      rt+=`<line x1="${x}" y1="263" x2="${x}" y2="${263+len}" stroke="${rgba(M,x===256?.75:.45)}" stroke-width="${x===256?1.6:1.1}"/>`;
+    }
+    P.push(`<g class="fade">${rt}</g>`);
+  }
+
+  /* ---- constellation lines ---- */
+  let ln="";
+  LINES.forEach((L,i)=>{
+    const a=STARS[L[0]], b=STARS[L[1]];
+    ln+=`<line class="ln" style="--i:${i}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="url(#${uid}-line)" stroke-opacity="${L[3]}" stroke-width="${(sw*L[2]).toFixed(1)}" stroke-linecap="round" pathLength="1"/>`;
+  });
+  P.push(`<g>${ln}</g>`);
+
+  /* ---- seven stars ---- */
+  let stars="";
+  STARS.forEach((S,i)=>{
+    const s=S.s*ss, k=s*.18;
+    const spike=`M0,${-s} Q${k},${-k} ${s},0 Q${k},${k} 0,${s} Q${-k},${k} ${-s},0 Q${-k},${-k} 0,${-s} Z`;
+    const tw = anim ? `<animate attributeName="opacity" values="1;.68;1" dur="${(3.1+i*.41).toFixed(2)}s" begin="${(i*.53).toFixed(2)}s" repeatCount="indefinite"/>` : "";
+    stars+=`<g class="star" style="--i:${i}" transform="translate(${S.x},${S.y})">
+  <g>${tw}
+    <circle r="${(s*2.15).toFixed(1)}" fill="url(#${uid}-halo)"/>
+    <path d="${spike}" fill="url(#${uid}-starfill)" stroke="${rgba(DEEP,.6)}" stroke-width=".8"/>
+    <circle r="${Math.max(1.1,s*.14).toFixed(1)}" fill="#FFFDF2" opacity=".95"/>
+  </g>
+</g>`;
+  });
+  P.push(`<g>${stars}</g>`);
+
+  /* ---- construction guides ---- */
+  if(guides){
+    const C="rgba(87,176,255,";
+    let g=`<circle cx="${CX}" cy="${CY}" r="170" fill="none" stroke="${C}.32)" stroke-width="1" stroke-dasharray="4 5"/>
+  <line x1="256" y1="26" x2="256" y2="486" stroke="${C}.3)" stroke-width="1" stroke-dasharray="5 5"/>
+  <line x1="36" y1="262" x2="476" y2="262" stroke="${C}.3)" stroke-width="1" stroke-dasharray="5 5"/>
+  <line x1="248" y1="256" x2="264" y2="256" stroke="${C}.7)" stroke-width="1.2"/><line x1="256" y1="248" x2="256" y2="264" stroke="${C}.7)" stroke-width="1.2"/>`;
+    STARS.forEach(S=>{
+      g+=`<line x1="${CX}" y1="${CY}" x2="${S.x}" y2="${S.y}" stroke="${C}.22)" stroke-width="1"/>`;
+      const dx=S.x-CX, dy=S.y-CY, L=Math.hypot(dx,dy), ox=S.x+dx/L*30, oy=S.y+dy/L*30;
+      g+=`<text x="${ox.toFixed(0)}" y="${(oy+3).toFixed(0)}" font-family="ui-monospace,Menlo,monospace" font-size="10.5" fill="${C}.85)" text-anchor="middle">${S.id}</text>`;
+    });
+    if(guides==="full"){
+      g+=`<path d="${SILHOUETTE}" fill="url(#${uid}-hatch)" stroke="none"/>
+  <line x1="114" y1="286" x2="398" y2="286" stroke="${C}.6)" stroke-width="1"/>
+  <line x1="114" y1="280" x2="114" y2="292" stroke="${C}.6)" stroke-width="1"/><line x1="398" y1="280" x2="398" y2="292" stroke="${C}.6)" stroke-width="1"/>
+  <text x="256" y="281" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="${C}.9)" text-anchor="middle">284</text>
+  <line x1="174" y1="410" x2="338" y2="410" stroke="${C}.6)" stroke-width="1"/>
+  <line x1="174" y1="404" x2="174" y2="416" stroke="${C}.6)" stroke-width="1"/><line x1="338" y1="404" x2="338" y2="416" stroke="${C}.6)" stroke-width="1"/>
+  <text x="256" y="405" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="${C}.9)" text-anchor="middle">164</text>
+  <path d="M 226.4,109.4 A 34,34 0 0 0 285.6,109.4" fill="none" stroke="${C}.6)" stroke-width="1"/>
+  <text x="268" y="136" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="${C}.9)">118°</text>
+  <text x="256" y="330" font-family="ui-monospace,Menlo,monospace" font-size="9" letter-spacing="2" fill="${C}.8)" text-anchor="middle">NEGATIVE SPACE</text>
+  <text x="256" y="346" font-family="'PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" letter-spacing="3" fill="${C}.85)" text-anchor="middle">负空间 · 工坊</text>`;
+      const leaders=[[256,56,"屋脊",0],[410,148,"右檐",1],[420,252,"右台面",1],[352,412,"右足",1],[160,412,"左足",-1],[92,252,"左台面",-1],[102,148,"左檐",-1]];
+      leaders.forEach(([x,y,t,dir])=>{
+        g+=`<text x="${x}" y="${y}" font-family="'PingFang SC','Noto Sans CJK SC',sans-serif" font-size="10" letter-spacing="1.5" fill="${C}.75)" text-anchor="${dir<0?"end":dir>0?"start":"middle"}">${t}</text>`;
+      });
+    }
+    P.push(`<g>${g}</g>`);
+  }
+
+  const attrs = o.standalone
+    ? `xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${size}" height="${size}" viewBox="0 0 512 512"`
+    : `viewBox="0 0 512 512" width="100%" height="100%"`;
+  return `<svg ${attrs} role="img" aria-label="七星阵列工坊徽章">\n${P.join("\n")}\n</svg>`;
+}
+function standaloneSVG(st,{size=512,animate=true}={}){
+  return badgeSVG(st,{uid:"sf",size,detail:"full",guides:false,breathe:animate,standalone:true});
+}
+
+/* ============================================================
+   mounts & live rendering
+   ============================================================ */
+const LADDER_SIZES=[128,96,64,48,32,24,16];
+let drawTimer=null, renderQueued=false;
+
+function renderAll(draw=false){
+  // stage
+  const mount=$("#badgeMount");
+  mount.innerHTML=badgeSVG(state,{uid:"st",size:512,detail:"full",guides:state.guides?"light":false});
+  const tilt=$("#badgeTilt");
+  clearTimeout(drawTimer);
+  if(draw && !REDUCED){
+    tilt.classList.remove("badge-draw"); void tilt.offsetWidth;
+    tilt.classList.add("badge-draw");
+    drawTimer=setTimeout(()=>tilt.classList.remove("badge-draw"),2700);
+  } else tilt.classList.remove("badge-draw");
+
+  // nav + footer minis
+  $("#navBadge").innerHTML=badgeSVG(state,{uid:"nv",size:32,detail:"auto"});
+  $("#footBadge").innerHTML=badgeSVG(state,{uid:"ft",size:44,detail:"auto"});
+
+  // anatomy blueprint
+  $("#anatomyMount").innerHTML=badgeSVG(state,{uid:"an",size:512,detail:"full",guides:"full",breathe:false});
+
+  // ladders
+  const cells=light=>LADDER_SIZES.map(s=>
+    `<div class="cell">${badgeSVG(state,{uid:(light?"ll":"ld")+s,size:s,detail:"auto"})}<span class="px">${s}px</span></div>`).join("");
+  $("#ladderDark").innerHTML=cells(false)+`<div class="note"><b>深空场</b><br>标准渲染 · 小尺寸自动精简</div>`;
+  $("#ladderLight").innerHTML=cells(true)+`<div class="note"><b>浅色场</b><br>徽章自带深空底，无需反色</div>`;
+  $$("#ladderDark .cell svg, #ladderLight .cell svg").forEach(sv=>{
+    const s=+sv.closest(".cell").querySelector(".px").textContent.replace("px","");
+    sv.setAttribute("width",s); sv.setAttribute("height",s); sv.style.width=s+"px"; sv.style.height=s+"px";
+  });
+
+  // applications
+  $("#mockApp").innerHTML=badgeSVG(state,{uid:"ma",size:86,detail:"auto"});
+  $("#mockFavicon").innerHTML=badgeSVG(state,{uid:"mf",size:16,detail:"auto"});
+  $("#mockAvatar").innerHTML=badgeSVG(state,{uid:"mv",size:52,detail:"auto"});
+  $("#mockStamp").innerHTML=badgeSVG(state,{uid:"ms",size:104,detail:"auto",mono:true,breathe:false});
+  $("#certSerial").textContent=`NO. SF-07-${state.shape[0].toUpperCase()}-${state.metal.replace("#","").toUpperCase()}`;
+
+  // spec strip
+  const F=FIELDS[state.field];
+  $("#specStrip").innerHTML=
+    `<span>外形 <b>${SHAPE_NAMES[state.shape]}</b></span><span>星 <b>7 / 7</b></span>`+
+    `<span>线宽 <b>${state.stroke.toFixed(1)}</b></span><span>星芒 <b>${state.starScale.toFixed(2)}×</b></span>`+
+    `<span>辉光 <b>${state.glow}%</b></span>`+
+    `<span><i class="sw" style="background:${state.metal}"></i>金 <b>${state.metal.toUpperCase()}</b></span>`+
+    `<span><i class="sw" style="background:${F.c}"></i>底 <b>${F.name}</b></span>`;
+
+  // palette chips
+  $("#paletteRow").innerHTML=[
+    [F.c,"深空蓝 · 底",F.name],[state.metal,"星金 · 线",METAL_NAMES[state.metal]||"自定义"],
+    ["#57B0FF","电光蓝 · 构造","固定"],["#FFB35C","暖琥珀 · 灯","固定"],
+  ].map(([c,n,d])=>`<div class="pal"><div class="chip" style="background:${c}"></div><div class="pl"><b>${n}</b>${c.toUpperCase()} · ${d}</div></div>`).join("");
+
+  // live favicon
+  const fav=standaloneSVG(state,{size:64,animate:false});
+  $("#favicon").href="data:image/svg+xml,"+encodeURIComponent(fav);
+
+  queueCode();
+}
+function requestRender(draw=false){
+  if(draw){ renderAll(true); return; }
+  if(renderQueued) return;
+  renderQueued=true;
+  requestAnimationFrame(()=>{ renderQueued=false; renderAll(false); });
+}
+
+/* ---------- code preview ---------- */
+let codeTimer=null;
+function currentExportSVG(){ return standaloneSVG(state,{size:512,animate:state.breathe&&!REDUCED}); }
+function queueCode(){ clearTimeout(codeTimer); codeTimer=setTimeout(updateCode,140); }
+function updateCode(){
+  const svg=currentExportSVG();
+  const kb=(new Blob([svg]).size/1024).toFixed(1)+" KB";
+  $("#codeBytes").textContent=kb; $("#mockBytes").textContent=kb;
+  let esc=svg.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  esc=esc.replace(/([\w:-]+)="([^"]*)"/g,'<span class="a">$1</span>="<span class="v">$2</span>"')
+         .replace(/(&lt;\/?)([\w:-]+)/g,'$1<span class="t">$2</span>');
+  $("#codeView").innerHTML=esc;
+}
+
+/* ---------- coordinates table ---------- */
+(function(){
+  $("#coordBody").innerHTML=STARS.map(S=>{
+    const dx=S.x-CX, dy=S.y-CY, r=Math.hypot(dx,dy);
+    let ang=Math.atan2(dx,-dy)*180/Math.PI; if(ang<0)ang+=360;
+    return `<tr><td>${S.id}</td><td>${S.name}星</td><td>${S.x}</td><td>${S.y}</td><td>${r.toFixed(1)}</td><td>${ang.toFixed(1)}°</td></tr>`;
+  }).join("");
+})();
+
+/* ============================================================
+   sound — every blip is tied to a visible action
+   ============================================================ */
+const FX={
+  ctx:null, master:null, enabled:true, lastTick:0,
+  ensure(){
+    if(!this.ctx){
+      const C=window.AudioContext||window.webkitAudioContext; if(!C) return false;
+      this.ctx=new C(); this.master=this.ctx.createGain();
+      this.master.gain.value=.5; this.master.connect(this.ctx.destination);
+    }
+    if(this.ctx.state==="suspended") this.ctx.resume();
+    return true;
+  },
+  blip(f,dur=.06,type="sine",vol=.1,delay=0){
+    if(!this.enabled||!this.ensure())return;
+    const t=this.ctx.currentTime+delay, o=this.ctx.createOscillator(), g=this.ctx.createGain();
+    o.type=type; o.frequency.setValueAtTime(f,t);
+    g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g); g.connect(this.master); o.start(t); o.stop(t+dur+.03);
+  },
+  tick(){ const n=performance.now(); if(n-this.lastTick<70)return; this.lastTick=n; this.blip(1450+Math.random()*350,.035,"sine",.045); },
+  click(){ this.blip(700,.05,"triangle",.08); this.blip(1050,.06,"triangle",.07,.055); },
+  chime(){ [659.25,830.61,987.77].forEach((f,i)=>this.blip(f,.5,"sine",.085,i*.09)); },
+  reset(){ this.blip(880,.08,"triangle",.08); this.blip(587.33,.14,"triangle",.08,.1); },
+  whoosh(){
+    if(!this.enabled||!this.ensure())return;
+    const t=this.ctx.currentTime, len=.32, buf=this.ctx.createBuffer(1,this.ctx.sampleRate*len,this.ctx.sampleRate);
+    const d=buf.getChannelData(0); for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
+    const src=this.ctx.createBufferSource(); src.buffer=buf;
+    const bp=this.ctx.createBiquadFilter(); bp.type="bandpass"; bp.Q.value=1.4;
+    bp.frequency.setValueAtTime(320,t); bp.frequency.exponentialRampToValueAtTime(2600,t+len);
+    const g=this.ctx.createGain(); g.gain.setValueAtTime(.16,t); g.gain.exponentialRampToValueAtTime(.0001,t+len);
+    src.connect(bp); bp.connect(g); g.connect(this.master); src.start(t);
+  },
+};
+function setSound(on){
+  FX.enabled=on;
+  $("#soundBtn").setAttribute("aria-pressed",String(on));
+  $("#soundLabel").textContent=on?"音效 开":"音效 关";
+  if(on) FX.click();
+  toast(on?"音效已开启 · 每次调校都有回响":"音效已静音","ok");
+}
+
+/* ============================================================
+   toasts
+   ============================================================ */
+function toast(msg,kind="ok",action=null){
+  const box=$("#toasts"), el=document.createElement("div");
+  el.className="toast "+kind;
+  const ic={ok:"✓",warn:"⚠",danger:"✕",info:"✦"}[kind]||"✦";
+  el.innerHTML=`<span class="ti">${kind==="info"?"✦":ic}</span><span>${msg}</span>`;
+  if(action){
+    const b=document.createElement("button"); b.textContent=action.label;
+    b.onclick=()=>{ action.fn(); dismiss(); };
+    el.appendChild(b);
+  }
+  box.appendChild(el);
+  while(box.children.length>3) box.firstChild.remove();
+  const dismiss=()=>{ el.classList.add("out"); setTimeout(()=>el.remove(),320); };
+  setTimeout(dismiss, action?4200:2600);
+}
+
+/* ============================================================
+   controls
+   ============================================================ */
+function syncControls(){
+  $("#starScale").value=state.starScale; $("#starScaleOut").textContent=state.starScale.toFixed(2)+"×";
+  $("#strokeW").value=state.stroke; $("#strokeOut").textContent=state.stroke.toFixed(1)+" px";
+  $("#glowR").value=state.glow; $("#glowOut").textContent=state.glow+"%";
+  $("#shapeOut").textContent=SHAPE_NAMES[state.shape];
+  $$("#shapeSeg button").forEach(b=>b.classList.toggle("on",b.dataset.val===state.shape));
+  $("#metalOut").textContent=state.metal.toUpperCase();
+  $("#metalPick").value=state.metal;
+  $$("#metalSw .swatch").forEach(b=>b.classList.toggle("on",b.dataset.metal.toUpperCase()===state.metal.toUpperCase()));
+  $("#fieldOut").textContent=FIELDS[state.field].name;
+  $$("#fieldSw .swatch").forEach(b=>b.classList.toggle("on",b.dataset.field===state.field));
+  $$(".switch[data-key]").forEach(b=>b.setAttribute("aria-checked",String(!!state[b.dataset.key])));
+  $("#pngSize").value=String(state.pngSize);
+  $$("#pngBgSeg button").forEach(b=>b.classList.toggle("on",b.dataset.val===state.pngBg));
+}
+function setKey(key,val,{draw=false,sound="tick"}={}){
+  state[key]=val;
+  syncControls(); requestRender(draw);
+  if(sound==="tick")FX.tick(); else if(sound==="click")FX.click();
+}
+
+$("#starScale").addEventListener("input",e=>setKey("starScale",+e.target.value));
+$("#strokeW").addEventListener("input",e=>setKey("stroke",+e.target.value));
+$("#glowR").addEventListener("input",e=>setKey("glow",+e.target.value));
+$("#shapeSeg").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b||b.dataset.val===state.shape)return;
+  setKey("shape",b.dataset.val,{draw:true,sound:"click"});
+});
+$("#metalSw").addEventListener("click",e=>{
+  const b=e.target.closest(".swatch"); if(!b)return;
+  setKey("metal",b.dataset.metal,{sound:"click"});
+});
+$("#metalPick").addEventListener("input",e=>setKey("metal",e.target.value));
+$("#fieldSw").addEventListener("click",e=>{
+  const b=e.target.closest(".swatch"); if(!b)return;
+  setKey("field",b.dataset.field,{sound:"click"});
+});
+$$(".switch[data-key]").forEach(b=>b.addEventListener("click",()=>{
+  const k=b.dataset.key;
+  setKey(k,!state[k],{sound:"click"});
+  if(k==="guides") toast(state.guides?"构造网格已叠加 · 轴线与星位可见":"构造网格已收起","info");
+}));
+$("#pngSize").addEventListener("change",e=>{ state.pngSize=+e.target.value; FX.click(); });
+$("#pngBgSeg").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  state.pngBg=b.dataset.val; syncControls(); FX.click();
+});
+
+/* ---------- reset / randomize (with undo) ---------- */
+function snapshot(){ return {...state}; }
+function restore(s){ state={...s}; syncControls(); requestRender(true); }
+$("#resetBtn").addEventListener("click",()=>{
+  const prev=snapshot();
+  state={...DEFAULTS}; syncControls(); requestRender(true); FX.reset();
+  toast("已重置为默认方案 · 深空蓝 × 星金","ok",{label:"撤销",fn:()=>{restore(prev);FX.click();}});
+});
+$("#randBtn").addEventListener("click",randomize);
+function randomize(){
+  const prev=snapshot(); schemeNo++;
+  const pick=a=>a[Math.floor(Math.random()*a.length)];
+  const metals=Object.keys(METAL_NAMES);
+  state={...state,
+    shape:pick(["circle","hex","hybrid"]),
+    metal:pick(metals), field:pick(Object.keys(FIELDS)),
+    starScale:+(0.8+Math.random()*0.55).toFixed(2),
+    stroke:+(1.8+Math.random()*2.2).toFixed(1),
+    glow:Math.round(30+Math.random()*60),
+    lamp:Math.random()<.85, ruler:Math.random()<.8,
+    inscription:Math.random()<.75, orbit:Math.random()<.8,
+    breathe:true, guides:false,
+  };
+  syncControls(); requestRender(true); FX.whoosh();
+  toast(`随机方案 #${String(schemeNo).padStart(2,"0")} · ${SHAPE_NAMES[state.shape]} × ${METAL_NAMES[state.metal]} × ${FIELDS[state.field].name}`,"info",
+    {label:"撤销",fn:()=>{restore(prev);FX.click();}});
+}
+
+/* ============================================================
+   export
+   ============================================================ */
+function downloadBlob(blob,name){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+function fileStem(){ return `starforge-sf07-${state.shape}-${state.metal.replace("#","")}`; }
+function exportSVG(){
+  const svg=currentExportSVG();
+  downloadBlob(new Blob([svg],{type:"image/svg+xml;charset=utf-8"}),fileStem()+".svg");
+  FX.chime(); toast("SVG 已导出 · 携带当前全部状态","ok");
+}
+async function exportPNG(){
+  const size=state.pngSize;
+  const svg=standaloneSVG(state,{size,animate:false});
+  const url=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml;charset=utf-8"}));
+  try{
+    const img=new Image(); img.decoding="async";
+    await new Promise((res,rej)=>{ img.onload=res; img.onerror=()=>rej(new Error("SVG 位图化失败")); img.src=url; });
+    const cv=document.createElement("canvas"); cv.width=cv.height=size;
+    const cx=cv.getContext("2d");
+    if(state.pngBg==="field"){ cx.fillStyle=FIELDS[state.field].c; cx.fillRect(0,0,size,size); }
+    cx.drawImage(img,0,0,size,size);
+    const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
+    if(!blob) throw new Error("PNG 编码失败");
+    downloadBlob(blob,`${fileStem()}-${size}.png`);
+    FX.chime(); toast(`PNG 已导出 · ${size} × ${size} · ${state.pngBg==="field"?"深空方底":"透明底"}`,"ok");
+  }catch(err){ FX.blip(220,.2,"sawtooth",.06); toast("PNG 导出失败："+err.message,"danger"); }
+  finally{ URL.revokeObjectURL(url); }
+}
+async function copySVG(){
+  const svg=currentExportSVG();
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){ await navigator.clipboard.writeText(svg); }
+    else{
+      const ta=document.createElement("textarea"); ta.value=svg; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select();
+      const ok=document.execCommand("copy"); ta.remove();
+      if(!ok) throw new Error("clipboard unavailable");
+    }
+    FX.chime(); toast("SVG 源码已复制到剪贴板","ok");
+  }catch{ FX.blip(220,.2,"sawtooth",.06); toast("复制失败 · 请在源码框中手动全选","danger"); }
+}
+$("#navExport").addEventListener("click",exportSVG);
+$("#ctaExport").addEventListener("click",exportSVG);
+$("#dlSvg").addEventListener("click",exportSVG);
+$("#dlPng").addEventListener("click",exportPNG);
+$("#copySvg").addEventListener("click",copySVG);
+$("#copySvg2").addEventListener("click",copySVG);
+$("#soundBtn").addEventListener("click",()=>setSound(!FX.enabled));
+$("#ctaConsole").addEventListener("click",()=>{
+  const p=$("#console");
+  p.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"center"});
+  p.classList.add("pulse"); setTimeout(()=>p.classList.remove("pulse"),1400);
+  FX.click();
+});
+
+/* ---------- keyboard ---------- */
+document.addEventListener("keydown",e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  const t=e.target;
+  if(t&&(t.tagName==="INPUT"||t.tagName==="SELECT"||t.tagName==="TEXTAREA")) return;
+  const k=e.key.toLowerCase();
+  if(k==="g"){ setKey("guides",!state.guides,{sound:"click"}); toast(state.guides?"构造网格已叠加":"构造网格已收起","info"); }
+  else if(k==="m"){ setSound(!FX.enabled); }
+  else if(k==="e"){ exportSVG(); }
+  else if(k==="r"){ randomize(); }
+  else if(k==="1"||k==="2"||k==="3"){ setKey("shape",["circle","hex","hybrid"][+k-1],{draw:true,sound:"click"}); }
+});
+
+/* ============================================================
+   stage tilt — one damped rAF loop
+   ============================================================ */
+(function(){
+  if(REDUCED) return;
+  const wrap=$("#stageTilt"), el=$("#badgeTilt");
+  let tx=0,ty=0,cx=0,cy=0,raf=null;
+  function loop(){
+    cx+=(tx-cx)*.085; cy+=(ty-cy)*.085;
+    el.style.transform=`rotateX(${cy.toFixed(3)}deg) rotateY(${cx.toFixed(3)}deg)`;
+    if(Math.abs(tx-cx)>.005||Math.abs(ty-cy)>.005){ raf=requestAnimationFrame(loop); }
+    else{ raf=null; el.style.transform=`rotateX(${ty.toFixed(3)}deg) rotateY(${tx.toFixed(3)}deg)`; }
+  }
+  function kick(){ if(raf===null) raf=requestAnimationFrame(loop); }
+  wrap.addEventListener("pointermove",e=>{
+    if(e.pointerType==="touch")return;
+    const r=wrap.getBoundingClientRect();
+    tx=((e.clientX-r.left)/r.width-.5)*10;
+    ty=-((e.clientY-r.top)/r.height-.5)*10;
+    kick();
+  });
+  wrap.addEventListener("pointerleave",()=>{ tx=0; ty=0; kick(); });
+})();
+
+/* ============================================================
+   nav state + scroll reveals
+   ============================================================ */
+addEventListener("scroll",()=>$("#topbar").classList.toggle("scrolled",scrollY>10),{passive:true});
+const navIO=new IntersectionObserver(es=>{
+  es.forEach(en=>{ if(en.isIntersecting){
+    $$(".nav-links a").forEach(a=>a.classList.toggle("active",a.dataset.nav===en.target.id));
+  }});
+},{rootMargin:"-40% 0px -55% 0px"});
+["stage","anatomy","scale","apply","export"].forEach(id=>navIO.observe(document.getElementById(id)));
+const revIO=new IntersectionObserver(es=>{
+  es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add("in"); revIO.unobserve(en.target); }});
+},{threshold:.12});
+$$(".reveal").forEach(el=>revIO.observe(el));
+
+/* ---------- boot ---------- */
+syncControls();
+renderAll(true);
+updateCode();
+</script>
+</body>
+</html>

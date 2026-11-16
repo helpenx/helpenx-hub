@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>HelpEnx Hub · 星阵万象 — 分享封面</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; background: #04091C; }
+  .cover {
+    position: relative; width: 1200px; height: 630px;
+    background:
+      radial-gradient(880px 520px at 16% 46%, rgba(61, 91, 217, .30), transparent 66%),
+      radial-gradient(680px 400px at 94% 92%, rgba(245, 197, 66, .13), transparent 70%),
+      linear-gradient(135deg, #04091C 0%, #071127 55%, #04091C 100%);
+    font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+    color: #EDF1FE; overflow: hidden;
+  }
+  .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(245, 197, 66, .055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 197, 66, .055) 1px, transparent 1px);
+    background-size: 60px 60px;
+    -webkit-mask-image: radial-gradient(760px 520px at 30% 45%, #000 20%, transparent 78%);
+    mask-image: radial-gradient(760px 520px at 30% 45%, #000 20%, transparent 78%);
+  }
+  .stars { position: absolute; inset: 0; }
+  .stars i {
+    position: absolute; width: 2px; height: 2px; border-radius: 50%;
+    background: #DCE6FF; opacity: .55;
+  }
+  .badge-wrap {
+    position: absolute; left: 64px; top: 50%; width: 440px; height: 440px;
+    transform: translateY(-50%);
+    filter: drop-shadow(0 26px 70px rgba(245, 197, 66, .16));
+  }
+  .badge-wrap svg { display: block; width: 100%; height: 100%; }
+  .right { position: absolute; left: 556px; top: 92px; right: 76px; }
+  .eyebrow { display: flex; align-items: center; gap: 14px; }
+  .eyebrow b {
+    font-size: 17px; font-weight: 700; letter-spacing: .16em; color: #F5C542;
+  }
+  .eyebrow span {
+    font-size: 15px; letter-spacing: .22em; color: #8FA0CC;
+    padding-left: 14px; border-left: 1px solid rgba(245, 197, 66, .35);
+  }
+  h1 {
+    margin-top: 26px; font-size: 58px; line-height: 1.24; font-weight: 700;
+    letter-spacing: .015em;
+  }
+  h1 em {
+    font-style: normal;
+    background: linear-gradient(100deg, #FFD86B 0%, #F5C542 52%, #C9932B 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .lead {
+    margin-top: 20px; font-size: 20px; line-height: 1.65; color: #C7D0EE;
+  }
+  .lead b { color: #FFFFFF; font-weight: 600; }
+  .chips { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 9px; max-width: 540px; }
+  .chip {
+    padding: 6px 13px; border-radius: 999px; font-size: 13.5px; line-height: 1.4;
+    color: #FFD86B; border: 1px solid rgba(245, 197, 66, .26);
+    background: rgba(245, 197, 66, .055); white-space: nowrap;
+  }
+  .foot {
+    position: absolute; left: 556px; right: 76px; bottom: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 15.5px; color: #8FA0CC;
+  }
+  .foot b { color: #EDF1FE; font-weight: 600; }
+  .foot .dot { color: #F5C542; margin: 0 8px; }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="grid"></div>
+  <div class="stars" id="stars"></div>
+  <div class="badge-wrap"><svg viewBox="0 0 512 512" width="100%" height="100%" role="img" aria-label="七星阵列工坊徽章">
+<defs>
+  <clipPath id="st-clip"><circle cx="256" cy="256" r="244"></circle></clipPath>
+  <radialGradient id="st-field" cx="50%" cy="36%" r="78%">
+    <stop offset="0%" stop-color="#1A2C5E"></stop><stop offset="52%" stop-color="#0A1533"></stop><stop offset="100%" stop-color="#050B1E"></stop>
+  </radialGradient>
+  <radialGradient id="st-inner" cx="50%" cy="41%" r="52%">
+    <stop offset="0%" stop-color="rgba(255,179,92,0.11)"></stop><stop offset="46%" stop-color="rgba(74,111,208,0.1)"></stop><stop offset="100%" stop-color="rgba(74,111,208,0)"></stop>
+  </radialGradient>
+  <radialGradient id="st-vig" cx="50%" cy="50%" r="50%">
+    <stop offset="62%" stop-color="rgba(2,6,16,0)"></stop><stop offset="100%" stop-color="rgba(2,6,16,.52)"></stop>
+  </radialGradient>
+  <linearGradient id="st-line" gradientUnits="userSpaceOnUse" x1="0" y1="64" x2="0" y2="448">
+    <stop offset="0%" stop-color="#f9dd8f"></stop><stop offset="52%" stop-color="#F5C542"></stop><stop offset="100%" stop-color="#e4aa0c"></stop>
+  </linearGradient>
+  <radialGradient id="st-starfill" cx="50%" cy="42%" r="62%">
+    <stop offset="0%" stop-color="#FFFDF2"></stop><stop offset="42%" stop-color="#f9dd8f"></stop><stop offset="100%" stop-color="#F5C542"></stop>
+  </radialGradient>
+  <radialGradient id="st-halo" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="rgba(245,197,66,0.55)"></stop><stop offset="55%" stop-color="rgba(245,197,66,0.16)"></stop><stop offset="100%" stop-color="rgba(245,197,66,0)"></stop>
+  </radialGradient>
+  <radialGradient id="st-bulb" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="rgba(255,223,168,0.85)"></stop><stop offset="45%" stop-color="rgba(255,179,92,0.32)"></stop><stop offset="100%" stop-color="rgba(255,179,92,0)"></stop>
+  </radialGradient>
+  <linearGradient id="st-cone" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="rgba(255,179,92,0.17)"></stop><stop offset="100%" stop-color="rgba(255,179,92,0)"></stop>
+  </linearGradient>
+  <filter id="st-blur" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="5.3"></feGaussianBlur>
+  </filter>
+  <filter id="st-grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"></feTurbulence><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 .86  0 0 0 0 .55  0 0 0 .05 0"></feColorMatrix></filter>
+  <pattern id="st-hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+    <line x1="0" y1="0" x2="0" y2="7" stroke="rgba(87,176,255,.20)" stroke-width="1.1"></line>
+  </pattern>
+  <path id="st-arcT" d="M 75,256 A 181,181 0 0 1 437,256" fill="none"></path>
+  <path id="st-arcB" d="M 75,256 A 181,181 0 0 0 437,256" fill="none"></path>
+</defs>
+<g clip-path="url(#st-clip)">
+  <rect x="0" y="0" width="512" height="512" fill="url(#st-field)"></rect>
+  <path d="M256,92 L386,170 L398,262 L338,386 L174,386 L114,262 L126,170 Z" fill="url(#st-inner)"></path>
+  <rect x="0" y="0" width="512" height="512" filter="url(#st-grain)" opacity=".8"></rect>
+  <rect x="0" y="0" width="512" height="512" fill="url(#st-vig)"></rect>
+</g>
+<g class="fade"><circle cx="256" cy="256" r="244" fill="none" stroke="url(#st-line)" stroke-width="2.4" pathLength="1"></circle><circle cx="256" cy="256" r="231" fill="none" stroke="rgba(245,197,66,0.34)" stroke-width="1.1"></circle></g>
+<g class="fade"><line x1="256.0" y1="44.0" x2="256.0" y2="34.0" stroke="rgba(245,197,66,0.7)" stroke-width="2"></line><line x1="303.6" y1="47.4" x2="304.7" y2="42.5" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="348.9" y1="63.2" x2="351.0" y2="58.7" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="389.4" y1="88.7" x2="392.5" y2="84.8" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="421.7" y1="123.8" x2="429.6" y2="117.6" stroke="rgba(245,197,66,0.7)" stroke-width="2"></line><line x1="448.8" y1="163.1" x2="453.3" y2="161.0" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="464.6" y1="208.4" x2="469.5" y2="207.3" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="470.0" y1="256.0" x2="475.0" y2="256.0" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="462.7" y1="303.2" x2="472.4" y2="305.4" stroke="rgba(245,197,66,0.7)" stroke-width="2"></line><line x1="448.8" y1="348.9" x2="453.3" y2="351.0" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="423.3" y1="389.4" x2="427.2" y2="392.5" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="389.4" y1="423.3" x2="392.5" y2="427.2" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="348.0" y1="447.0" x2="352.3" y2="456.0" stroke="rgba(245,197,66,0.7)" stroke-width="2"></line><line x1="303.6" y1="464.6" x2="304.7" y2="469.5" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="256.0" y1="470.0" x2="256.0" y2="475.0" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="208.4" y1="464.6" x2="207.3" y2="469.5" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="164.0" y1="447.0" x2="159.7" y2="456.0" stroke="rgba(245,197,66,0.7)" stroke-width="2"></line><line x1="122.6" y1="423.3" x2="119.5" y2="427.2" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="88.7" y1="389.4" x2="84.8" y2="392.5" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="63.2" y1="348.9" x2="58.7" y2="351.0" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="49.3" y1="303.2" x2="39.6" y2="305.4" stroke="rgba(245,197,66,0.7)" stroke-width="2"></line><line x1="42.0" y1="256.0" x2="37.0" y2="256.0" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="47.4" y1="208.4" x2="42.5" y2="207.3" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="63.2" y1="163.1" x2="58.7" y2="161.0" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="90.3" y1="123.8" x2="82.4" y2="117.6" stroke="rgba(245,197,66,0.7)" stroke-width="2"></line><line x1="122.6" y1="88.7" x2="119.5" y2="84.8" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="163.1" y1="63.2" x2="161.0" y2="58.7" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line><line x1="208.4" y1="47.4" x2="207.3" y2="42.5" stroke="rgba(245,197,66,0.32)" stroke-width="1.1"></line></g>
+<g class="fade"><g><animateTransform attributeName="transform" type="rotate" from="0 256 256" to="360 256 256" dur="160s" repeatCount="indefinite"></animateTransform><circle cx="256" cy="256" r="196" fill="none" stroke="rgba(245,197,66,0.24)" stroke-width="1.4" stroke-dasharray="1.5 9.5" stroke-linecap="round"></circle></g></g>
+<g class="fade2">
+  <text font-family="'PingFang SC','Noto Sans CJK SC','Microsoft YaHei',sans-serif" font-size="11.5" font-weight="600" letter-spacing="5" fill="rgba(245,197,66,0.74)"><textPath href="#st-arcT" xlink:href="#st-arcT" startOffset="50%" text-anchor="middle">七星阵列 · 负空间工坊</textPath></text>
+  <text font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="9.5" letter-spacing="2.6" fill="rgba(245,197,66,0.58)"><textPath href="#st-arcB" xlink:href="#st-arcB" startOffset="50%" text-anchor="middle">STARFORGE ATELIER · SEVEN-STAR ARRAY</textPath></text>
+  <rect x="72.6" y="253.6" width="4.8" height="4.8" transform="rotate(45 75 256)" fill="rgba(245,197,66,0.55)"></rect>
+  <rect x="434.6" y="253.6" width="4.8" height="4.8" transform="rotate(45 437 256)" fill="rgba(245,197,66,0.55)"></rect>
+</g>
+<g class="fade" filter="url(#st-blur)" opacity="0.44"><path d="M256,92 L386,170 L398,262 L338,386 L174,386 L114,262 L126,170 Z" fill="none" stroke="#F5C542" stroke-width="5.5" stroke-linejoin="round"></path><line x1="114" y1="262" x2="398" y2="262" stroke="#F5C542" stroke-width="5.5"></line><line x1="126" y1="170" x2="386" y2="170" stroke="#F5C542" stroke-width="4.4"></line></g>
+<g class="fade"><line x1="256" y1="92" x2="256" y2="188" stroke="rgba(245,197,66,0.8)" stroke-width="1.8" stroke-linecap="round"></line>
+<path d="M256,205 L208,262 L304,262 Z" fill="url(#st-cone)"><animate attributeName="opacity" values=".75;1;.75" dur="4.2s" repeatCount="indefinite"></animate></path>
+  <path d="M248,188 L264,188 L270,200 L242,200 Z" fill="#0A1533" stroke="#f9dd8f" stroke-width="1.5" stroke-linejoin="round"></path>
+  <circle cx="256" cy="170" r="2.5" fill="#f9dd8f" stroke="#a97e09" stroke-width=".6"></circle>
+  <circle cx="256" cy="205" r="13" fill="url(#st-bulb)"><animate attributeName="opacity" values=".55;.95;.55" dur="4.2s" repeatCount="indefinite"></animate></circle>
+  <circle cx="256" cy="205" r="3.3" fill="#FFDFA8"></circle>
+</g>
+<g class="fade"><line x1="130" y1="263" x2="130" y2="270" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="144" y1="263" x2="144" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="158" y1="263" x2="158" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="172" y1="263" x2="172" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="186" y1="263" x2="186" y2="270" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="200" y1="263" x2="200" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="214" y1="263" x2="214" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="228" y1="263" x2="228" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="242" y1="263" x2="242" y2="270" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="256" y1="263" x2="256" y2="272" stroke="rgba(245,197,66,0.75)" stroke-width="1.6"></line><line x1="270" y1="263" x2="270" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="284" y1="263" x2="284" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="298" y1="263" x2="298" y2="270" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="312" y1="263" x2="312" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="326" y1="263" x2="326" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="340" y1="263" x2="340" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="354" y1="263" x2="354" y2="270" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="368" y1="263" x2="368" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line><line x1="382" y1="263" x2="382" y2="267.5" stroke="rgba(245,197,66,0.45)" stroke-width="1.1"></line></g>
+<g><line class="ln" style="--i:0" x1="126" y1="170" x2="256" y2="92" stroke="url(#st-line)" stroke-opacity="1" stroke-width="2.6" stroke-linecap="round" pathLength="1"></line><line class="ln" style="--i:1" x1="256" y1="92" x2="386" y2="170" stroke="url(#st-line)" stroke-opacity="1" stroke-width="2.6" stroke-linecap="round" pathLength="1"></line><line class="ln" style="--i:2" x1="386" y1="170" x2="398" y2="262" stroke="url(#st-line)" stroke-opacity="0.95" stroke-width="2.6" stroke-linecap="round" pathLength="1"></line><line class="ln" style="--i:3" x1="126" y1="170" x2="114" y2="262" stroke="url(#st-line)" stroke-opacity="0.95" stroke-width="2.6" stroke-linecap="round" pathLength="1"></line><line class="ln" style="--i:4" x1="398" y1="262" x2="338" y2="386" stroke="url(#st-line)" stroke-opacity="1" stroke-width="2.6" stroke-linecap="round" pathLength="1"></line><line class="ln" style="--i:5" x1="114" y1="262" x2="174" y2="386" stroke="url(#st-line)" stroke-opacity="1" stroke-width="2.6" stroke-linecap="round" pathLength="1"></line><line class="ln" style="--i:6" x1="174" y1="386" x2="338" y2="386" stroke="url(#st-line)" stroke-opacity="1" stroke-width="2.6" stroke-linecap="round" pathLength="1"></line><line class="ln" style="--i:7" x1="126" y1="170" x2="386" y2="170" stroke="url(#st-line)" stroke-opacity="0.8" stroke-width="2.1" stroke-linecap="round" pathLength="1"></line><line class="ln" style="--i:8" x1="114" y1="262" x2="398" y2="262" stroke="url(#st-line)" stroke-opacity="1" stroke-width="2.6" stroke-linecap="round" pathLength="1"></line></g>
+<g><g class="star" style="--i:0" transform="translate(256,92)">
+  <g><animate attributeName="opacity" values="1;.68;1" dur="3.10s" begin="0.00s" repeatCount="indefinite"></animate>
+    <circle r="43.0" fill="url(#st-halo)"></circle>
+    <path d="M0,-20 Q3.5999999999999996,-3.5999999999999996 20,0 Q3.5999999999999996,3.5999999999999996 0,20 Q-3.5999999999999996,3.5999999999999996 -20,0 Q-3.5999999999999996,-3.5999999999999996 0,-20 Z" fill="url(#st-starfill)" stroke="rgba(169,126,9,0.6)" stroke-width=".8"></path>
+    <circle r="2.8" fill="#FFFDF2" opacity=".95"></circle>
+  </g>
+</g><g class="star" style="--i:1" transform="translate(386,170)">
+  <g><animate attributeName="opacity" values="1;.68;1" dur="3.51s" begin="0.53s" repeatCount="indefinite"></animate>
+    <circle r="32.3" fill="url(#st-halo)"></circle>
+    <path d="M0,-15 Q2.6999999999999997,-2.6999999999999997 15,0 Q2.6999999999999997,2.6999999999999997 0,15 Q-2.6999999999999997,2.6999999999999997 -15,0 Q-2.6999999999999997,-2.6999999999999997 0,-15 Z" fill="url(#st-starfill)" stroke="rgba(169,126,9,0.6)" stroke-width=".8"></path>
+    <circle r="2.1" fill="#FFFDF2" opacity=".95"></circle>
+  </g>
+</g><g class="star" style="--i:2" transform="translate(398,262)">
+  <g><animate attributeName="opacity" values="1;.68;1" dur="3.92s" begin="1.06s" repeatCount="indefinite"></animate>
+    <circle r="34.4" fill="url(#st-halo)"></circle>
+    <path d="M0,-16 Q2.88,-2.88 16,0 Q2.88,2.88 0,16 Q-2.88,2.88 -16,0 Q-2.88,-2.88 0,-16 Z" fill="url(#st-starfill)" stroke="rgba(169,126,9,0.6)" stroke-width=".8"></path>
+    <circle r="2.2" fill="#FFFDF2" opacity=".95"></circle>
+  </g>
+</g><g class="star" style="--i:3" transform="translate(338,386)">
+  <g><animate attributeName="opacity" values="1;.68;1" dur="4.33s" begin="1.59s" repeatCount="indefinite"></animate>
+    <circle r="27.9" fill="url(#st-halo)"></circle>
+    <path d="M0,-13 Q2.34,-2.34 13,0 Q2.34,2.34 0,13 Q-2.34,2.34 -13,0 Q-2.34,-2.34 0,-13 Z" fill="url(#st-starfill)" stroke="rgba(169,126,9,0.6)" stroke-width=".8"></path>
+    <circle r="1.8" fill="#FFFDF2" opacity=".95"></circle>
+  </g>
+</g><g class="star" style="--i:4" transform="translate(174,386)">
+  <g><animate attributeName="opacity" values="1;.68;1" dur="4.74s" begin="2.12s" repeatCount="indefinite"></animate>
+    <circle r="27.9" fill="url(#st-halo)"></circle>
+    <path d="M0,-13 Q2.34,-2.34 13,0 Q2.34,2.34 0,13 Q-2.34,2.34 -13,0 Q-2.34,-2.34 0,-13 Z" fill="url(#st-starfill)" stroke="rgba(169,126,9,0.6)" stroke-width=".8"></path>
+    <circle r="1.8" fill="#FFFDF2" opacity=".95"></circle>
+  </g>
+</g><g class="star" style="--i:5" transform="translate(114,262)">
+  <g><animate attributeName="opacity" values="1;.68;1" dur="5.15s" begin="2.65s" repeatCount="indefinite"></animate>
+    <circle r="34.4" fill="url(#st-halo)"></circle>
+    <path d="M0,-16 Q2.88,-2.88 16,0 Q2.88,2.88 0,16 Q-2.88,2.88 -16,0 Q-2.88,-2.88 0,-16 Z" fill="url(#st-starfill)" stroke="rgba(169,126,9,0.6)" stroke-width=".8"></path>
+    <circle r="2.2" fill="#FFFDF2" opacity=".95"></circle>
+  </g>
+</g><g class="star" style="--i:6" transform="translate(126,170)">
+  <g><animate attributeName="opacity" values="1;.68;1" dur="5.56s" begin="3.18s" repeatCount="indefinite"></animate>
+    <circle r="32.3" fill="url(#st-halo)"></circle>
+    <path d="M0,-15 Q2.6999999999999997,-2.6999999999999997 15,0 Q2.6999999999999997,2.6999999999999997 0,15 Q-2.6999999999999997,2.6999999999999997 -15,0 Q-2.6999999999999997,-2.6999999999999997 0,-15 Z" fill="url(#st-starfill)" stroke="rgba(169,126,9,0.6)" stroke-width=".8"></path>
+    <circle r="2.1" fill="#FFFDF2" opacity=".95"></circle>
+  </g>
+</g></g>
+</svg></div>
+  <div class="right">
+    <div class="eyebrow"><b>HELPENX HUB</b><span>星阵万象</span></div>
+    <h1>聚七星之阵，<br><em>启万象之境。</em></h1>
+    <p class="lead">北斗七星生态 · <b>23 项服务</b>一触即达<br>开源引擎、AIGC 平台、平台总线与数字工具</p>
+    <div class="chips">
+      <span class="chip">天枢 · 开源引擎</span>
+      <span class="chip">天璇 · 星阵视界 AIGC</span>
+      <span class="chip">天玑 · 平台总线</span>
+      <span class="chip">天权 · 数字工具</span>
+      <span class="chip">玉衡 · 内容知识</span>
+      <span class="chip">开阳 · 行业演示</span>
+      <span class="chip">摇光 · 创作者计划</span>
+    </div>
+  </div>
+  <div class="foot">
+    <span><b>helpenx.com</b><span class="dot">·</span>星阵视界 Studio 承载 AIGC 生产</span>
+    <span>SEVEN-STAR ARRAY</span>
+  </div>
+</div>
+<script>
+  (function () {
+    var host = document.getElementById("stars");
+    var rand = 20261116;
+    function next() { rand = (rand * 1103515245 + 12345) % 2147483648; return rand / 2147483648; }
+    for (var i = 0; i < 56; i++) {
+      var dot = document.createElement("i");
+      dot.style.left = (next() * 100).toFixed(2) + "%";
+      dot.style.top = (next() * 100).toFixed(2) + "%";
+      var size = next() > 0.82 ? 3 : 2;
+      dot.style.width = size + "px";
+      dot.style.height = size + "px";
+      dot.style.opacity = (0.22 + next() * 0.5).toFixed(2);
+      if (next() > 0.9) dot.style.background = "#F5C542";
+      host.appendChild(dot);
+    }
+  })();
+</script>
+</body>
+</html>

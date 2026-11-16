@@ -1,4 +1,4 @@
-// 把 scripts/og-cover.html 渲染成 1200×630 的社交分享图（assets/og-cover.png）
+// 把 scripts/share-cover.html 渲染成 1200×630 的社交分享图（assets/share-cover.jpg）
 // 用法：node scripts/render-og.js；改完封面文案后重新运行
 const { spawn } = require("child_process");
 const fs = require("fs");
@@ -9,32 +9,39 @@ const edge = process.env.EDGE || path.join(
   process.env["ProgramFiles(x86)"] || "C:/Program Files (x86)",
   "Microsoft/Edge/Application/msedge.exe"
 );
-const port = 8935;
 const profile = path.join(root, ".tmp-og-profile");
-const source = "file:///" + path.join(root, "scripts/og-cover.html").replace(/\\/g, "/");
-const out = path.join(root, "assets/og-cover.png");
+const source = "file:///" + path.join(root, "scripts/share-cover.html").replace(/\\/g, "/");
+const out = path.join(root, "assets/share-cover.jpg");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 if (!fs.existsSync(edge)) throw new Error("找不到 Edge，可用 EDGE 环境变量指定路径");
 
 const proc = spawn(edge, [
   "--headless=new", "--disable-gpu", "--hide-scrollbars",
-  "--force-device-scale-factor=1", "--window-size=1200,630",
-  "--remote-debugging-port=" + port,
+  "--force-device-scale-factor=1", "--window-size=1200,900",
+  "--remote-debugging-port=0",
   "--user-data-dir=" + profile,
   "about:blank"
 ], { stdio: "ignore" });
 
 (async () => {
-  let page;
-  for (let i = 0; i < 40 && !page; i++) {
+  let devPort = 0;
+  const portFile = path.join(profile, "DevToolsActivePort");
+  for (let i = 0; i < 60 && !devPort; i++) {
     await sleep(200);
+    try { devPort = Number(fs.readFileSync(portFile, "utf8").split("\n")[0]); } catch (e) { /* 端口文件还没生成 */ }
+  }
+  if (!devPort) throw new Error("Edge 调试端口未就绪");
+
+  let page;
+  for (let i = 0; i < 20 && !page; i++) {
     try {
-      const list = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
+      const list = await (await fetch(`http://127.0.0.1:${devPort}/json/list`)).json();
       page = list.find((t) => t.type === "page");
     } catch (e) { /* 浏览器还没起来，继续等 */ }
+    if (!page) await sleep(200);
   }
-  if (!page) throw new Error("Edge 调试端口未就绪");
+  if (!page) throw new Error("Edge 页面未就绪");
 
   const ws = new WebSocket(page.webSocketDebuggerUrl);
   let id = 0;
@@ -51,10 +58,14 @@ const proc = spawn(edge, [
   });
 
   await send("Page.enable");
-  await send("Emulation.setDeviceMetricsOverride", { width: 1200, height: 630, deviceScaleFactor: 1, mobile: false });
+  await send("Emulation.setDeviceMetricsOverride", { width: 1200, height: 900, deviceScaleFactor: 1, mobile: false });
   await send("Page.navigate", { url: source });
-  await sleep(1500);
-  const shot = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+  await sleep(2200);
+  const shot = await send("Page.captureScreenshot", {
+    format: "jpeg", quality: 90,
+    clip: { x: 0, y: 0, width: 1200, height: 630, scale: 1 },
+    captureBeyondViewport: false
+  });
   fs.writeFileSync(out, Buffer.from(shot.result.data, "base64"));
   console.log("已输出", path.relative(root, out), "(1200×630)");
 

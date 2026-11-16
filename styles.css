@@ -2354,7 +2354,7 @@ body::after {
   .constellation__all { align-self: flex-start; }
   .constellation__board {
     aspect-ratio: auto; min-height: 0; margin-top: 18px;
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: grid; grid-template-columns: 1fr;
     gap: 8px; padding: 12px;
     background: linear-gradient(180deg, #fcfdff, #f4f8fd);
   }
@@ -2373,7 +2373,6 @@ body::after {
     border: 1px solid var(--border); border-radius: 12px;
     background: var(--surface); text-align: left;
   }
-  .cstar:nth-of-type(7) { grid-column: 1 / -1; }
   .cstar__point {
     position: relative; inset: auto; flex: none;
     width: 16px; height: 16px; display: grid; place-items: center;

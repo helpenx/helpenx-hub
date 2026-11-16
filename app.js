@@ -1599,22 +1599,44 @@
       });
     }
 
+    // 分享图预取：Web Share 只接受 File，提前缓存避免点击时丢失用户手势
+    var shareFile = null;
+    fetch("assets/share-cover.jpg", { cache: "force-cache" })
+      .then(function (res) { return res.ok ? res.blob() : null; })
+      .then(function (blob) {
+        if (!blob) return;
+        var file = new File([blob], "helpenx-xingzhen-wanxiang.jpg", { type: "image/jpeg" });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) shareFile = file;
+      })
+      .catch(function () { /* 不支持文件分享时只发链接 */ });
+
     btn.addEventListener("click", function () {
       var url = shareUrl();
+      var siteName = metaContent('meta[property="og:site_name"]') || "星阵万象";
       var motto = document.querySelector(".hero__motto");
+      var tagline = motto ? motto.textContent.trim() : metaContent('meta[name="description"]');
       var data = {
         title: metaContent('meta[property="og:title"]') || document.title,
-        text: motto ? motto.textContent.trim() : metaContent('meta[name="description"]'),
+        text: siteName + "｜" + tagline + "23 项服务，一触即达。",
         url: url
       };
-      if (navigator.share) {
-        navigator.share(data).catch(function (err) {
-          if (err && err.name === "AbortError") return;
+      if (shareFile) data.files = [shareFile];
+      if (!navigator.share) {
+        copyLink(url);
+        return;
+      }
+      navigator.share(data).catch(function (err) {
+        if (err && err.name === "AbortError") return;
+        if (!data.files) {
+          copyLink(url);
+          return;
+        }
+        var plain = { title: data.title, text: data.text, url: data.url };
+        navigator.share(plain).catch(function (err2) {
+          if (err2 && err2.name === "AbortError") return;
           copyLink(url);
         });
-      } else {
-        copyLink(url);
-      }
+      });
     });
   }
 

@@ -1601,7 +1601,7 @@
 
     // 分享图预取：Web Share 只接受 File，提前缓存避免点击时丢失用户手势
     var shareFile = null;
-    fetch("assets/share-cover.jpg", { cache: "force-cache" })
+    fetch("assets/share-thumb.jpg", { cache: "force-cache" })
       .then(function (res) { return res.ok ? res.blob() : null; })
       .then(function (blob) {
         if (!blob) return;
@@ -1612,12 +1612,10 @@
 
     btn.addEventListener("click", function () {
       var url = shareUrl();
-      var siteName = metaContent('meta[property="og:site_name"]') || "星阵万象";
       var motto = document.querySelector(".hero__motto");
-      var tagline = motto ? motto.textContent.trim() : metaContent('meta[name="description"]');
       var data = {
-        title: metaContent('meta[property="og:title"]') || document.title,
-        text: siteName + "｜" + tagline + "23 项服务，一触即达。",
+        title: metaContent('meta[property="og:title"]') || "HelpEnx Hub · 星阵万象",
+        text: metaContent('meta[property="og:description"]') || (motto ? motto.textContent.trim() : ""),
         url: url
       };
       if (shareFile) data.files = [shareFile];

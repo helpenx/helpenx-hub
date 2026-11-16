@@ -61,6 +61,9 @@ for (let round = 0; keywords.length < KW_LIMIT; round++) {
 const metaKeywords = keywords.slice(0, KW_LIMIT).join(", ");
 
 const socialTitle = seo.socialTitle || title;
+const socialDesc = seo.socialDescription || desc;
+const twitterImage = seo.twitterImage || seo.image;
+const twitterImageAlt = seo.twitterImageAlt || seo.imageAlt || title;
 const imageType = seo.imageType ||
   (/\.svg($|\?)/i.test(seo.image || "") ? "image/svg+xml" : "image/png");
 
@@ -68,7 +71,7 @@ const og = [
   "<meta property=\"og:type\" content=\"website\" />",
   "<meta property=\"og:url\" content=\"" + esc(url) + "\" />",
   "<meta property=\"og:title\" content=\"" + esc(socialTitle) + "\" />",
-  "<meta property=\"og:description\" content=\"" + esc(desc) + "\" />",
+  "<meta property=\"og:description\" content=\"" + esc(socialDesc) + "\" />",
   "<meta property=\"og:site_name\" content=\"" + esc(brand.fullName || brand.name || "") + "\" />",
   "<meta property=\"og:locale\" content=\"" + esc(seo.locale || "zh_CN") + "\" />"
 ];
@@ -88,12 +91,12 @@ if (seo.image) {
 og.push(
   "<meta name=\"twitter:card\" content=\"summary_large_image\" />",
   "<meta name=\"twitter:title\" content=\"" + esc(socialTitle) + "\" />",
-  "<meta name=\"twitter:description\" content=\"" + esc(desc) + "\" />"
+  "<meta name=\"twitter:description\" content=\"" + esc(socialDesc) + "\" />"
 );
-if (seo.image) {
+if (twitterImage) {
   og.push(
-    "<meta name=\"twitter:image\" content=\"" + esc(seo.image) + "\" />",
-    "<meta name=\"twitter:image:alt\" content=\"" + esc(seo.imageAlt || title) + "\" />"
+    "<meta name=\"twitter:image\" content=\"" + esc(twitterImage) + "\" />",
+    "<meta name=\"twitter:image:alt\" content=\"" + esc(twitterImageAlt) + "\" />"
   );
 }
 

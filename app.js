@@ -398,7 +398,7 @@
           '<p class="showcase__desc">' + escapeHtml(hs.description || "") + "</p>" +
           '<div class="arch-teaser">' +
             '<div class="arch-teaser__text">' +
-              '<span class="arch-teaser__eyebrow">轻天璇 Studio · 技术底座</span>' +
+              '<span class="arch-teaser__eyebrow">星阵视界 Studio · 技术底座</span>' +
               '<p class="arch-teaser__title">四层架构、两条总线：控制面编排，数据面执行，模型层统一出网</p>' +
               '<p class="arch-teaser__desc">NeoFlow 拆 DAG，NeoTask 拉任务，AI Gateway 收敛模型出口；PenFix 三道质检门按根因回退。分层、总线与回退路径在系统架构页展开。</p>' +
             "</div>" +
@@ -481,10 +481,12 @@
     var title = el("board-title");
     var star = activeStar();
     var stage = activeStage();
-    if (state.query) title.textContent = "搜索「" + state.query + "」· " + sites.length;
-    else if (stage) title.textContent = stage.char + " · " + (stage.label || "") + " · " + sites.length;
-    else if (star) title.textContent = star.title + " · " + sites.length;
-    else title.textContent = "星图 · 全部服务 · " + sites.length;
+    // 展示区已承载 hero 卡时，网格里没有它，但「全部服务」的计数仍应包含它
+    var total = sites.length + (inShowcase ? 1 : 0);
+    if (state.query) title.textContent = "搜索「" + state.query + "」· " + total;
+    else if (stage) title.textContent = stage.char + " · " + (stage.label || "") + " · " + total;
+    else if (star) title.textContent = star.title + " · " + total;
+    else title.textContent = "星图 · 全部服务 · " + total;
 
     revealRefresh();
   }

@@ -1,38 +1,46 @@
 {
   "brand": {
     "name": "HelpEnx",
-    "fullName": "HelpEnx Hub · 星阵台",
-    "alias": "星阵台",
-    "motto": "聚七星之阵，筑数字工坊。",
-    "tagline": "从底层引擎到 AIGC 创意落地，开源项目、平台能力、在线工具与行业演示，在星阵台一揽全局、一触即达。",
+    "fullName": "HelpEnx Hub · 星阵万象",
+    "alias": "星阵万象",
+    "motto": "聚七星之阵，启万象之境。",
+    "tagline": "从底层引擎到 AIGC 创意落地，开源项目、平台能力、在线工具与行业演示，在星阵万象一揽全局、一触即达。",
     "site": "helpenx.com",
     "github": "https://github.com/neopen",
     "cta": {
-      "primary": { "label": "轻天璇 Studio（演示版）", "url": "https://studio.helpenx.com" },
+      "primary": { "label": "星阵视界 Studio（演示版）", "url": "https://studio.helpenx.com" },
       "secondary": { "label": "查看全部服务", "url": "#board" }
     }
   },
+  "routing": {
+    "note": "星阵视界只使用 studio.helpenx.com 一个域名：Studio 占根路径，星阵工坊与摇光计划作为视界内的模块与计划挂在子路径，与 Studio 同域共用登录、资产库与 SEO，不单独开子域名；将来若工坊独立成社区，再从子路径迁出。",
+    "paths": {
+      "studio": "/",
+      "workshop": "/workshop",
+      "yaoguang-plan": "/creators"
+    }
+  },
   "seo": {
-    "title": "HelpEnx Hub · 星阵台 | 北斗七星生态 · AIGC 创意、平台中枢与开源工具枢纽",
-    "description": "HelpEnx Hub 星阵台：聚七星之阵，筑数字工坊。以北斗七星为引，天枢开源引擎、天璇 AIGC Studio（启绘铸韵织鉴藏七星轨）、天玑平台中枢、天权数字工具、玉衡内容与知识、开阳行业方案、摇光实验共创，22 项服务一触即达。",
-    "keywords": ["HelpEnx", "HelpEnx Hub", "星阵台", "北斗七星", "北斗阵列", "七星阵列", "七星生态", "七主星", "天枢", "天璇", "天玑", "天权", "玉衡", "开阳", "摇光", "轻天枢", "轻天璇 Studio", "轻天玑", "平台中枢", "统一账号", "AI 网关", "模型网关", "开放平台", "MCP", "轻天权", "轻玉衡", "轻开阳", "轻摇光", "七星轨", "天璇七星轨", "AIGC Studio", "AIGC 创意", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "工作流编排", "DAG 调度", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
+    "title": "HelpEnx Hub · 星阵万象 | 北斗七星生态 · AIGC 创意、平台总线与开源工具",
+    "description": "HelpEnx Hub 星阵万象：聚七星之阵，启万象之境。以北斗七星为引，天枢开源引擎、星阵视界 AIGC 平台（Studio 总控、启绘铸韵织鉴藏七星轨与星阵工坊）、天玑平台总线、天权数字工具、玉衡内容与知识、开阳行业方案、摇光创作者计划，23 项服务一触即达。",
+    "keywords": ["HelpEnx", "HelpEnx Hub", "星阵万象", "星阵视界", "星阵工坊", "北斗七星", "北斗阵列", "七星阵列", "七星生态", "七主星", "天枢", "天璇", "天玑", "天权", "玉衡", "开阳", "摇光", "摇光计划", "创作者扶持", "平台总线", "统一账号", "AI 网关", "模型网关", "开放平台", "MCP", "七星轨", "星阵视界七星轨", "AIGC Studio", "AIGC 创意", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "模板市场", "创作社区", "工作流编排", "DAG 调度", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
     "url": "https://helpenx.com/",
-    "socialTitle": "HelpEnx Hub · 星阵台 | 北斗七星生态服务枢纽",
+    "socialTitle": "HelpEnx Hub · 星阵万象 | 北斗七星生态服务枢纽",
     "image": "https://helpenx.com/assets/og-cover.png",
-    "imageAlt": "HelpEnx Hub · 星阵台：聚七星之阵，筑数字工坊，北斗七星生态 22 项服务一触即达",
+    "imageAlt": "HelpEnx Hub · 星阵万象：聚七星之阵，启万象之境，北斗七星生态 23 项服务一触即达",
     "imageWidth": 1200,
     "imageHeight": 630,
     "imageType": "image/png",
     "logo": "https://helpenx.com/assets/brand-mark.png",
-    "lastmod": "2026-11-15",
-    "name": "HelpEnx Hub · 星阵台",
+    "lastmod": "2026-11-16",
+    "name": "HelpEnx Hub · 星阵万象",
     "locale": "zh_CN",
     "language": "zh-CN"
   },
   "constellation": {
     "eyebrow": "北斗阵列 · 七主星",
-    "title": "七主星领航，22 项服务各归其位",
-    "lead": "七星各司其职：天枢管开源引擎，天璇管 AIGC 生产，天玑管平台中枢，天权管数字工具，玉衡沉淀内容与知识，开阳承载行业方案，摇光试验新可能。",
+    "title": "七主星领航，23 项服务各归其位",
+    "lead": "七星各司其职：天枢管开源引擎，天璇以星阵视界承载 AIGC 生产与工坊，天玑管平台总线，天权管数字工具，玉衡沉淀内容与知识，开阳承载行业方案，摇光以创作者计划试验新可能。",
     "hint": "点主星在下方展开各自的星图，点节点筛选服务，点辅星直达项目；点同一颗主星或「收起星图」回到全部。",
     "links": [
       ["tianshu", "tianxuan"],
@@ -47,7 +55,7 @@
       {
         "id": "tianshu",
         "name": "天枢",
-        "title": "轻天枢 · 开源引擎",
+        "title": "天枢 · 开源引擎",
         "short": "开源引擎",
         "desc": "调度、队列与后端工具链，几行代码接管分布式执行。",
         "accent": "#6f5bb8",
@@ -82,21 +90,21 @@
       {
         "id": "tianxuan",
         "name": "天璇",
-        "title": "轻天璇 · AIGC Studio",
-        "short": "AIGC 创意",
-        "desc": "从剧本到成片的全链路多 Agent 编排，创意按镜头落地。",
+        "title": "天璇 · 星阵视界 AIGC 平台",
+        "short": "AIGC 平台",
+        "desc": "璇为美玉，作品如玉：从剧本到成片的全链路多 Agent 编排，Studio 总控、六段工序与工坊沉淀。",
         "accent": "#0a7494",
         "x": 12.5,
         "y": 60,
         "label": "bottom",
         "auxAngle": 200,
         "auxSpread": 92,
-        "projects": ["studio", "penplot", "penshot", "pengen", "pendub", "penclip", "penfix"],
+        "projects": ["studio", "penplot", "penshot", "pengen", "pendub", "penclip", "penfix", "workshop"],
         "track": {
-          "eyebrow": "PIPELINE RAIL · 七星轨",
-          "title": "天璇 · 七星轨",
+          "eyebrow": "PLATFORM RAIL · 星阵视界七星轨",
+          "title": "星阵视界 · 七星轨",
           "charLine": "启 · 绘 · 铸 · 韵 · 织 · 鉴 · 藏",
-          "lead": "从一句念头到一部成片，七颗星位各守一段工序。点星位筛选并定位对应工具，再点一次回到整轨。",
+          "lead": "璇为美玉，作品如玉：从一句念头到一部成片，七颗星位各守一段工序。Studio 是总控台，启绘铸韵织鉴六道工序之后，由工坊沉淀模板与作品。",
           "hint": "点环节定位工具，点「收起星图」回到全部。",
           "stages": [
             { "id": "qi", "char": "启", "site": "penplot", "label": "剧情创作", "accent": "#2f8a63", "x": 7, "y": 64 },
@@ -105,15 +113,15 @@
             { "id": "yun", "char": "韵", "site": "pendub", "label": "音频同步", "accent": "#c2762a", "x": 50, "y": 30 },
             { "id": "zhi", "char": "织", "site": "penclip", "label": "视频剪辑", "accent": "#b08a1e", "x": 65, "y": 34 },
             { "id": "jian", "char": "鉴", "site": "penfix", "label": "质量审核", "accent": "#b0524c", "x": 79, "y": 46 },
-            { "id": "cang", "char": "藏", "site": "studio", "label": "资产沉淀", "accent": "#8b98a9", "x": 93, "y": 60 }
+            { "id": "cang", "char": "藏", "site": "workshop", "label": "工坊沉淀", "accent": "#8b98a9", "x": 93, "y": 60 }
           ]
         }
       },
       {
         "id": "tianji",
         "name": "天玑",
-        "title": "轻天玑 · 平台中枢",
-        "short": "平台中枢",
+        "title": "天玑 · 平台总线",
+        "short": "平台总线",
         "desc": "统一账号、模型网关与开放能力：七个模块共用的一条平台总线。",
         "accent": "#4f6ae0",
         "x": 29.5,
@@ -124,8 +132,8 @@
         "projects": ["helpenx-id", "ai-gateway", "open-platform"],
         "micro": {
           "layout": "nexus",
-          "eyebrow": "PLATFORM NEXUS · 平台中枢",
-          "title": "天玑 · 平台中枢",
+          "eyebrow": "PLATFORM BUS · 平台总线",
+          "title": "天玑 · 平台总线",
           "charLine": "账号 · 网关 · 开放",
           "lead": "七个模块共用一套账号、一条模型网关与一个开放平台：登录、调用与配额都在这里收口。",
           "core": { "x": 50, "y": 50, "title": "HUB", "note": "统一接入" },
@@ -144,7 +152,7 @@
       {
         "id": "tianquan",
         "name": "天权",
-        "title": "轻天权 · 数字工具箱",
+        "title": "天权 · 数字工具箱",
         "short": "数字工具",
         "desc": "浏览器本地处理，隐私安全，即开即用。",
         "accent": "#b4690e",
@@ -176,9 +184,9 @@
       {
         "id": "yuheng",
         "name": "玉衡",
-        "title": "轻玉衡 · 内容与知识",
+        "title": "玉衡 · 内容与知识",
         "short": "内容知识",
-        "desc": "技术博客与产品文档：AI、Python 与系统架构的一手记录。",
+        "desc": "技术博客与产品文档：以衡为尺，记录并校准 AI、Python 与系统架构的一手实践。",
         "accent": "#96650a",
         "x": 50,
         "y": 47,
@@ -191,7 +199,7 @@
           "eyebrow": "CONTENT BEACON · 内容信标",
           "title": "玉衡 · 内容信标",
           "charLine": "AI · Python · 架构",
-          "lead": "一篇篇实践记录与一套产品文档汇成信标：AI 应用、Python 工程与系统架构，持续向外发信。",
+          "lead": "衡为尺，信为标：一篇篇实践记录与一套产品文档汇成信标——AI 应用、Python 工程与系统架构，持续向外发信。",
           "nodes": [
             { "id": "post", "site": "blog", "char": "文", "label": "技术博客", "x": 34, "y": 50 },
             { "id": "docs", "site": "docs", "char": "册", "label": "文档中心", "x": 64, "y": 62 }
@@ -206,7 +214,7 @@
       {
         "id": "kaiyang",
         "name": "开阳",
-        "title": "轻开阳 · 行业演示",
+        "title": "开阳 · 行业演示",
         "short": "行业演示",
         "desc": "智慧城市、安检、TMS 与 ERP 的可运行案例。",
         "accent": "#4d6484",
@@ -242,36 +250,36 @@
       {
         "id": "yaoguang",
         "name": "摇光",
-        "title": "轻摇光 · 实验与共创",
-        "short": "实验共创",
-        "desc": "灵犀 AIGC 创作台：角色、场景与模型的资产试验场。",
+        "title": "摇光 · 创作者计划",
+        "short": "创作者计划",
+        "desc": "摇光计划：视界创作者的扶持、模板分成与作品展示。",
         "accent": "#8a6ba8",
         "x": 92,
         "y": 38,
         "label": "top",
         "auxAngle": 22,
         "auxSpread": 42,
-        "projects": ["demo-lingxi"],
+        "projects": ["yaoguang-plan"],
         "micro": {
           "layout": "spiral",
-          "eyebrow": "SANDBOX ORBIT · 共创轨道",
-          "title": "摇光 · 共创轨道",
-          "charLine": "角色 · 场景 · 模型",
-          "lead": "灵犀 AIGC 创作台把角色、场景与模型放进同一条试验轨道：先试，再定。",
+          "eyebrow": "CREATOR ORBIT · 创作者轨道",
+          "title": "摇光 · 创作者轨道",
+          "charLine": "创作 · 分成 · 展示",
+          "lead": "摇光计划把创作者、模板与作品放进同一条扶持轨道：先内测，再分成。",
           "nodes": [
-            { "id": "lingxi", "site": "demo-lingxi", "char": "犀", "label": "灵犀创作台", "x": 30, "y": 52 }
+            { "id": "plan", "site": "yaoguang-plan", "char": "光", "label": "摇光计划", "x": 30, "y": 52 }
           ],
           "sats": [
-            { "x": 55, "y": 26, "text": "角色资产" },
-            { "x": 72, "y": 66, "text": "场景资产" },
-            { "x": 90, "y": 30, "text": "模型试验" }
+            { "x": 55, "y": 26, "text": "首批内测" },
+            { "x": 72, "y": 66, "text": "模板分成" },
+            { "x": 90, "y": 30, "text": "作品展示" }
           ]
         }
       }
     ]
   },
   "story": {
-    "eyebrow": "轻天璇 Studio · 数据流模型",
+    "eyebrow": "星阵视界 Studio · 数据流模型",
     "title": "不是一条直线：数据分叉、三处质检、按层回退",
     "lead": [
       "一句创意先写成结构化剧本，再切成带 Prompt 与时长的分镜。两份产物都在环节内自检自修，判断不了的交给人工。",
@@ -388,7 +396,7 @@
   "sites": [
     {
       "id": "studio",
-      "name": "轻天璇 Studio",
+      "name": "星阵视界 Studio",
       "url": "https://studio.helpenx.com",
       "category": "studio",
       "size": "hero",
@@ -396,9 +404,9 @@
       "image": "./assets/studio-pipeline.svg",
       "imageWidth": 680,
       "imageHeight": 460,
-      "ctaLabel": "进入轻天璇 Studio（演示版）",
-      "tagline": "AIGC 创意工坊",
-      "description": "以轻盈之技，筑云端之梦。从剧本到成片的全链路多 Agent 编排，让创意如美玉般落地：角色、场景、道具、模型沉淀为可复用资产库，跨镜头、跨集保持同一张脸，换一部剧不必从零重画。整集可一键生成，也能在任意节点人工介入改写。",
+      "ctaLabel": "进入星阵视界 Studio（演示版）",
+      "tagline": "AIGC 平台 · 全链路编排",
+      "description": "以轻盈之技，让创意落地成片。从剧本到成片的全链路多 Agent 编排，让创意如美玉般落地：角色、场景、道具、模型沉淀为可复用资产库，跨镜头、跨集保持同一张脸，换一部剧不必从零重画。整集可一键生成，也能在任意节点人工介入改写。",
       "pipeline": ["创意 / 剧本", "分集分镜脚本", "数字资产 · 角色 / 场景", "关键帧", "视频片段", "配音 · 口型 · BGM", "分段质检", "剪辑合成", "终审 / 成片"],
       "features": ["角色 / 场景 / 模型资产库", "多模型路由与降级", "跨镜头跨集一致性", "自动质检与返工", "断点续跑与配额调度", "Tool / MCP / API 开放", "可用率与成本指标"],
       "keywords": ["短剧 AI 生成", "AI 短剧", "剧本转视频", "AIGC 工作流", "多 Agent 编排", "分镜脚本生成", "数字资产库", "角色一致性", "场景资产", "模型资产", "AI 配音", "口型同步", "文生视频", "图生视频", "AI 剪辑", "短剧制作"]
@@ -513,6 +521,32 @@
       "description": "在视频、音频与初剪后各设一道质检：画面一致性、音画同步、内容合规与技术指标。Gen/Dub 不合格回分镜；Clip 终审按根因回 PenClip 重剪或回 Gen/Dub 重生成。",
       "features": ["三处质检门", "画面一致性检查", "音画同步校验", "内容合规审查", "技术指标检测", "根因分流回退", "重剪 / 重生成分级"],
       "keywords": ["视频审核", "内容合规", "画质检测", "音画同步校验", "质量把关", "AI 质检"]
+    },
+    {
+      "id": "workshop",
+      "name": "星阵工坊",
+      "url": "https://studio.helpenx.com/workshop",
+      "category": "studio",
+      "status": "planned",
+      "deployed": false,
+      "icon": "spark",
+      "tagline": "星阵视界创作社区 · 模板与作品",
+      "description": "星阵视界的创作社区与模板市场：创作者在这里发布短剧模板、角色与场景资产，作品墙展示成片与拆解，看到喜欢的直接一键套用；资产可复用、可授权、可分成，让一次创作成为下一次的起点。",
+      "features": ["模板市场与一键套用", "作品墙与创作拆解", "角色 / 场景资产复用", "创作者主页", "授权与分成", "创作挑战与榜单"],
+      "keywords": ["星阵工坊", "AIGC 创作社区", "模板市场", "作品广场", "数字资产复用", "模板分成", "短剧模板", "角色资产", "场景资产"]
+    },
+    {
+      "id": "yaoguang-plan",
+      "name": "摇光计划",
+      "url": "https://studio.helpenx.com/creators",
+      "category": "studio",
+      "status": "planned",
+      "deployed": false,
+      "icon": "id",
+      "tagline": "星阵视界创作者扶持计划",
+      "description": "面向使用星阵视界创作短剧与模板的创作者：首批内测名额、官方模板与资产授权、作品在工坊首页展示，模板被套用后获得分成。计划按季度招募，权益与名额公开，不收取报名费。",
+      "features": ["首批内测名额", "官方模板与资产授权", "工坊首页展示位", "模板套用分成", "季度招募与公示", "创作者交流群"],
+      "keywords": ["摇光计划", "创作者扶持", "AIGC 创作者", "模板分成", "短剧创作", "内测名额", "作品展示", "创作社区"]
     },
     {
       "id": "helpoke",
@@ -666,18 +700,6 @@
       "description": "面向跨境与国内电商分销企业的静态演示 ERP：销售、采购、库存、财务四条主线一体化贯通，单据从创建到审核全流程可操作，用来展示订单履约、库存周转与成本核算在同一数据模型下的联动。",
       "features": ["销售 / 采购 / 库存 / 财务一体化", "单据全流程可操作", "跨境与内销分销场景", "静态演示免注册"],
       "keywords": ["ERP", "企业资源计划", "电商 ERP", "跨境电商", "进销存", "库存管理", "财务一体化", "单据流程", "分销管理"]
-    },
-    {
-      "id": "demo-lingxi",
-      "name": "灵犀 AIGC 创作台",
-      "url": "https://aigc.pengline.cn",
-      "category": "demo",
-      "status": "archived",
-      "icon": "spark",
-      "tagline": "AIGC 创作与资产演示",
-      "description": "角色、道具、场景、短剧与 LoRA 模型的一体化创作、运行与资产管理演示：从发现广场浏览公开作品，到创作台内完成生成、调参与资产沉淀，用于验证轻量 AIGC 创作场景与数字资产的复用路径。",
-      "features": ["角色 / 道具 / 场景资产", "LoRA 模型管理", "短剧创作流程", "发现广场与作品分发"],
-      "keywords": ["灵犀", "AIGC 创作台", "LoRA 模型", "数字资产", "短剧创作", "AI 生成", "发现广场", "资产复用"]
     }
   ]
 }

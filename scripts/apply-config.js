@@ -323,7 +323,7 @@ function heroCardOf(site) {
       '<span class="showcase__tagline">' + esc(site.tagline || "") + "</span>" +
       '<p class="showcase__desc">' + esc(site.description || "") + "</p>" +
       '<div class="arch-teaser"><div class="arch-teaser__text">' +
-        '<span class="arch-teaser__eyebrow">轻天璇 Studio · 技术底座</span>' +
+        '<span class="arch-teaser__eyebrow">星阵视界 Studio · 技术底座</span>' +
         '<p class="arch-teaser__title">四层架构、两条总线：控制面编排，数据面执行，模型层统一出网</p>' +
         '<p class="arch-teaser__desc">NeoFlow 拆 DAG，NeoTask 拉任务，AI Gateway 收敛模型出口；PenFix 三道质检门按根因回退。分层、总线与回退路径在系统架构页展开。</p>' +
       "</div>" +

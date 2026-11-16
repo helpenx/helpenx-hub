@@ -20,6 +20,26 @@
       "yaoguang-plan": "/creators"
     }
   },
+  "reserved": {
+    "note": "预留位只做规划记录，不渲染、不计入 23 项服务；拿到正式名称与 URL 后再迁入 sites。",
+    "names": [
+      { "name": "星阵云", "use": "托管运行时 / 云端工作室" }
+    ],
+    "products": [
+      { "name": "AI 陪伴", "star": "kaiyang", "role": "消费者产品" },
+      { "name": "医疗问答", "star": "kaiyang", "role": "垂直行业问答" },
+      { "name": "股票分析", "star": "kaiyang", "role": "垂直行业问答" }
+    ],
+    "supply": {
+      "yaoguang-plan": "AI 陪伴角色、模型与素材的创作者供给",
+      "workshop": "角色、模型、素材与模板的上架、授权与分成"
+    },
+    "capabilities": {
+      "tianxuan": "角色形象、语音、视频与素材加工管线",
+      "tianji": "账号、模型网关、配额、计费与审计",
+      "yuheng": "角色设定库、内容规范、评测与免责声明"
+    }
+  },
   "seo": {
     "title": "HelpenX Hub · 星阵万象 | 北斗七星生态 · AIGC 创意、平台总线与开源工具",
     "description": "HelpenX Hub 星阵万象：聚七星之阵，启万象之境。以北斗七星为引，天枢开源引擎、星阵视界 AIGC 平台（Studio 总控、启绘铸韵织鉴藏七星轨与星阵工坊）、天玑平台总线、天权数字工具、玉衡内容与知识、开阳行业方案、摇光创作者计划，23 项服务一触即达。",

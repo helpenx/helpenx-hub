@@ -1,7 +1,7 @@
 {
   "brand": {
-    "name": "HelpEnx",
-    "fullName": "HelpEnx Hub · 星阵万象",
+    "name": "HelpenX",
+    "fullName": "HelpenX Hub · 星阵万象",
     "alias": "星阵万象",
     "motto": "聚七星之阵，启万象之境。",
     "tagline": "从底层引擎到 AIGC 创意落地，开源项目、平台能力、在线工具与行业演示，在星阵万象一揽全局、一触即达。",
@@ -21,11 +21,11 @@
     }
   },
   "seo": {
-    "title": "HelpEnx Hub · 星阵万象 | 北斗七星生态 · AIGC 创意、平台总线与开源工具",
-    "description": "HelpEnx Hub 星阵万象：聚七星之阵，启万象之境。以北斗七星为引，天枢开源引擎、星阵视界 AIGC 平台（Studio 总控、启绘铸韵织鉴藏七星轨与星阵工坊）、天玑平台总线、天权数字工具、玉衡内容与知识、开阳行业方案、摇光创作者计划，23 项服务一触即达。",
-    "keywords": ["HelpEnx", "HelpEnx Hub", "星阵万象", "星阵视界", "星阵工坊", "北斗七星", "北斗阵列", "七星阵列", "七星生态", "七主星", "天枢", "天璇", "天玑", "天权", "玉衡", "开阳", "摇光", "摇光计划", "创作者扶持", "平台总线", "统一账号", "AI 网关", "模型网关", "开放平台", "MCP", "七星轨", "星阵视界七星轨", "AIGC Studio", "AIGC 创意", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "模板市场", "创作社区", "工作流编排", "DAG 调度", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
+    "title": "HelpenX Hub · 星阵万象 | 北斗七星生态 · AIGC 创意、平台总线与开源工具",
+    "description": "HelpenX Hub 星阵万象：聚七星之阵，启万象之境。以北斗七星为引，天枢开源引擎、星阵视界 AIGC 平台（Studio 总控、启绘铸韵织鉴藏七星轨与星阵工坊）、天玑平台总线、天权数字工具、玉衡内容与知识、开阳行业方案、摇光创作者计划，23 项服务一触即达。",
+    "keywords": ["HelpenX", "HelpenX Hub", "星阵万象", "星阵视界", "星阵工坊", "北斗七星", "北斗阵列", "七星阵列", "七星生态", "七主星", "天枢", "天璇", "天玑", "天权", "玉衡", "开阳", "摇光", "摇光计划", "创作者扶持", "平台总线", "统一账号", "AI 网关", "模型网关", "开放平台", "MCP", "七星轨", "星阵视界七星轨", "AIGC Studio", "AIGC 创意", "短剧 AI 生成", "AI 分镜", "AIGC 生产编排", "数字资产", "模板市场", "创作社区", "工作流编排", "DAG 调度", "Python 任务队列", "在线工具箱", "防久坐提醒", "Spring Boot JPA", "智慧城市", "智慧安检", "TMS 运输管理系统", "电商 ERP", "技术博客", "开源项目"],
     "url": "https://helpenx.com/",
-    "socialTitle": "HelpEnx Hub · 星阵万象",
+    "socialTitle": "HelpenX Hub · 星阵万象",
     "socialDescription": "聚七星之阵，启万象之境",
     "image": "https://helpenx.com/assets/share-thumb.jpg",
     "imageAlt": "星阵工坊七星阵列徽章：七颗星闭合连线，围合出中心工作台的负空间",
@@ -33,10 +33,10 @@
     "imageHeight": 600,
     "imageType": "image/jpeg",
     "twitterImage": "https://helpenx.com/assets/share-cover.jpg",
-    "twitterImageAlt": "HelpEnx Hub · 星阵万象：七星阵列徽章，聚七星之阵，启万象之境，北斗七星生态 23 项服务一触即达",
+    "twitterImageAlt": "HelpenX Hub · 星阵万象：七星阵列徽章，聚七星之阵，启万象之境，北斗七星生态 23 项服务一触即达",
     "logo": "https://helpenx.com/assets/brand-mark.png",
     "lastmod": "2026-11-16",
-    "name": "HelpEnx Hub · 星阵万象",
+    "name": "HelpenX Hub · 星阵万象",
     "locale": "zh_CN",
     "language": "zh-CN"
   },
@@ -591,7 +591,7 @@
     },
     {
       "id": "helpenx-id",
-      "name": "HelpEnx ID",
+      "name": "HelpenX ID",
       "url": "https://id.helpenx.com",
       "category": "platform",
       "status": "planned",
@@ -644,7 +644,7 @@
     },
     {
       "id": "docs",
-      "name": "HelpEnx 文档中心",
+      "name": "HelpenX 文档中心",
       "url": "https://docs.helpenx.com",
       "category": "content",
       "status": "planned",

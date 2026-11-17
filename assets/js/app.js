@@ -1601,7 +1601,7 @@
 
     // 分享图预取：Web Share 只接受 File，提前缓存避免点击时丢失用户手势
     var shareFile = null;
-    fetch("assets/share-thumb.jpg", { cache: "force-cache" })
+    fetch("assets/img/share-thumb.jpg", { cache: "force-cache" })
       .then(function (res) { return res.ok ? res.blob() : null; })
       .then(function (blob) {
         if (!blob) return;

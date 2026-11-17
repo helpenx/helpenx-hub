@@ -78,6 +78,7 @@ const og = [
 if (seo.image) {
   og.push(
     "<meta property=\"og:image\" content=\"" + esc(seo.image) + "\" />",
+    "<meta property=\"og:image:secure_url\" content=\"" + esc(seo.image) + "\" />",
     "<meta property=\"og:image:type\" content=\"" + esc(imageType) + "\" />"
   );
   if (seo.imageWidth && seo.imageHeight) {
@@ -106,7 +107,9 @@ const head = [
   "<meta name=\"keywords\" content=\"" + esc(metaKeywords) + "\" />",
   "<meta name=\"author\" content=\"" + esc(brand.name || "") + "\" />",
   "<meta name=\"robots\" content=\"index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1\" />",
-  "<meta name=\"googlebot\" content=\"index, follow\" />",
+  "<meta name=\"googlebot\" content=\"index, follow, max-snippet:-1, max-image-preview:large\" />",
+  "<meta name=\"bingbot\" content=\"index, follow, max-image-preview:large\" />",
+  "<meta name=\"applicable-device\" content=\"pc,mobile\" />",
   "<link rel=\"canonical\" href=\"" + esc(url) + "\" />",
   "<link rel=\"alternate\" hreflang=\"" + esc(seo.language || "zh-CN") + "\" href=\"" + esc(url) + "\" />",
   "<link rel=\"alternate\" hreflang=\"x-default\" href=\"" + esc(url) + "\" />",
@@ -169,7 +172,7 @@ const graph = {
       "url": url,
       "logo": {
         "@type": "ImageObject",
-        "url": seo.logo || (url + "assets/brand-mark.png"),
+        "url": seo.logo || (url + "assets/img/brand-mark.png"),
         "width": 256,
         "height": 256
       },
@@ -989,8 +992,28 @@ function microBoardOf(star) {
 write("index.html", html);
 
 // robots.txt / sitemap.xml：sitemap 只收录同域与子域，外链域名不能出现在本站 sitemap 里
+// 显式列出中外主流抓取器，避免托管边缘节点的默认规则误伤；Host 供百度识别首选域
 write("robots.txt", [
   "User-agent: *",
+  "Allow: /",
+  "",
+  "User-agent: Googlebot",
+  "Allow: /",
+  "",
+  "User-agent: Bingbot",
+  "Allow: /",
+  "",
+  "User-agent: Baiduspider",
+  "Allow: /",
+  "Host: " + host,
+  "",
+  "User-agent: Sogou web spider",
+  "Allow: /",
+  "",
+  "User-agent: 360Spider",
+  "Allow: /",
+  "",
+  "User-agent: YisouSpider",
   "Allow: /",
   "",
   "Sitemap: https://" + host + "/sitemap.xml",
@@ -1003,19 +1026,29 @@ const sameOrigin = sites.filter((s) => {
   try { return new URL(s.url).host.split(".").slice(-2).join(".") === domain; } catch (e) { return false; }
 });
 // 门户自有页面用 seo.lastmod 标注更新时间；子域内容不由本站维护，不写 lastmod
-const pageNode = (loc, changefreq, priority, dated) => [
+const imageNode = (loc, title) => [
+  "    <image:image>",
+  "      <image:loc>" + esc(loc) + "</image:loc>",
+  title ? "      <image:title>" + esc(title) + "</image:title>" : "",
+  "    </image:image>"
+].filter((x) => x !== "").join("\n");
+const pageNode = (loc, changefreq, priority, dated, images) => [
   "  <url>",
   "    <loc>" + esc(loc) + "</loc>",
   dated && seo.lastmod ? "    <lastmod>" + esc(seo.lastmod) + "</lastmod>" : "",
   "    <changefreq>" + changefreq + "</changefreq>",
   "    <priority>" + priority + "</priority>",
+  (images || []).map((img) => imageNode(img.loc, img.title)).join("\n"),
   "  </url>"
 ].filter((x) => x !== "").join("\n");
 write("sitemap.xml", [
   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-  "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">",
-  pageNode(url, "weekly", "1.0", true),
-  pageNode("https://" + host + "/architecture.html", "monthly", "0.7", true),
+  "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"",
+  "        xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">",
+  pageNode(url, "weekly", "1.0", true, seo.image ? [{ loc: seo.image, title: socialTitle }] : []),
+  pageNode("https://" + host + "/architecture.html", "monthly", "0.7", true, [
+    { loc: "https://" + host + "/assets/img/share-cover.jpg", title: "星阵视界 Studio · 系统架构" }
+  ]),
   sameOrigin.map((s) => pageNode(String(s.url).replace(/\/+$/, "") + "/", "monthly", "0.8", false)).join("\n"),
   "</urlset>",
   ""

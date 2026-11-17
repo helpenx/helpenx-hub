@@ -2350,12 +2350,13 @@ body::after {
 }
 @media (max-width: 760px) {
   .constellation { padding-top: 4px; }
-  .constellation__toolrow { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .constellation__toolrow { flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 16px; }
+  .constellation__hint { line-height: 1.7; }
   .constellation__all { align-self: flex-start; }
   .constellation__board {
-    aspect-ratio: auto; min-height: 0; margin-top: 18px;
+    aspect-ratio: auto; min-height: 0; margin-top: 22px;
     display: grid; grid-template-columns: 1fr;
-    gap: 8px; padding: 12px;
+    gap: 10px; padding: 14px;
     background: linear-gradient(180deg, #fcfdff, #f4f8fd);
   }
   .constellation__board::before,
@@ -2367,15 +2368,15 @@ body::after {
   .constellation__axis,
   .constellation__meta { display: none; }
   .cstar {
-    position: static; width: 100%; height: auto; transform: none;
-    display: flex; align-items: center; gap: 9px;
-    padding: 10px 12px;
+    position: static; width: 100%; height: auto; min-height: 48px; transform: none;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
     border: 1px solid var(--border); border-radius: 12px;
     background: var(--surface); text-align: left;
   }
   .cstar__point {
     position: relative; inset: auto; flex: none;
-    width: 16px; height: 16px; display: grid; place-items: center;
+    width: 18px; height: 18px; display: grid; place-items: center;
   }
   .cstar__halo { display: none; }
   .cstar__point::before, .cstar__point::after { display: none; }
@@ -2383,10 +2384,15 @@ body::after {
     width: 9px; height: 9px; transform: none; animation: none;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 13%, transparent);
   }
-  .cstar__label {
-    position: static; transform: none; flex: 1; white-space: normal;
-    display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+  .cstar .cstar__label,
+  .cstar--label-top .cstar__label,
+  .cstar--label-bottom .cstar__label,
+  .cstar--label-left .cstar__label,
+  .cstar--label-right .cstar__label {
+    position: static; inset: auto; transform: none; flex: 1; white-space: normal;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
     padding: 0; border: 0; background: none; box-shadow: none;
+    line-height: 1.4;
   }
   .cstar:hover .cstar__label, .cstar:focus-visible .cstar__label,
   .cstar[aria-pressed="true"] .cstar__label { border-color: transparent; box-shadow: none; }

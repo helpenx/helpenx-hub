@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://helpenx.com/</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://helpenx.com/assets/img/share-thumb.jpg</image:loc>
+      <image:title>HelpenX Hub · 星阵万象</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://helpenx.com/architecture.html</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://helpenx.com/assets/img/share-cover.jpg</image:loc>
+      <image:title>星阵视界 Studio · 系统架构</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://studio.helpenx.com/</loc>

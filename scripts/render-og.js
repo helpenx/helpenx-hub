@@ -1,4 +1,4 @@
-// 把 scripts/share-cover.html 渲染成 1200×630 的社交分享图（assets/share-cover.jpg）
+// 把 scripts/share-cover.html 渲染成 1200×630 的社交分享图（assets/img/share-cover.jpg）
 // 用法：node scripts/render-og.js；改完封面文案后重新运行
 const { spawn } = require("child_process");
 const fs = require("fs");
@@ -11,7 +11,7 @@ const edge = process.env.EDGE || path.join(
 );
 const profile = path.join(root, ".tmp-og-profile");
 const source = "file:///" + path.join(root, "scripts/share-cover.html").replace(/\\/g, "/");
-const out = path.join(root, "assets/share-cover.jpg");
+const out = path.join(root, "assets/img/share-cover.jpg");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 if (!fs.existsSync(edge)) throw new Error("找不到 Edge，可用 EDGE 环境变量指定路径");

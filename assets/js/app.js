@@ -10,6 +10,22 @@
 
   function el(id) { return document.getElementById(id); }
 
+  // 宽屏等比放大：以 1160 设计宽度为基准，视口多宽整页就放大多少，不再留两侧空白
+  function fitPageZoom() {
+    var w = document.documentElement.clientWidth;
+    var z = w > 1160 ? w / 1160 : 1;
+    document.documentElement.style.setProperty("--page-zoom", z.toFixed(4));
+  }
+
+  // 当前整页缩放倍率：指针与几何测量得到的是缩放后的视觉像素，布局要换算回设计像素
+  function pageZoom() {
+    var z = parseFloat(window.getComputedStyle(document.body).zoom);
+    return z > 0 ? z : 1;
+  }
+
+  fitPageZoom();
+  window.addEventListener("resize", fitPageZoom, { passive: true });
+
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -1336,8 +1352,9 @@
     function nearestStarAt(clientX, clientY) {
       if (!starCenters.length) return null;
       var rect = board.getBoundingClientRect();
-      var x = clientX - rect.left;
-      var y = clientY - rect.top;
+      var z = pageZoom();
+      var x = (clientX - rect.left) / z;
+      var y = (clientY - rect.top) / z;
       // 指针压在辅星附近时让位给辅星本身，别被主星热区覆盖
       for (var a = 0; a < auxCenters.length; a++) {
         if (Math.hypot(auxCenters[a].x - x, auxCenters[a].y - y) <= AUX_NEAR) return null;
@@ -1365,11 +1382,18 @@
       // 冻结 3D 倾斜与巡航漂移，按未变换坐标排辅星，避免倾斜后错位
       board.classList.add("is-measuring");
       var br = board.getBoundingClientRect();
-      var W = br.width;
-      var H = br.height;
+      // 整页等比缩放后 gBCR 是视觉像素，统一折算回设计像素再排版
+      var z = pageZoom();
+      var W = br.width / z;
+      var H = br.height / z;
       var starPts = starButtons.map(function (btn) {
         var r = btn.getBoundingClientRect();
-        return { id: btn.getAttribute("data-star"), x: r.left + r.width / 2 - br.left, y: r.top + r.height / 2 - br.top, r: r.width / 2 };
+        return {
+          id: btn.getAttribute("data-star"),
+          x: (r.left + r.width / 2 - br.left) / z,
+          y: (r.top + r.height / 2 - br.top) / z,
+          r: r.width / 2 / z
+        };
       });
       starPts.forEach(function (pt) {
         var nearest = Infinity;
@@ -1383,7 +1407,11 @@
       starCenters = starPts;
       var labelRects = starButtons.map(function (btn) {
         var r = btn.querySelector(".cstar__label").getBoundingClientRect();
-        return { id: btn.getAttribute("data-star"), x: r.left - br.left, y: r.top - br.top, w: r.width, h: r.height };
+        return {
+          id: btn.getAttribute("data-star"),
+          x: (r.left - br.left) / z, y: (r.top - br.top) / z,
+          w: r.width / z, h: r.height / z
+        };
       });
       board.classList.remove("is-measuring");
       board.style.setProperty("--par-x", parX || "0");

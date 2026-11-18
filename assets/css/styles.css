@@ -33,7 +33,10 @@ body {
   font-family: var(--sans);
   background: var(--bg);
   color: var(--text);
-  min-height: 100vh;
+  /* 高度先按缩放折算，否则整页放大后 100vh 会把页面撑高一个倍率 */
+  min-height: calc(100vh / var(--page-zoom, 1));
+  /* 宽屏整页等比放大（倍率由 app.js 按视口写入），视口多宽就铺多宽 */
+  zoom: var(--page-zoom, 1);
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;

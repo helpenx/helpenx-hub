@@ -785,10 +785,10 @@ function microBoardOf(star) {
       link.delay + 's"></path>');
   });
   lines.push(p + "      </svg>");
-  // 底色上的地月：月亮为夜空主天体，地球作伴星悬在一旁
+  // 右下角小日心系统：太阳固定，地球绕日公转，月球再绕地球；比例保持日>地>月
   lines.push(p + '      <span class="constellation__orbit" aria-hidden="true">');
-  lines.push(p + '        <i class="corb corb--moon"></i>');
-  lines.push(p + '        <i class="corb corb--earth"></i>');
+  lines.push(p + '        <i class="corb corb--sun"></i>');
+  lines.push(p + '        <span class="corb-track"><i class="corb corb--earth"><i class="corb corb--moon"></i></i></span>');
   lines.push(p + "      </span>");
   // 颗粒流星：细长亮粒按各自节拍斜落，取代原来整片扫光
   const meteors = [

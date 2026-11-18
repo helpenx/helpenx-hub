@@ -353,10 +353,10 @@
 <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
 <link rel="mask-icon" href="./assets/icons/favicon-mask.svg" color="#0a7494" />
-<link rel="preload" href="./assets/css/styles.css?v=202611172000" as="style" />
-<link rel="preload" href="./assets/js/app.js?v=202611171900" as="script" />
+<link rel="preload" href="./assets/css/styles.css?v=202611191350" as="style" />
+<link rel="preload" href="./assets/js/app.js?v=202611191350" as="script" />
 <link rel="preload" href="./assets/img/studio-pipeline.svg" as="image" type="image/svg+xml" />
-<link rel="stylesheet" href="./assets/css/styles.css?v=202611172000" fetchpriority="high" />
+<link rel="stylesheet" href="./assets/css/styles.css?v=202611191350" fetchpriority="high" />
 </head>
 <body>
 <svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
@@ -546,37 +546,62 @@
       </div>
     </div>
     <div class="constellation__board" data-constellation-board role="group" aria-label="北斗阵列：点主星在下方展开星图，点辅星直达项目">
-      <svg class="constellation__edges" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-          <line data-link="tianshu tianxuan" x1="80.0" y1="91.8" x2="125.0" y2="204.0"></line>
-          <line data-link="tianxuan tianji" x1="125.0" y1="204.0" x2="295.0" y2="214.2"></line>
-          <line data-link="tianji tianquan" x1="295.0" y1="214.2" x2="305.0" y2="98.6"></line>
-          <line data-link="tianquan tianshu" x1="305.0" y1="98.6" x2="80.0" y2="91.8"></line>
-          <line data-link="tianquan yuheng" x1="305.0" y1="98.6" x2="500.0" y2="159.8"></line>
-          <line data-link="yuheng kaiyang" x1="500.0" y1="159.8" x2="695.0" y2="102.0"></line>
-          <line data-link="kaiyang yaoguang" x1="695.0" y1="102.0" x2="920.0" y2="129.2"></line>
-      </svg>
-      <span class="constellation__orbit" aria-hidden="true">
-        <i class="corb corb--sun"></i>
-        <i class="corb corb--earth"><i class="corb__moon"></i></i>
-      </span>
-      <span class="constellation__meteors" aria-hidden="true">
-        <i style="--x:6%;--y:2%;--len:74px;--dur:9.4s;--delay:-1.2s;--angle:-33deg"></i>
-        <i style="--x:18%;--y:10%;--len:52px;--dur:11.6s;--delay:-6.4s;--angle:-29deg"></i>
-        <i style="--x:27%;--y:1%;--len:64px;--dur:10.2s;--delay:-8.8s;--angle:-36deg"></i>
-        <i style="--x:41%;--y:6%;--len:46px;--dur:12.4s;--delay:-3.5s;--angle:-31deg"></i>
-        <i style="--x:56%;--y:2%;--len:82px;--dur:8.8s;--delay:-7.1s;--angle:-34deg"></i>
-        <i style="--x:66%;--y:12%;--len:58px;--dur:10.8s;--delay:-0.4s;--angle:-28deg"></i>
-        <i style="--x:78%;--y:4%;--len:68px;--dur:9.8s;--delay:-5.2s;--angle:-35deg"></i>
-        <i style="--x:88%;--y:9%;--len:48px;--dur:12.8s;--delay:-9.6s;--angle:-30deg"></i>
-      </span>
-      <div class="constellation__aux" data-constellation-aux></div>
-      <button class="cstar cstar--track cstar--label-right" type="button" data-star="tianshu" aria-pressed="false" aria-label="天枢 · 开源引擎，3 项服务，点击展开星图" style="--accent:#6f5bb8;--x:8%;--y:27%"><span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">天枢</span><span class="cstar__short">开源引擎</span><span class="cstar__track">图</span><span class="cstar__count">3</span></span></button>
-      <button class="cstar cstar--track cstar--label-bottom" type="button" data-star="tianxuan" aria-pressed="false" aria-label="天璇 · 星阵视界 AIGC 平台，8 项服务，点击展开七星轨" style="--accent:#0a7494;--x:12.5%;--y:60%"><span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">天璇</span><span class="cstar__short">AIGC 平台</span><span class="cstar__track">轨</span><span class="cstar__count">8</span></span></button>
-      <button class="cstar cstar--track cstar--label-right" type="button" data-star="tianji" aria-pressed="false" aria-label="天玑 · 平台总线，3 项服务，点击展开星图" style="--accent:#4f6ae0;--x:29.5%;--y:63%"><span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">天玑</span><span class="cstar__short">平台总线</span><span class="cstar__track">图</span><span class="cstar__count">3</span></span></button>
-      <button class="cstar cstar--track cstar--label-top" type="button" data-star="tianquan" aria-pressed="false" aria-label="天权 · 数字工具箱，2 项服务，点击展开星图" style="--accent:#b4690e;--x:30.5%;--y:29%"><span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">天权</span><span class="cstar__short">数字工具</span><span class="cstar__track">图</span><span class="cstar__count">2</span></span></button>
-      <button class="cstar cstar--track cstar--label-right" type="button" data-star="yuheng" aria-pressed="false" aria-label="玉衡 · 内容与知识，2 项服务，点击展开星图" style="--accent:#96650a;--x:50%;--y:47%"><span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">玉衡</span><span class="cstar__short">内容知识</span><span class="cstar__track">图</span><span class="cstar__count">2</span></span></button>
-      <button class="cstar cstar--track cstar--label-right" type="button" data-star="kaiyang" aria-pressed="false" aria-label="开阳 · 行业演示，4 项服务，点击展开星图" style="--accent:#4d6484;--x:69.5%;--y:30%"><span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">开阳</span><span class="cstar__short">行业演示</span><span class="cstar__track">图</span><span class="cstar__count">4</span></span></button>
-      <button class="cstar cstar--track cstar--label-top" type="button" data-star="yaoguang" aria-pressed="false" aria-label="摇光 · 创作者计划，1 项服务，点击展开星图" style="--accent:#8a6ba8;--x:92%;--y:38%"><span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">摇光</span><span class="cstar__short">创作者计划</span><span class="cstar__track">图</span><span class="cstar__count">1</span></span></button>
+      <span class="constellation__night" aria-hidden="true"></span>
+      <div class="constellation__space">
+        <div class="constellation__plane">
+          <svg class="constellation__array" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <ellipse class="carray-ring" cx="500" cy="170" rx="474" ry="151"></ellipse>
+            <ellipse class="carray-ring carray-ring--inner" cx="500" cy="170" rx="352" ry="110"></ellipse>
+            <ellipse class="carray-sweep" cx="500" cy="170" rx="474" ry="151" pathLength="100"></ellipse>
+            <path class="carray-chord" data-link="tianshu tianji" d="M80 91.8Q182.4 162.0 295 214.2"></path>
+            <path class="carray-chord" data-link="tianxuan tianquan" d="M125 204Q210.6 143.7 305 98.6"></path>
+            <path class="carray-chord" data-link="tianji yuheng" d="M295 214.2Q399.8 195.6 500 159.8"></path>
+            <path class="carray-chord" data-link="tianquan kaiyang" d="M305 98.6Q500.1 89.5 695 102"></path>
+            <path class="carray-chord" data-link="yuheng yaoguang" d="M500 159.8Q710.8 155.3 920 129.2"></path>
+            <path class="carray-chord" data-link="kaiyang tianshu" d="M695 102Q387.3 107.7 80 91.8"></path>
+            <path class="carray-chord" data-link="yaoguang tianxuan" d="M920 129.2Q521.5 155.8 125 204"></path>
+          </svg>
+          <svg class="constellation__edges" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <defs><linearGradient id="clink-grad-0" gradientUnits="userSpaceOnUse" x1="80" y1="91.8" x2="125" y2="204"><stop offset="0" stop-color="#6f5bb8"></stop><stop offset="1" stop-color="#0a7494"></stop></linearGradient><linearGradient id="clink-grad-1" gradientUnits="userSpaceOnUse" x1="125" y1="204" x2="295" y2="214.2"><stop offset="0" stop-color="#0a7494"></stop><stop offset="1" stop-color="#4f6ae0"></stop></linearGradient><linearGradient id="clink-grad-2" gradientUnits="userSpaceOnUse" x1="295" y1="214.2" x2="305" y2="98.6"><stop offset="0" stop-color="#4f6ae0"></stop><stop offset="1" stop-color="#b4690e"></stop></linearGradient><linearGradient id="clink-grad-3" gradientUnits="userSpaceOnUse" x1="305" y1="98.6" x2="80" y2="91.8"><stop offset="0" stop-color="#b4690e"></stop><stop offset="1" stop-color="#6f5bb8"></stop></linearGradient><linearGradient id="clink-grad-4" gradientUnits="userSpaceOnUse" x1="305" y1="98.6" x2="500" y2="159.8"><stop offset="0" stop-color="#b4690e"></stop><stop offset="1" stop-color="#96650a"></stop></linearGradient><linearGradient id="clink-grad-5" gradientUnits="userSpaceOnUse" x1="500" y1="159.8" x2="695" y2="102"><stop offset="0" stop-color="#96650a"></stop><stop offset="1" stop-color="#4d6484"></stop></linearGradient><linearGradient id="clink-grad-6" gradientUnits="userSpaceOnUse" x1="695" y1="102" x2="920" y2="129.2"><stop offset="0" stop-color="#4d6484"></stop><stop offset="1" stop-color="#8a6ba8"></stop></linearGradient></defs>
+            <path class="clink" data-link="tianshu tianxuan" d="M80 91.8Q94.6 151.1 125 204"></path>
+            <path class="clink-flow" data-link="tianshu tianxuan" pathLength="100" d="M80 91.8Q94.6 151.1 125 204" style="stroke:url(#clink-grad-0);--flow-dur:6.4s;--flow-delay:0.0s"></path>
+            <path class="clink" data-link="tianxuan tianji" d="M125 204Q210.7 197.2 295 214.2"></path>
+            <path class="clink-flow" data-link="tianxuan tianji" pathLength="100" d="M125 204Q210.7 197.2 295 214.2" style="stroke:url(#clink-grad-1);--flow-dur:7.1s;--flow-delay:-1.3s"></path>
+            <path class="clink" data-link="tianji tianquan" d="M295 214.2Q308.1 157.1 305 98.6"></path>
+            <path class="clink-flow" data-link="tianji tianquan" pathLength="100" d="M295 214.2Q308.1 157.1 305 98.6" style="stroke:url(#clink-grad-2);--flow-dur:7.8s;--flow-delay:-2.6s"></path>
+            <path class="clink" data-link="tianquan tianshu" d="M305 98.6Q192.0 110.9 80 91.8"></path>
+            <path class="clink-flow" data-link="tianquan tianshu" pathLength="100" d="M305 98.6Q192.0 110.9 80 91.8" style="stroke:url(#clink-grad-3);--flow-dur:8.5s;--flow-delay:-3.9s"></path>
+            <path class="clink" data-link="tianquan yuheng" d="M305 98.6Q398.2 142.8 500 159.8"></path>
+            <path class="clink-flow" data-link="tianquan yuheng" pathLength="100" d="M305 98.6Q398.2 142.8 500 159.8" style="stroke:url(#clink-grad-4);--flow-dur:9.2s;--flow-delay:-5.2s"></path>
+            <path class="clink" data-link="yuheng kaiyang" d="M500 159.8Q593.5 117.3 695 102"></path>
+            <path class="clink-flow" data-link="yuheng kaiyang" pathLength="100" d="M500 159.8Q593.5 117.3 695 102" style="stroke:url(#clink-grad-5);--flow-dur:9.9s;--flow-delay:-6.5s"></path>
+            <path class="clink" data-link="kaiyang yaoguang" d="M695 102Q805.6 131.3 920 129.2"></path>
+            <path class="clink-flow" data-link="kaiyang yaoguang" pathLength="100" d="M695 102Q805.6 131.3 920 129.2" style="stroke:url(#clink-grad-6);--flow-dur:10.6s;--flow-delay:-7.8s"></path>
+          </svg>
+          <span class="constellation__orbit" aria-hidden="true">
+            <i class="corb corb--moon"></i>
+            <i class="corb corb--earth"></i>
+          </span>
+          <span class="constellation__meteors" aria-hidden="true">
+            <i style="--x:6%;--y:2%;--len:74px;--dur:9.4s;--delay:-1.2s;--angle:-33deg"></i>
+            <i style="--x:18%;--y:10%;--len:52px;--dur:11.6s;--delay:-6.4s;--angle:-29deg"></i>
+            <i style="--x:27%;--y:1%;--len:64px;--dur:10.2s;--delay:-8.8s;--angle:-36deg"></i>
+            <i style="--x:41%;--y:6%;--len:46px;--dur:12.4s;--delay:-3.5s;--angle:-31deg"></i>
+            <i style="--x:56%;--y:2%;--len:82px;--dur:8.8s;--delay:-7.1s;--angle:-34deg"></i>
+            <i style="--x:66%;--y:12%;--len:58px;--dur:10.8s;--delay:-0.4s;--angle:-28deg"></i>
+            <i style="--x:78%;--y:4%;--len:68px;--dur:9.8s;--delay:-5.2s;--angle:-35deg"></i>
+            <i style="--x:88%;--y:9%;--len:48px;--dur:12.8s;--delay:-9.6s;--angle:-30deg"></i>
+          </span>
+          <div class="constellation__aux" data-constellation-aux></div>
+          <button class="cstar cstar--track cstar--label-right" type="button" data-star="tianshu" aria-pressed="false" aria-label="天枢 · 开源引擎，3 项服务，点击展开星图" style="--accent:#6f5bb8;--w:0.29;--x:8%;--y:27%"><span class="cstar__point" aria-hidden="true"><span class="cstar__shadow"></span><span class="cstar__ring"></span><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">天枢</span><span class="cstar__short">开源引擎</span><span class="cstar__track">图</span><span class="cstar__count">3</span></span></button>
+          <button class="cstar cstar--track cstar--label-bottom" type="button" data-star="tianxuan" aria-pressed="false" aria-label="天璇 · 星阵视界 AIGC 平台，8 项服务，点击展开七星轨" style="--accent:#0a7494;--w:1.00;--x:12.5%;--y:60%"><span class="cstar__point" aria-hidden="true"><span class="cstar__shadow"></span><span class="cstar__ring"></span><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">天璇</span><span class="cstar__short">AIGC 平台</span><span class="cstar__track">轨</span><span class="cstar__count">8</span></span></button>
+          <button class="cstar cstar--track cstar--label-right" type="button" data-star="tianji" aria-pressed="false" aria-label="天玑 · 平台总线，3 项服务，点击展开星图" style="--accent:#4f6ae0;--w:0.29;--x:29.5%;--y:63%"><span class="cstar__point" aria-hidden="true"><span class="cstar__shadow"></span><span class="cstar__ring"></span><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">天玑</span><span class="cstar__short">平台总线</span><span class="cstar__track">图</span><span class="cstar__count">3</span></span></button>
+          <button class="cstar cstar--track cstar--label-top" type="button" data-star="tianquan" aria-pressed="false" aria-label="天权 · 数字工具箱，2 项服务，点击展开星图" style="--accent:#b4690e;--w:0.14;--x:30.5%;--y:29%"><span class="cstar__point" aria-hidden="true"><span class="cstar__shadow"></span><span class="cstar__ring"></span><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">天权</span><span class="cstar__short">数字工具</span><span class="cstar__track">图</span><span class="cstar__count">2</span></span></button>
+          <button class="cstar cstar--track cstar--label-right" type="button" data-star="yuheng" aria-pressed="false" aria-label="玉衡 · 内容与知识，2 项服务，点击展开星图" style="--accent:#96650a;--w:0.14;--x:50%;--y:47%"><span class="cstar__point" aria-hidden="true"><span class="cstar__shadow"></span><span class="cstar__ring"></span><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">玉衡</span><span class="cstar__short">内容知识</span><span class="cstar__track">图</span><span class="cstar__count">2</span></span></button>
+          <button class="cstar cstar--track cstar--label-right" type="button" data-star="kaiyang" aria-pressed="false" aria-label="开阳 · 行业演示，4 项服务，点击展开星图" style="--accent:#4d6484;--w:0.43;--x:69.5%;--y:30%"><span class="cstar__point" aria-hidden="true"><span class="cstar__shadow"></span><span class="cstar__ring"></span><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">开阳</span><span class="cstar__short">行业演示</span><span class="cstar__track">图</span><span class="cstar__count">4</span></span></button>
+          <button class="cstar cstar--track cstar--label-top" type="button" data-star="yaoguang" aria-pressed="false" aria-label="摇光 · 创作者计划，1 项服务，点击展开星图" style="--accent:#8a6ba8;--w:0.00;--x:92%;--y:38%"><span class="cstar__point" aria-hidden="true"><span class="cstar__shadow"></span><span class="cstar__ring"></span><span class="cstar__halo"></span><span class="cstar__dot"></span></span><span class="cstar__label"><span class="cstar__name">摇光</span><span class="cstar__short">创作者计划</span><span class="cstar__track">图</span><span class="cstar__count">1</span></span></button>
+        </div>
+      </div>
       <span class="constellation__axis" aria-hidden="true">北斗 · BIG DIPPER</span>
       <span class="constellation__meta" aria-hidden="true">23 服务 · 7 主星 · 点按展开</span>
     </div>
@@ -1675,6 +1700,6 @@
 }
 </script>
 <div class="share-toast" id="share-toast" role="status" aria-live="polite" hidden></div>
-<script src="./assets/js/app.js?v=202611171900" defer></script>
+<script src="./assets/js/app.js?v=202611191350" defer></script>
 </body>
 </html>

@@ -567,7 +567,7 @@
       btn.classList.remove("is-hot", "is-dim");
     });
 
-    var lines = [].slice.call(board.querySelectorAll(".constellation__edges line"));
+    var lines = [].slice.call(board.querySelectorAll("[data-link]"));
     lines.forEach(function (line) {
       var on = !!star && line.getAttribute("data-link").split(" ").indexOf(star.id) !== -1;
       line.classList.toggle("is-selected", on);
@@ -1242,9 +1242,20 @@
   function bindConstellation() {
     var board = document.querySelector("[data-constellation-board]");
     if (!board) return;
+    // 底色随时段切换：20:00–06:00 深空盘，06:00–08:00 与 18:00–20:00 浅深夜，其余时间浅色盘
+    function syncBoardTone() {
+      var hour = new Date().getHours();
+      board.setAttribute("data-tone",
+        hour >= 20 || hour < 6 ? "night" : hour < 8 || hour >= 18 ? "dusk" : "day");
+    }
+    syncBoardTone();
+    // 首个稳定帧之后再开过渡：夜里打开页面直接是夜色，只有页面常开跨过时间点才渐变
+    window.requestAnimationFrame(function () { board.classList.add("is-tone-settled"); });
+    window.setInterval(syncBoardTone, 60000);
+    document.addEventListener("visibilitychange", syncBoardTone);
     var auxBox = board.querySelector("[data-constellation-aux]");
     var starButtons = [].slice.call(board.querySelectorAll(".cstar"));
-    var lines = [].slice.call(board.querySelectorAll(".constellation__edges line"));
+    var lines = [].slice.call(board.querySelectorAll("[data-link]"));
     var auxButtons = [];
 
     // 桌面指针视差：棋盘四层按不同幅度错位，离开后归位
@@ -1264,11 +1275,17 @@
           parRaf = 0;
           board.style.setProperty("--par-x", parX.toFixed(3));
           board.style.setProperty("--par-y", parY.toFixed(3));
+          // 近星高亮：指针进入星点周围一圈就点亮，离开即熄，扩大可感知的命中范围
+          var near = nearestStarAt(ev.clientX, ev.clientY);
+          starButtons.forEach(function (btn) {
+            btn.classList.toggle("is-near", btn.getAttribute("data-star") === near);
+          });
         });
       });
       board.addEventListener("pointerleave", function () {
         board.style.setProperty("--par-x", "0");
         board.style.setProperty("--par-y", "0");
+        starButtons.forEach(function (btn) { btn.classList.remove("is-near"); });
       });
     }
 
@@ -1309,6 +1326,30 @@
     var AUX_GAP = 32;
     var LABEL_CLEAR = 6;
     var layoutRaf = 0;
+    var starCenters = [];
+    var auxCenters = [];
+    // 主星的“手感半径”：指针落在这个距离内都算指向该星，不必压中圆点；
+    // 实际半径还会按相邻主星距离收紧，避免把邻近星点吞进热区
+    var NEAR_R = 46;
+    var AUX_NEAR = 18;
+
+    function nearestStarAt(clientX, clientY) {
+      if (!starCenters.length) return null;
+      var rect = board.getBoundingClientRect();
+      var x = clientX - rect.left;
+      var y = clientY - rect.top;
+      // 指针压在辅星附近时让位给辅星本身，别被主星热区覆盖
+      for (var a = 0; a < auxCenters.length; a++) {
+        if (Math.hypot(auxCenters[a].x - x, auxCenters[a].y - y) <= AUX_NEAR) return null;
+      }
+      var best = null;
+      var bestRatio = 1;
+      starCenters.forEach(function (pt) {
+        var ratio = Math.hypot(pt.x - x, pt.y - y) / pt.near;
+        if (ratio < bestRatio) { bestRatio = ratio; best = pt.id; }
+      });
+      return best;
+    }
 
     function hitsLabel(pt, label) {
       var nx = Math.max(label.x, Math.min(pt.x, label.x + label.w));
@@ -1321,6 +1362,8 @@
       var parY = board.style.getPropertyValue("--par-y");
       board.style.setProperty("--par-x", "0");
       board.style.setProperty("--par-y", "0");
+      // 冻结 3D 倾斜与巡航漂移，按未变换坐标排辅星，避免倾斜后错位
+      board.classList.add("is-measuring");
       var br = board.getBoundingClientRect();
       var W = br.width;
       var H = br.height;
@@ -1328,10 +1371,21 @@
         var r = btn.getBoundingClientRect();
         return { id: btn.getAttribute("data-star"), x: r.left + r.width / 2 - br.left, y: r.top + r.height / 2 - br.top, r: r.width / 2 };
       });
+      starPts.forEach(function (pt) {
+        var nearest = Infinity;
+        starPts.forEach(function (other) {
+          if (other === pt) return;
+          nearest = Math.min(nearest, Math.hypot(other.x - pt.x, other.y - pt.y));
+        });
+        // 热区最多吃到与邻星间距的 42%，两侧热区不会连成一片
+        pt.near = Math.min(NEAR_R, nearest * 0.42);
+      });
+      starCenters = starPts;
       var labelRects = starButtons.map(function (btn) {
         var r = btn.querySelector(".cstar__label").getBoundingClientRect();
         return { id: btn.getAttribute("data-star"), x: r.left - br.left, y: r.top - br.top, w: r.width, h: r.height };
       });
+      board.classList.remove("is-measuring");
       board.style.setProperty("--par-x", parX || "0");
       board.style.setProperty("--par-y", parY || "0");
       if (!W || !H) return;
@@ -1346,11 +1400,12 @@
         if (!center) return;
         var n = cluster.items.length;
         var base = (cluster.star.auxAngle || 0) * Math.PI / 180;
-        var span = n > 1 ? Math.min(3.4, 1.1 + n * 0.32) : 0;
+        // 大簇（天璇 8 颗）加大张角而不是一路往外撑半径，让各星的辅星都落在相近的圈层
+        var span = n > 1 ? Math.min(3.9, 1.2 + n * 0.36) : 0;
         var step = n > 1 ? span / (n - 1) : 0;
 
         function arcAt(offset) {
-          var R = 40;
+          var R = 58;
           var pts = [];
           var out = 0;
           var ok = false;
@@ -1381,8 +1436,9 @@
           return { pts: pts, out: out, R: R, ok: ok };
         }
 
-        // 贴近主星优先：先比是否满足间距与避让，再比半径，最后才接受偏转
-        var offsets = [0, 0.2, -0.2, 0.42, -0.42, 0.66, -0.66, 0.95, -0.95, 1.3, -1.3, 1.7, -1.7, 2.1, -2.1];
+        // 贴近主星优先：先比是否满足间距与避让，再比半径，最后才接受偏转；
+        // 偏转范围放到整圈，大簇可以整体转到标签背侧，不用靠加大半径躲开
+        var offsets = [0, 0.2, -0.2, 0.42, -0.42, 0.66, -0.66, 0.95, -0.95, 1.3, -1.3, 1.7, -1.7, 2.1, -2.1, 2.5, -2.5, 2.9, -2.9, Math.PI, -Math.PI];
         var chosen = null;
         var best = Infinity;
         offsets.forEach(function (offset) {
@@ -1463,6 +1519,22 @@
         if (!moved) break;
       }
 
+      // 收口：个别被标签推得过远的辅星拉回同一圈层，避免大簇看起来「散得很开」
+      placed.forEach(function (item) {
+        var parentId = item.btn.getAttribute("data-parent");
+        var center = null;
+        starPts.forEach(function (pt) { if (pt.id === parentId) center = pt; });
+        if (!center) return;
+        var dx = item.x - center.x;
+        var dy = item.y - center.y;
+        var d = Math.hypot(dx, dy);
+        if (d > 66 && d > 0.01) {
+          item.x = center.x + dx / d * 66;
+          item.y = center.y + dy / d * 66;
+        }
+      });
+
+      auxCenters = placed.map(function (item) { return { x: item.x, y: item.y }; });
       placed.forEach(function (item) {
         item.btn.style.setProperty("--x", (item.x / W * 100).toFixed(2) + "%");
         item.btn.style.setProperty("--y", (item.y / H * 100).toFixed(2) + "%");
@@ -1516,6 +1588,13 @@
       btn.addEventListener("mouseleave", clearTrace);
       btn.addEventListener("focus", function () { trace(id, null); });
       btn.addEventListener("blur", clearTrace);
+    });
+
+    // 点星点周围的空白也按“就近”选中，不用精确压中圆点
+    board.addEventListener("click", function (ev) {
+      if (ev.target.closest && ev.target.closest(".cstar, .caux")) return;
+      var id = nearestStarAt(ev.clientX, ev.clientY);
+      if (id) setStar(id);
     });
 
     var reset = document.querySelector("[data-constellation-reset]");

@@ -483,13 +483,19 @@ function starButtonOf(s) {
   const hasTrack = !!(s.track && (s.track.stages || []).length);
   const hasMicro = !!(s.micro && (s.micro.nodes || []).length);
   const hasMap = hasTrack || hasMicro;
+  // 服务越多星体越大：天璇（8）明显大于摇光（1），一眼能看出产品线体量
+  const weight = Math.max(0, Math.min(1, (count - 1) / 7)).toFixed(2);
   return '<button class="cstar' + (hasMap ? " cstar--track" : "") +
     " cstar--label-" + esc(s.label || "bottom") + '" type="button" data-star="' + esc(s.id) +
     '" aria-pressed="false"' +
     ' aria-label="' + esc(s.title + "，" + count + " 项服务，" +
       (hasTrack ? "点击展开七星轨" : hasMicro ? "点击展开星图" : "点击筛选")) + '"' +
-    ' style="--accent:' + esc(s.accent || "#4f6ae0") + ";--x:" + s.x + "%;--y:" + s.y + '%">' +
-    '<span class="cstar__point" aria-hidden="true"><span class="cstar__halo"></span><span class="cstar__dot"></span></span>' +
+    ' style="--accent:' + esc(s.accent || "#4f6ae0") + ";--w:" + weight +
+    ";--x:" + s.x + "%;--y:" + s.y + '%">' +
+    '<span class="cstar__point" aria-hidden="true">' +
+      '<span class="cstar__shadow"></span><span class="cstar__ring"></span>' +
+      '<span class="cstar__halo"></span><span class="cstar__dot"></span>' +
+    "</span>" +
     '<span class="cstar__label"><span class="cstar__name">' + esc(s.name) + "</span>" +
       '<span class="cstar__short">' + esc(s.short || "") + "</span>" +
       (hasMap ? '<span class="cstar__track">' + (hasTrack ? "轨" : "图") + "</span>" : "") +
@@ -497,12 +503,20 @@ function starButtonOf(s) {
     "</button>";
 }
 
-function starLinkOf(pair) {
-  const a = starById[pair[0]], b = starById[pair[1]];
-  if (!a || !b) throw new Error("constellation.links 引用了不存在的主星：" + pair.join(" / "));
-  return '<line data-link="' + esc(pair.join(" ")) + '" x1="' + (a.x * 10).toFixed(1) +
-    '" y1="' + (a.y * 3.4).toFixed(1) + '" x2="' + (b.x * 10).toFixed(1) +
-    '" y2="' + (b.y * 3.4).toFixed(1) + '"></line>';
+// 主星连线走轻微弧线，构图更像悬浮的星轨而不是折线
+function starPointOf(star) {
+  return { x: +(star.x * 10).toFixed(1), y: +(star.y * 3.4).toFixed(1) };
+}
+
+function starLinkD(a, b, bend) {
+  const pa = starPointOf(a), pb = starPointOf(b);
+  const dx = pb.x - pa.x, dy = pb.y - pa.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const off = bend * Math.min(18, len * 0.07);
+  const cx = (pa.x + pb.x) / 2 - (dy / len) * off;
+  const cy = (pa.y + pb.y) / 2 + (dx / len) * off;
+  return "M" + pa.x + " " + pa.y + "Q" + cx.toFixed(1) + " " + cy.toFixed(1) +
+    " " + pb.x + " " + pb.y;
 }
 
 // 环节坐标以百分比书写，与主星画布共用 1000 × 340 的视口
@@ -694,6 +708,43 @@ function microBoardOf(star) {
 
   const lines = [];
   const p = "    ";
+
+  // 主星连线：双色渐变 + 一层沿弧线奔跑的流光，表现七星互相牵连
+  const linkDefs = [];
+  const linkPaths = [];
+  (constellation.links || []).forEach((pair, i) => {
+    const starA = starById[pair[0]], starB = starById[pair[1]];
+    if (!starA || !starB) throw new Error("constellation.links 引用了不存在的主星：" + pair.join(" / "));
+    const gid = "clink-grad-" + i;
+    const pa = starPointOf(starA), pb = starPointOf(starB);
+    linkDefs.push('<linearGradient id="' + gid + '" gradientUnits="userSpaceOnUse" x1="' + pa.x +
+      '" y1="' + pa.y + '" x2="' + pb.x + '" y2="' + pb.y + '">' +
+      '<stop offset="0" stop-color="' + esc(starA.accent || "#4f6ae0") + '"></stop>' +
+      '<stop offset="1" stop-color="' + esc(starB.accent || "#4f6ae0") + '"></stop></linearGradient>');
+    linkPaths.push({
+      pair: pair.join(" "),
+      d: starLinkD(starA, starB, i % 2 ? -1 : 1),
+      gid: gid,
+      dur: (6.4 + i * 0.7).toFixed(1),
+      delay: (-i * 1.3).toFixed(1)
+    });
+  });
+
+  // 七芒阵弦：按主星顺序隔一颗相连，低透明度铺成一层阵图底网
+  const arrayChords = [];
+  if (stars.length >= 5) {
+    const seenChord = {};
+    stars.forEach((star, i) => {
+      const next = stars[(i + 2) % stars.length];
+      if (!next || next.id === star.id) return;
+      const key = [star.id, next.id].sort().join(" ");
+      if (seenChord[key]) return;
+      seenChord[key] = true;
+      arrayChords.push('<path class="carray-chord" data-link="' + esc(star.id + " " + next.id) +
+        '" d="' + starLinkD(star, next, i % 2 ? -0.6 : 0.6) + '"></path>');
+    });
+  }
+
   lines.push(p + '<div class="constellation__head">');
   if (constellation.eyebrow) {
     lines.push(p + '  <span class="constellation__eyebrow">' + esc(constellation.eyebrow) + "</span>");
@@ -714,14 +765,31 @@ function microBoardOf(star) {
   lines.push(p + "</div>");
 
   lines.push(p + '<div class="constellation__board" data-constellation-board role="group" aria-label="北斗阵列：点主星在下方展开星图，点辅星直达项目">');
-  lines.push(p + '  <svg class="constellation__edges" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
-  (constellation.links || []).forEach((pair) => lines.push(p + "      " + starLinkOf(pair)));
-  lines.push(p + "  </svg>");
-  // 底色环上的日地月：太阳与地球沿椭圆环公转，月球绕地自转
-  lines.push(p + '  <span class="constellation__orbit" aria-hidden="true">');
-  lines.push(p + '    <i class="corb corb--sun"></i>');
-  lines.push(p + '    <i class="corb corb--earth"><i class="corb__moon"></i></i>');
-  lines.push(p + "  </span>");
+  // 夜色铺底：白天保持浅色盘，入夜由 app.js 切到 data-tone="night"，这层深空底色淡入覆盖
+  lines.push(p + '  <span class="constellation__night" aria-hidden="true"></span>');
+  // 3D 场景：space 负责指针倾斜，plane 负责缓慢巡航漂移；星与连线同处一层，倾斜时不会脱节
+  lines.push(p + '  <div class="constellation__space">');
+  lines.push(p + '    <div class="constellation__plane">');
+  lines.push(p + '      <svg class="constellation__array" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
+  lines.push(p + '        <ellipse class="carray-ring" cx="500" cy="170" rx="474" ry="151"></ellipse>');
+  lines.push(p + '        <ellipse class="carray-ring carray-ring--inner" cx="500" cy="170" rx="352" ry="110"></ellipse>');
+  lines.push(p + '        <ellipse class="carray-sweep" cx="500" cy="170" rx="474" ry="151" pathLength="100"></ellipse>');
+  arrayChords.forEach((chord) => lines.push(p + "        " + chord));
+  lines.push(p + "      </svg>");
+  lines.push(p + '      <svg class="constellation__edges" viewBox="0 0 1000 340" preserveAspectRatio="none" aria-hidden="true" focusable="false">');
+  lines.push(p + '        <defs>' + linkDefs.join("") + "</defs>");
+  linkPaths.forEach((link) => {
+    lines.push(p + '        <path class="clink" data-link="' + esc(link.pair) + '" d="' + link.d + '"></path>');
+    lines.push(p + '        <path class="clink-flow" data-link="' + esc(link.pair) + '" pathLength="100" d="' +
+      link.d + '" style="stroke:url(#' + link.gid + ');--flow-dur:' + link.dur + "s;--flow-delay:" +
+      link.delay + 's"></path>');
+  });
+  lines.push(p + "      </svg>");
+  // 底色上的地月：月亮为夜空主天体，地球作伴星悬在一旁
+  lines.push(p + '      <span class="constellation__orbit" aria-hidden="true">');
+  lines.push(p + '        <i class="corb corb--moon"></i>');
+  lines.push(p + '        <i class="corb corb--earth"></i>');
+  lines.push(p + "      </span>");
   // 颗粒流星：细长亮粒按各自节拍斜落，取代原来整片扫光
   const meteors = [
     [6, 2, 74, 9.4, -1.2, -33], [18, 10, 52, 11.6, -6.4, -29],
@@ -729,12 +797,14 @@ function microBoardOf(star) {
     [56, 2, 82, 8.8, -7.1, -34], [66, 12, 58, 10.8, -0.4, -28],
     [78, 4, 68, 9.8, -5.2, -35], [88, 9, 48, 12.8, -9.6, -30]
   ];
-  lines.push(p + '  <span class="constellation__meteors" aria-hidden="true">');
-  meteors.forEach(([x, y, len, dur, delay, angle]) => lines.push(p + '    <i style="--x:' + x + "%;--y:" + y +
+  lines.push(p + '      <span class="constellation__meteors" aria-hidden="true">');
+  meteors.forEach(([x, y, len, dur, delay, angle]) => lines.push(p + '        <i style="--x:' + x + "%;--y:" + y +
     "%;--len:" + len + "px;--dur:" + dur + "s;--delay:" + delay + "s;--angle:" + angle + 'deg"></i>'));
-  lines.push(p + "  </span>");
-  lines.push(p + '  <div class="constellation__aux" data-constellation-aux></div>');
-  stars.forEach((s) => lines.push(p + "  " + starButtonOf(s)));
+  lines.push(p + "      </span>");
+  lines.push(p + '      <div class="constellation__aux" data-constellation-aux></div>');
+  stars.forEach((s) => lines.push(p + "      " + starButtonOf(s)));
+  lines.push(p + "    </div>");
+  lines.push(p + "  </div>");
   lines.push(p + '  <span class="constellation__axis" aria-hidden="true">北斗 · BIG DIPPER</span>');
   lines.push(p + '  <span class="constellation__meta" aria-hidden="true">' + sites.length + " 服务 · " +
     stars.length + " 主星 · 点按展开</span>");

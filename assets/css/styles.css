@@ -94,7 +94,8 @@ body {
   font-size: 13px; color: var(--text-faint); line-height: 1.1;
   padding-left: 10px; border-left: 1px solid var(--border);
 }
-.header__right { display: flex; align-items: center; gap: 18px; }
+/* 切换 / GitHub / 服务统计作为一个整体：一行放不下时整组换到下一行并贴右 */
+.header__right { display: flex; align-items: center; gap: 18px; flex: none; margin-left: auto; }
 .ghlink {
   display: inline-flex; align-items: center; gap: 7px;
   font-size: 13px; font-weight: 500; color: var(--text-dim);
@@ -140,7 +141,7 @@ body {
 .theme[data-mode="dark"] [data-mode="dark"] { display: block; }
 .theme__menu {
   position: absolute; right: 0; top: calc(100% + 10px); z-index: 70;
-  width: 208px; padding: 6px;
+  width: 158px; padding: 6px;
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 14px; box-shadow: var(--shadow-hover);
   animation: pop-in 0.16s cubic-bezier(0.22, 1, 0.36, 1) backwards;
@@ -1575,6 +1576,10 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 .flow__scrollhint {
   display: none; margin: 4px 0 0; text-align: center;
   font-size: 11px; color: var(--text-faint);
+}
+/* 画布加宽后，这一档开始横向裁切，提前给出滑动提示 */
+@media (max-width: 1160px) {
+  .flow__scrollhint { display: block; }
 }
 
 @keyframes flowDash {

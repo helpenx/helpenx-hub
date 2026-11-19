@@ -490,9 +490,9 @@
 <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
 <link rel="mask-icon" href="./assets/icons/favicon-mask.svg" color="#0a7494" />
-<link rel="preload" href="./assets/css/styles.css?v=202611191315" as="style" />
+<link rel="preload" href="./assets/css/styles.css?v=202611191620" as="style" />
 <link rel="preload" href="./assets/js/app.js?v=202611191346" as="script" />
-<link rel="stylesheet" href="./assets/css/styles.css?v=202611191315" fetchpriority="high" />
+<link rel="stylesheet" href="./assets/css/styles.css?v=202611191620" fetchpriority="high" />
 </head>
 <body>
 <svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
@@ -634,7 +634,7 @@
       <div class="theme__menu" id="theme-menu" data-theme-menu role="menu" aria-label="背景模式" hidden>
         <button class="theme__opt" type="button" role="menuitemradio" aria-checked="true" data-theme-choice="auto">
           <svg class="theme__opt-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor"/></svg>
-          <span class="theme__label">自动<span class="theme__sub">08–20 护眼 · 夜间深色</span></span>
+          <span class="theme__label">自动<span class="theme__sub">20-08 深色</span></span>
           <svg class="theme__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.6 4.4 4.4L19 7.4"/></svg>
         </button>
         <button class="theme__opt" type="button" role="menuitemradio" aria-checked="false" data-theme-choice="normal">
@@ -916,8 +916,8 @@
       </div>
       <div class="flow" data-flow>
         <div class="flow__scroll">
-          <div class="flow__board" data-flow-board role="group" aria-label="短剧数据流：原始创意经 PenPlot、PenShot 变成分镜，分叉出视频与音频；PenGen、PenDub 的产出分别经 PenFix 质检，不合格退回分镜调整提示词重做；PenClip 落轨成初剪后再由 PenFix 终审，合成问题退回 PenClip 重剪，镜头素材问题按镜头退回 PenGen / PenDub 重新生成，通过才输出成片" style="width:980px;height:456px">
-            <svg class="flow__edges" viewBox="0 0 980 456" aria-hidden="true" focusable="false">
+          <div class="flow__board" data-flow-board role="group" aria-label="短剧数据流：原始创意经 PenPlot、PenShot 变成分镜，分叉出视频与音频；PenGen、PenDub 的产出分别经 PenFix 质检，不合格退回分镜调整提示词重做；PenClip 落轨成初剪后再由 PenFix 终审，合成问题退回 PenClip 重剪，镜头素材问题按镜头退回 PenGen / PenDub 重新生成，通过才输出成片" style="width:1058px;height:456px">
+            <svg class="flow__edges" viewBox="0 0 1058 456" aria-hidden="true" focusable="false">
               <defs>
                 <marker id="flow-arrow-flow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" fill="#3f7f96"/></marker>
                 <marker id="flow-arrow-branch" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" fill="#7059b0"/></marker>
@@ -925,90 +925,90 @@
                 <marker id="flow-arrow-gate" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" fill="#a8843c"/></marker>
                 <marker id="flow-arrow-rework" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 8 4 0 8z" fill="#a45757"/></marker>
               </defs>
-              <path class="flow__edge flow__edge--flow" data-kind="flow" data-tool="penplot" d="M98 250H147" marker-end="url(#flow-arrow-flow)"></path>
-              <path class="flow__edge flow__edge--flow" data-kind="flow" data-tool="penshot" d="M245 250H294" marker-end="url(#flow-arrow-flow)"></path>
-              <path class="flow__edge flow__edge--branch" data-kind="branch" data-tool="pengen" d="M392 250C416.5 250 416.5 104 441 104" marker-end="url(#flow-arrow-branch)"></path>
-              <path class="flow__edge flow__edge--branch" data-kind="branch" data-tool="pendub" d="M392 250C416.5 250 416.5 396 441 396" marker-end="url(#flow-arrow-branch)"></path>
-              <path class="flow__edge flow__edge--gate" data-kind="gate" data-tool="penfix" d="M539 104H588" marker-end="url(#flow-arrow-gate)"></path>
-              <path class="flow__edge flow__edge--gate" data-kind="gate" data-tool="penfix" d="M539 396H588" marker-end="url(#flow-arrow-gate)"></path>
-              <path class="flow__edge flow__edge--merge" data-kind="merge" data-tool="penclip" d="M686 104C710.5 104 710.5 250 735 250" marker-end="url(#flow-arrow-merge)"></path>
-              <path class="flow__edge flow__edge--merge" data-kind="merge" data-tool="penclip" d="M686 396C710.5 396 710.5 250 735 250" marker-end="url(#flow-arrow-merge)"></path>
-              <path class="flow__edge flow__edge--gate" data-kind="gate" data-tool="penfix" d="M833 250H882" marker-end="url(#flow-arrow-gate)"></path>
-              <path class="flow__edge flow__edge--rework" data-kind="rework" data-tool="penclip" d="M931 298V340H784V298" marker-end="url(#flow-arrow-rework)"></path>
-              <path class="flow__edge flow__edge--rework" data-kind="rework" data-tool="penfix" d="M637 60V20H343V202" marker-end="url(#flow-arrow-rework)"></path>
-              <path class="flow__edge flow__edge--rework" data-kind="rework" data-tool="penfix" d="M931 202V42H490V60" marker-end="url(#flow-arrow-rework)"></path>
-              <path class="flow__pulse flow__pulse--flow" data-kind="flow" data-tool="penplot" d="M98 250H147" style="--dur:3s;--delay:-0s"></path>
-              <path class="flow__pulse flow__pulse--flow" data-kind="flow" data-tool="penshot" d="M245 250H294" style="--dur:3.18s;--delay:-0.37s"></path>
-              <path class="flow__pulse flow__pulse--branch" data-kind="branch" data-tool="pengen" d="M392 250C416.5 250 416.5 104 441 104" style="--dur:3.36s;--delay:-0.74s"></path>
-              <path class="flow__pulse flow__pulse--branch" data-kind="branch" data-tool="pendub" d="M392 250C416.5 250 416.5 396 441 396" style="--dur:3.54s;--delay:-1.11s"></path>
-              <path class="flow__pulse flow__pulse--gate" data-kind="gate" data-tool="penfix" d="M539 104H588" style="--dur:3.72s;--delay:-1.48s"></path>
-              <path class="flow__pulse flow__pulse--gate" data-kind="gate" data-tool="penfix" d="M539 396H588" style="--dur:3.9s;--delay:-1.85s"></path>
-              <path class="flow__pulse flow__pulse--merge" data-kind="merge" data-tool="penclip" d="M686 104C710.5 104 710.5 250 735 250" style="--dur:4.08s;--delay:-2.22s"></path>
-              <path class="flow__pulse flow__pulse--merge" data-kind="merge" data-tool="penclip" d="M686 396C710.5 396 710.5 250 735 250" style="--dur:4.26s;--delay:-2.59s"></path>
-              <path class="flow__pulse flow__pulse--gate" data-kind="gate" data-tool="penfix" d="M833 250H882" style="--dur:4.44s;--delay:-2.96s"></path>
-              <path class="flow__pulse flow__pulse--rework" data-kind="rework" data-tool="penclip" d="M931 298V340H784V298" style="--dur:4.62s;--delay:-3.33s"></path>
-              <path class="flow__pulse flow__pulse--rework" data-kind="rework" data-tool="penfix" d="M637 60V20H343V202" style="--dur:4.8s;--delay:-3.7s"></path>
-              <path class="flow__pulse flow__pulse--rework" data-kind="rework" data-tool="penfix" d="M931 202V42H490V60" style="--dur:4.98s;--delay:-4.07s"></path>
+              <path class="flow__edge flow__edge--flow" data-kind="flow" data-tool="penplot" d="M98 250H160" marker-end="url(#flow-arrow-flow)"></path>
+              <path class="flow__edge flow__edge--flow" data-kind="flow" data-tool="penshot" d="M258 250H320" marker-end="url(#flow-arrow-flow)"></path>
+              <path class="flow__edge flow__edge--branch" data-kind="branch" data-tool="pengen" d="M418 250C449 250 449 104 480 104" marker-end="url(#flow-arrow-branch)"></path>
+              <path class="flow__edge flow__edge--branch" data-kind="branch" data-tool="pendub" d="M418 250C449 250 449 396 480 396" marker-end="url(#flow-arrow-branch)"></path>
+              <path class="flow__edge flow__edge--gate" data-kind="gate" data-tool="penfix" d="M578 104H640" marker-end="url(#flow-arrow-gate)"></path>
+              <path class="flow__edge flow__edge--gate" data-kind="gate" data-tool="penfix" d="M578 396H640" marker-end="url(#flow-arrow-gate)"></path>
+              <path class="flow__edge flow__edge--merge" data-kind="merge" data-tool="penclip" d="M738 104C769 104 769 250 800 250" marker-end="url(#flow-arrow-merge)"></path>
+              <path class="flow__edge flow__edge--merge" data-kind="merge" data-tool="penclip" d="M738 396C769 396 769 250 800 250" marker-end="url(#flow-arrow-merge)"></path>
+              <path class="flow__edge flow__edge--gate" data-kind="gate" data-tool="penfix" d="M898 250H960" marker-end="url(#flow-arrow-gate)"></path>
+              <path class="flow__edge flow__edge--rework" data-kind="rework" data-tool="penclip" d="M1009 298V340H849V298" marker-end="url(#flow-arrow-rework)"></path>
+              <path class="flow__edge flow__edge--rework" data-kind="rework" data-tool="penfix" d="M689 60V20H369V202" marker-end="url(#flow-arrow-rework)"></path>
+              <path class="flow__edge flow__edge--rework" data-kind="rework" data-tool="penfix" d="M1009 202V42H529V60" marker-end="url(#flow-arrow-rework)"></path>
+              <path class="flow__pulse flow__pulse--flow" data-kind="flow" data-tool="penplot" d="M98 250H160" style="--dur:3s;--delay:-0s"></path>
+              <path class="flow__pulse flow__pulse--flow" data-kind="flow" data-tool="penshot" d="M258 250H320" style="--dur:3.18s;--delay:-0.37s"></path>
+              <path class="flow__pulse flow__pulse--branch" data-kind="branch" data-tool="pengen" d="M418 250C449 250 449 104 480 104" style="--dur:3.36s;--delay:-0.74s"></path>
+              <path class="flow__pulse flow__pulse--branch" data-kind="branch" data-tool="pendub" d="M418 250C449 250 449 396 480 396" style="--dur:3.54s;--delay:-1.11s"></path>
+              <path class="flow__pulse flow__pulse--gate" data-kind="gate" data-tool="penfix" d="M578 104H640" style="--dur:3.72s;--delay:-1.48s"></path>
+              <path class="flow__pulse flow__pulse--gate" data-kind="gate" data-tool="penfix" d="M578 396H640" style="--dur:3.9s;--delay:-1.85s"></path>
+              <path class="flow__pulse flow__pulse--merge" data-kind="merge" data-tool="penclip" d="M738 104C769 104 769 250 800 250" style="--dur:4.08s;--delay:-2.22s"></path>
+              <path class="flow__pulse flow__pulse--merge" data-kind="merge" data-tool="penclip" d="M738 396C769 396 769 250 800 250" style="--dur:4.26s;--delay:-2.59s"></path>
+              <path class="flow__pulse flow__pulse--gate" data-kind="gate" data-tool="penfix" d="M898 250H960" style="--dur:4.44s;--delay:-2.96s"></path>
+              <path class="flow__pulse flow__pulse--rework" data-kind="rework" data-tool="penclip" d="M1009 298V340H849V298" style="--dur:4.62s;--delay:-3.33s"></path>
+              <path class="flow__pulse flow__pulse--rework" data-kind="rework" data-tool="penfix" d="M689 60V20H369V202" style="--dur:4.8s;--delay:-3.7s"></path>
+              <path class="flow__pulse flow__pulse--rework" data-kind="rework" data-tool="penfix" d="M1009 202V42H529V60" style="--dur:4.98s;--delay:-4.07s"></path>
             </svg>
             <div class="flow-node flow-node--input" style="left:0px;top:202px;width:98px;height:96px">
               <span class="flow-node__meta">INPUT · 自然语言</span>
               <span class="flow-node__label">原始创意</span>
               <span class="flow-node__sub">一句台词、一个画面、一个情绪</span>
             </div>
-            <div class="flow-node flow-node--data" style="left:147px;top:202px;width:98px;height:96px">
+            <div class="flow-node flow-node--data" style="left:160px;top:202px;width:98px;height:96px">
               <span class="flow-node__meta">SCRIPT · JSON</span>
               <span class="flow-node__label">结构化剧本</span>
               <span class="flow-node__sub">人物 / 场景 / 对白</span>
               <span class="flow-node__badge" title="环节内部自检自修，必要时人工修正，不占用 PenFix 质检门">↻ 自检 / 人工修正</span>
             </div>
-            <div class="flow-node flow-node--data" style="left:294px;top:202px;width:98px;height:96px">
+            <div class="flow-node flow-node--data" style="left:320px;top:202px;width:98px;height:96px">
               <span class="flow-node__meta">FRAGMENT · JSON</span>
               <span class="flow-node__label">分镜列表</span>
               <span class="flow-node__sub">视觉 Prompt / 音频参数 / 时长</span>
               <span class="flow-node__badge" title="环节内部自检自修，必要时人工修正，不占用 PenFix 质检门">↻ 自检 / 人工修正</span>
             </div>
-            <div class="flow-node flow-node--media" style="left:441px;top:60px;width:98px;height:88px">
+            <div class="flow-node flow-node--media" style="left:480px;top:60px;width:98px;height:88px">
               <span class="flow-node__meta">MEDIA · MP4</span>
               <span class="flow-node__label">视频片段</span>
               <span class="flow-node__sub">逐镜渲染的画面</span>
             </div>
-            <div class="flow-node flow-node--media" style="left:441px;top:352px;width:98px;height:88px">
+            <div class="flow-node flow-node--media" style="left:480px;top:352px;width:98px;height:88px">
               <span class="flow-node__meta">MEDIA · WAV</span>
               <span class="flow-node__label">音频片段</span>
               <span class="flow-node__sub">配音 / 音效 / BGM</span>
             </div>
-            <div class="flow-node flow-node--safe" style="left:588px;top:60px;width:98px;height:88px">
+            <div class="flow-node flow-node--safe" style="left:640px;top:60px;width:98px;height:88px">
               <span class="flow-node__meta">PASS · 视频质检</span>
               <span class="flow-node__label">合格视频</span>
               <span class="flow-node__sub">画面 / 技术达标</span>
             </div>
-            <div class="flow-node flow-node--safe" style="left:588px;top:352px;width:98px;height:88px">
+            <div class="flow-node flow-node--safe" style="left:640px;top:352px;width:98px;height:88px">
               <span class="flow-node__meta">PASS · 音频质检</span>
               <span class="flow-node__label">合格音频</span>
               <span class="flow-node__sub">音画 / 指标达标</span>
             </div>
-            <div class="flow-node flow-node--output" style="left:735px;top:202px;width:98px;height:96px">
+            <div class="flow-node flow-node--output" style="left:800px;top:202px;width:98px;height:96px">
               <span class="flow-node__meta">TIMELINE · JSON</span>
               <span class="flow-node__label">初剪时间线</span>
               <span class="flow-node__sub">视频 / 音频已落轨</span>
             </div>
-            <div class="flow-node flow-node--safe" style="left:882px;top:202px;width:98px;height:96px">
+            <div class="flow-node flow-node--safe" style="left:960px;top:202px;width:98px;height:96px">
               <span class="flow-node__meta">PASS · 终审通过</span>
               <span class="flow-node__label">终审成片</span>
               <span class="flow-node__sub">可发布 / 可交付</span>
             </div>
-            <button class="flow-tool flow-tool--flow" type="button" data-stage="penplot" data-tool="penplot" aria-expanded="false" aria-controls="flow-panel-penplot" aria-label="PenPlot · 剧情创作，点击查看环节详情" title="PenPlot · 剧情创作，点击查看环节详情" style="left:122.5px;top:228px;--tool-dot:#3f7f96"><span class="flow-tool__dot" aria-hidden="true"></span>PenPlot</button>
-            <button class="flow-tool flow-tool--flow" type="button" data-stage="penshot" data-tool="penshot" aria-expanded="false" aria-controls="flow-panel-penshot" aria-label="PenShot · 剧本分镜，点击查看环节详情" title="PenShot · 剧本分镜，点击查看环节详情" style="left:269.5px;top:228px;--tool-dot:#3f7f96"><span class="flow-tool__dot" aria-hidden="true"></span>PenShot</button>
-            <button class="flow-tool flow-tool--branch" type="button" data-stage="pengen" data-tool="pengen" aria-expanded="false" aria-controls="flow-panel-pengen" aria-label="PenGen · 视频生成，点击查看环节详情" title="PenGen · 视频生成，点击查看环节详情" style="left:416.5px;top:177px;--tool-dot:#7059b0"><span class="flow-tool__dot" aria-hidden="true"></span>PenGen</button>
-            <button class="flow-tool flow-tool--branch" type="button" data-stage="pendub" data-tool="pendub" aria-expanded="false" aria-controls="flow-panel-pendub" aria-label="PenDub · 音频同步，点击查看环节详情" title="PenDub · 音频同步，点击查看环节详情" style="left:416.5px;top:323px;--tool-dot:#7059b0"><span class="flow-tool__dot" aria-hidden="true"></span>PenDub</button>
-            <button class="flow-tool flow-tool--gate" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="PenFix · 质量审核，点击查看环节详情" title="PenFix · 质量审核，点击查看环节详情" style="left:563.5px;top:82px;--tool-dot:#a8843c"><span class="flow-tool__dot" aria-hidden="true"></span>PenFix</button>
-            <button class="flow-tool flow-tool--gate" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="PenFix · 质量审核，点击查看环节详情" title="PenFix · 质量审核，点击查看环节详情" style="left:563.5px;top:374px;--tool-dot:#a8843c"><span class="flow-tool__dot" aria-hidden="true"></span>PenFix</button>
-            <button class="flow-tool flow-tool--merge" type="button" data-stage="penclip" data-tool="penclip" aria-expanded="false" aria-controls="flow-panel-penclip" aria-label="PenClip · 视频剪辑，点击查看环节详情" title="PenClip · 视频剪辑，点击查看环节详情" style="left:710.5px;top:177px;--tool-dot:#3f8a63"><span class="flow-tool__dot" aria-hidden="true"></span>PenClip</button>
-            <button class="flow-tool flow-tool--merge" type="button" data-stage="penclip" data-tool="penclip" aria-expanded="false" aria-controls="flow-panel-penclip" aria-label="PenClip · 视频剪辑，点击查看环节详情" title="PenClip · 视频剪辑，点击查看环节详情" style="left:710.5px;top:323px;--tool-dot:#3f8a63"><span class="flow-tool__dot" aria-hidden="true"></span>PenClip</button>
-            <button class="flow-tool flow-tool--gate" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="PenFix · 质量审核，点击查看环节详情" title="PenFix · 质量审核，点击查看环节详情" style="left:857.5px;top:228px;--tool-dot:#a8843c"><span class="flow-tool__dot" aria-hidden="true"></span>PenFix</button>
-            <button class="flow-tool flow-tool--rework" type="button" data-stage="penclip" data-tool="penclip" aria-expanded="false" aria-controls="flow-panel-penclip" aria-label="合成问题 · 回 PenClip · 视频剪辑，点击查看环节详情" title="合成问题 · 回 PenClip · 视频剪辑，点击查看环节详情" style="left:857.5px;top:340px;--tool-dot:#a45757"><span class="flow-tool__dot" aria-hidden="true"></span>合成问题 · 回 PenClip</button>
-            <button class="flow-tool flow-tool--rework" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="Gen/Dub 退回分镜 · 质量审核，点击查看环节详情" title="Gen/Dub 退回分镜 · 质量审核，点击查看环节详情" style="left:490px;top:20px;--tool-dot:#a45757"><span class="flow-tool__dot" aria-hidden="true"></span>Gen/Dub 退回分镜</button>
-            <button class="flow-tool flow-tool--rework" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="素材问题 · 回 Gen/Dub · 质量审核，点击查看环节详情" title="素材问题 · 回 Gen/Dub · 质量审核，点击查看环节详情" style="left:710.5px;top:42px;--tool-dot:#a45757"><span class="flow-tool__dot" aria-hidden="true"></span>素材问题 · 回 Gen/Dub</button>
+            <button class="flow-tool flow-tool--flow" type="button" data-stage="penplot" data-tool="penplot" aria-expanded="false" aria-controls="flow-panel-penplot" aria-label="PenPlot · 剧情创作，点击查看环节详情" title="PenPlot · 剧情创作，点击查看环节详情" style="left:129px;top:228px;--tool-dot:#3f7f96"><span class="flow-tool__dot" aria-hidden="true"></span>PenPlot</button>
+            <button class="flow-tool flow-tool--flow" type="button" data-stage="penshot" data-tool="penshot" aria-expanded="false" aria-controls="flow-panel-penshot" aria-label="PenShot · 剧本分镜，点击查看环节详情" title="PenShot · 剧本分镜，点击查看环节详情" style="left:289px;top:228px;--tool-dot:#3f7f96"><span class="flow-tool__dot" aria-hidden="true"></span>PenShot</button>
+            <button class="flow-tool flow-tool--branch" type="button" data-stage="pengen" data-tool="pengen" aria-expanded="false" aria-controls="flow-panel-pengen" aria-label="PenGen · 视频生成，点击查看环节详情" title="PenGen · 视频生成，点击查看环节详情" style="left:449px;top:177px;--tool-dot:#7059b0"><span class="flow-tool__dot" aria-hidden="true"></span>PenGen</button>
+            <button class="flow-tool flow-tool--branch" type="button" data-stage="pendub" data-tool="pendub" aria-expanded="false" aria-controls="flow-panel-pendub" aria-label="PenDub · 音频同步，点击查看环节详情" title="PenDub · 音频同步，点击查看环节详情" style="left:449px;top:323px;--tool-dot:#7059b0"><span class="flow-tool__dot" aria-hidden="true"></span>PenDub</button>
+            <button class="flow-tool flow-tool--gate" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="PenFix · 质量审核，点击查看环节详情" title="PenFix · 质量审核，点击查看环节详情" style="left:609px;top:82px;--tool-dot:#a8843c"><span class="flow-tool__dot" aria-hidden="true"></span>PenFix</button>
+            <button class="flow-tool flow-tool--gate" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="PenFix · 质量审核，点击查看环节详情" title="PenFix · 质量审核，点击查看环节详情" style="left:609px;top:374px;--tool-dot:#a8843c"><span class="flow-tool__dot" aria-hidden="true"></span>PenFix</button>
+            <button class="flow-tool flow-tool--merge" type="button" data-stage="penclip" data-tool="penclip" aria-expanded="false" aria-controls="flow-panel-penclip" aria-label="PenClip · 视频剪辑，点击查看环节详情" title="PenClip · 视频剪辑，点击查看环节详情" style="left:769px;top:177px;--tool-dot:#3f8a63"><span class="flow-tool__dot" aria-hidden="true"></span>PenClip</button>
+            <button class="flow-tool flow-tool--merge" type="button" data-stage="penclip" data-tool="penclip" aria-expanded="false" aria-controls="flow-panel-penclip" aria-label="PenClip · 视频剪辑，点击查看环节详情" title="PenClip · 视频剪辑，点击查看环节详情" style="left:769px;top:323px;--tool-dot:#3f8a63"><span class="flow-tool__dot" aria-hidden="true"></span>PenClip</button>
+            <button class="flow-tool flow-tool--gate" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="PenFix · 质量审核，点击查看环节详情" title="PenFix · 质量审核，点击查看环节详情" style="left:929px;top:228px;--tool-dot:#a8843c"><span class="flow-tool__dot" aria-hidden="true"></span>PenFix</button>
+            <button class="flow-tool flow-tool--rework" type="button" data-stage="penclip" data-tool="penclip" aria-expanded="false" aria-controls="flow-panel-penclip" aria-label="合成问题 · 回 PenClip · 视频剪辑，点击查看环节详情" title="合成问题 · 回 PenClip · 视频剪辑，点击查看环节详情" style="left:929px;top:340px;--tool-dot:#a45757"><span class="flow-tool__dot" aria-hidden="true"></span>合成问题 · 回 PenClip</button>
+            <button class="flow-tool flow-tool--rework" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="Gen/Dub 退回分镜 · 质量审核，点击查看环节详情" title="Gen/Dub 退回分镜 · 质量审核，点击查看环节详情" style="left:529px;top:20px;--tool-dot:#a45757"><span class="flow-tool__dot" aria-hidden="true"></span>Gen/Dub 退回分镜</button>
+            <button class="flow-tool flow-tool--rework" type="button" data-stage="penfix" data-tool="penfix" aria-expanded="false" aria-controls="flow-panel-penfix" aria-label="素材问题 · 回 Gen/Dub · 质量审核，点击查看环节详情" title="素材问题 · 回 Gen/Dub · 质量审核，点击查看环节详情" style="left:769px;top:42px;--tool-dot:#a45757"><span class="flow-tool__dot" aria-hidden="true"></span>素材问题 · 回 Gen/Dub</button>
           </div>
         </div>
         <p class="flow__scrollhint">← 横向滑动查看完整数据流 →</p>

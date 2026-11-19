@@ -115,7 +115,7 @@ const head = [
   "<link rel=\"alternate\" hreflang=\"x-default\" href=\"" + esc(url) + "\" />",
   "<link rel=\"sitemap\" type=\"application/xml\" href=\"/sitemap.xml\" />",
   "<meta name=\"theme-color\" content=\"#f6f8fb\" />",
-  "<meta name=\"color-scheme\" content=\"light\" />",
+  "<meta name=\"color-scheme\" content=\"light dark\" />",
   "<meta name=\"format-detection\" content=\"telephone=no\" />",
   "<meta name=\"referrer\" content=\"strict-origin-when-cross-origin\" />",
   "<meta name=\"application-name\" content=\"" + esc(brand.name || "") + "\" />"
@@ -848,9 +848,9 @@ function microBoardOf(star) {
   const stageMap = {};
   stages.forEach((s, i) => { stageMap[s.id] = { stage: s, index: i }; });
   const graph = story.graph || {};
-  const NODE_W = 98, MID_H = 96, SIDE_H = 88, GAP = 49;
+  const NODE_W = 98, MID_H = 96, SIDE_H = 88, GAP = 62;
   const LANE_Y = { top: 104, mid: 250, bottom: 396 };
-  const BOARD_W = 980, BOARD_H = 456, REWORK_Y = 20, REWORK_UNDER_Y = 340;
+  const BOARD_H = 456, REWORK_Y = 20, REWORK_UNDER_Y = 340;
   const KIND_COLOR = { flow: "#3f7f96", branch: "#7059b0", gate: "#a8843c", merge: "#3f8a63", rework: "#a45757" };
 
   const boxes = {};
@@ -865,6 +865,8 @@ function microBoardOf(star) {
     boxes[n.id] = box;
     return box;
   });
+  // 画布宽度跟着最右一列走，改列间距时不用再手改画布尺寸
+  const BOARD_W = graphNodes.reduce((m, n) => Math.max(m, n.x + n.w), 0);
 
   function edgeGeometry(edge) {
     const a = boxes[edge.from], b = boxes[edge.to];

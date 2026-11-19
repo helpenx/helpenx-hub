@@ -3014,7 +3014,7 @@ html[data-eyecare="on"] .flow__dock[data-open="true"] {
 }
 html[data-eyecare="on"] .flow__hintdot { box-shadow: 0 0 0 3px rgba(10, 114, 128, 0.15); }
 
-/* ---------- 深色模式：手动切换；与护眼模式互斥，自动模式只在 08–20 点用护眼 ---------- */
+/* ---------- 深色模式：手动切换；与护眼模式互斥，自动模式只在 20–08 点用深色 ---------- */
 html[data-theme="dark"] {
   --bg: #0b1422;
   --surface: #111c2c;

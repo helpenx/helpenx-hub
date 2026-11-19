@@ -19,7 +19,7 @@
 <meta name="color-scheme" content="light dark" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
 <script>
-/* 背景模式：默认自动（08:00–20:00 护眼，20:00–08:00 深色），手动选正常 / 护眼 / 深色会覆盖自动并记住；
+/* 背景模式：默认自动（08:00–20:00 正常，20:00–08:00 深色），手动选正常 / 护眼 / 深色会覆盖自动并记住；
    到 8 点、20 点边界只重算一次，不做轮询 */
 (function () {
   var root = document.documentElement;
@@ -35,7 +35,7 @@
   }
   function autoMode() {
     var hour = new Date().getHours();
-    return hour >= 8 && hour < 20 ? "eye" : "dark";
+    return hour >= 8 && hour < 20 ? "normal" : "dark";
   }
   /* 链路示意图备有正常 / 护眼 / 深色三套配色，切背景时同步换源；data-img-base 记浅色原图 */
   function imgVariant(src, mode) {
@@ -243,7 +243,7 @@
       <div class="theme__menu" id="theme-menu" data-theme-menu role="menu" aria-label="背景模式" hidden>
         <button class="theme__opt" type="button" role="menuitemradio" aria-checked="true" data-theme-choice="auto">
           <svg class="theme__opt-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor"/></svg>
-          <span class="theme__label">自动<span class="theme__sub">08–20 护眼 · 夜间深色</span></span>
+          <span class="theme__label">自动<span class="theme__sub">08–20 正常 · 夜间深色</span></span>
           <svg class="theme__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.6 4.4 4.4L19 7.4"/></svg>
         </button>
         <button class="theme__opt" type="button" role="menuitemradio" aria-checked="false" data-theme-choice="normal">

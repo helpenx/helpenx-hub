@@ -586,7 +586,7 @@
     {
       "id": "break-reminder",
       "name": "Break Reminder 别坐了",
-      "url": "https://remind.helpoke.com",
+      "url": "https://breakly.helpoke.com",
       "category": "tools",
       "status": "iterating",
       "icon": "bell",

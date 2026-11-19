@@ -76,6 +76,17 @@
       : "";
   }
 
+  /* 示意图有正常 / 护眼 / 深色三套 SVG；按当前背景取对应文件，data-img-base 留浅色原图供切换 */
+  function imageSrc(src) {
+    var theme = document.documentElement.getAttribute("data-theme");
+    return theme && theme !== "normal" && /\.svg$/i.test(src)
+      ? src.replace(/\.svg$/i, "-" + theme + ".svg")
+      : src;
+  }
+  function imgThemeAttrs(src) {
+    return ' data-img-base="' + escapeHtml(src) + '"';
+  }
+
   function iconGlyph(site) {
     return site.icon
       ? '<svg class="card__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="#hx-i-' + escapeHtml(site.icon) + '"></use></svg>'
@@ -356,7 +367,8 @@
       "</div>";
 
     var thumb = site.image && site.span === "full"
-      ? '<span class="card__thumb"><img src="' + escapeHtml(site.image) + '" alt="' +
+      ? '<span class="card__thumb"><img src="' + escapeHtml(imageSrc(site.image)) + '"' +
+        imgThemeAttrs(site.image) + ' alt="' +
         escapeHtml(site.imageAlt || site.name + " 示意图") + '"' + imgSize(site) +
         ' loading="lazy" decoding="async"></span>'
       : "";
@@ -392,7 +404,8 @@
 
     var media = hs.image
       ? '<a class="showcase__media" href="' + escapeHtml(hs.url) + '" target="_blank" rel="noopener">' +
-          '<img src="' + escapeHtml(hs.image) + '" alt="' + escapeHtml(hs.name + " 生产链路示意") + '"' +
+          '<img src="' + escapeHtml(imageSrc(hs.image)) + '"' + imgThemeAttrs(hs.image) +
+          ' alt="' + escapeHtml(hs.name + " 生产链路示意") + '"' +
           imgSize(hs) + ' fetchpriority="high" decoding="async">' +
         "</a>"
       : "";
@@ -508,7 +521,7 @@
   }
 
   /* 主星筛选：选中一条产品线，再点同一颗星回到全部 */
-  function scrollToPanel(node) {
+  function scrollToPanel(node, alignTop) {
     if (!node) return;
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.requestAnimationFrame(function () {
@@ -516,9 +529,12 @@
       var headerH = header ? header.getBoundingClientRect().height : 0;
       var rect = node.getBoundingClientRect();
       var docTop = window.scrollY + rect.top;
-      var target = docTop - (window.innerHeight - rect.height) / 2;
+      // 展开的星图靠顶对齐，页眉下滑时已收起，上面只留一点呼吸位
+      var target = alignTop
+        ? docTop - 16
+        : docTop - (window.innerHeight - rect.height) / 2;
       // 居中后若顶端被吸顶页眉盖住，就退到页眉下方
-      target = Math.min(target, docTop - headerH);
+      if (!alignTop) target = Math.min(target, docTop - headerH);
       var max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
       target = Math.max(0, Math.min(target, max));
       window.scrollTo({ top: target, behavior: reduce ? "auto" : "smooth" });
@@ -540,7 +556,7 @@
     renderShowcase();
     renderGrid();
     syncConstellation();
-    if (state.star) scrollToPanel(document.querySelector("[data-constellation-stage]"));
+    if (state.star) scrollToPanel(document.querySelector("[data-constellation-stage]"), true);
     else if (prev) scrollToPanel(document.querySelector("[data-constellation-board]"));
   }
 
@@ -932,12 +948,60 @@
     });
   }
 
-  /* 滚动后给吸顶页眉一条边界，避免搜索面板与内容糊在一起 */
+  /* 滚动后给吸顶页眉一条边界；向下滚一段收起，向上滚一点就恢复 */
   function bindStickyHeader() {
     var header = document.querySelector(".site-header");
-    var onScroll = function () { header.classList.toggle("is-stuck", window.scrollY > 4); };
+    if (!header) return;
+    var lastY = Math.max(0, window.scrollY);
+    var down = 0;
+    var up = 0;
+    var hidden = false;
+    var ticking = false;
+
+    function show() {
+      if (!hidden) return;
+      hidden = false;
+      header.classList.remove("is-hidden");
+    }
+    function hide() {
+      if (hidden) return;
+      hidden = true;
+      header.classList.add("is-hidden");
+    }
+
+    function paint() {
+      ticking = false;
+      var y = Math.max(0, window.scrollY);
+      var delta = y - lastY;
+      lastY = y;
+      header.classList.toggle("is-stuck", y > 4);
+
+      if (delta > 0) { down += delta; up = 0; }
+      else if (delta < 0) { up -= delta; down = 0; }
+
+      var typingInHeader = header.contains(document.activeElement) &&
+        /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+
+      if (y < 88 || typingInHeader) {
+        down = up = 0;
+        show();
+      } else if (hidden) {
+        if (up > 10) { up = 0; show(); }
+      } else if (down > 32 && y > 160) {
+        down = 0;
+        hide();
+      }
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(paint);
+    }
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+    /* 键盘 Tab 进入页眉时不能让它停在视口外 */
+    header.addEventListener("focusin", function () { down = up = 0; show(); });
+    paint();
   }
 
   /* ---------- 滚动观感：进度条、光晕视差、逐段揭示 ---------- */
@@ -1258,17 +1322,37 @@
   function bindConstellation() {
     var board = document.querySelector("[data-constellation-board]");
     if (!board) return;
-    // 底色随时段切换：20:00–06:00 深空盘，06:00–08:00 与 18:00–20:00 浅深夜，其余时间浅色盘
+    // 底色随时段切换：20:00–06:00 深空盘，06:00–08:00 与 18:00–20:00 浅深夜，其余时间浅色盘；
+    // 深色模式固定夜盘，护眼模式固定日盘
     function syncBoardTone() {
+      var theme = document.documentElement.getAttribute("data-theme");
+      if (theme === "dark") { board.setAttribute("data-tone", "night"); return; }
+      if (theme === "eye") { board.setAttribute("data-tone", "day"); return; }
       var hour = new Date().getHours();
       board.setAttribute("data-tone",
         hour >= 20 || hour < 6 ? "night" : hour < 8 || hour >= 18 ? "dusk" : "day");
     }
+    // 只在 6/8/18/20 点边界挂一次性定时器，到点重算再排下一次，不做轮询
+    function scheduleBoardTone() {
+      var now = new Date();
+      var next = null;
+      [6, 8, 18, 20].forEach(function (h) {
+        var t = new Date(now);
+        t.setHours(h, 0, 0, 0);
+        if (t <= now) t.setDate(t.getDate() + 1);
+        if (!next || t < next) next = t;
+      });
+      window.setTimeout(function () {
+        syncBoardTone();
+        scheduleBoardTone();
+      }, next - now + 800);
+    }
     syncBoardTone();
     // 首个稳定帧之后再开过渡：夜里打开页面直接是夜色，只有页面常开跨过时间点才渐变
     window.requestAnimationFrame(function () { board.classList.add("is-tone-settled"); });
-    window.setInterval(syncBoardTone, 60000);
+    scheduleBoardTone();
     document.addEventListener("visibilitychange", syncBoardTone);
+    document.addEventListener("hx:theme", syncBoardTone);
     var auxBox = board.querySelector("[data-constellation-aux]");
     var starButtons = [].slice.call(board.querySelectorAll(".cstar"));
     var lines = [].slice.call(board.querySelectorAll("[data-link]"));
@@ -1277,6 +1361,39 @@
     // 桌面指针视差：棋盘四层按不同幅度错位，离开后归位
     var finePointer = window.matchMedia && window.matchMedia("(min-width: 761px) and (hover: hover) and (pointer: fine)").matches;
     var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // 3D 倾斜层里的原生 :hover / mouseenter 会偶发丢命中，星点高亮忽亮忽灭；
+    // 悬停高亮统一改由指针坐标的就近判定驱动
+    var focusRaf = 0;
+    var lastPointer = null;
+    function syncPointerFocus() {
+      focusRaf = 0;
+      if (!lastPointer) return;
+      var near = nearestStarAt(lastPointer.clientX, lastPointer.clientY);
+      starButtons.forEach(function (btn) {
+        btn.classList.toggle("is-near", btn.getAttribute("data-star") === near);
+      });
+      if (near) { trace(near, null); return; }
+      var aux = nearestAuxAt(lastPointer.clientX, lastPointer.clientY);
+      if (aux) trace(aux.parent, aux.site);
+      else clearTrace();
+    }
+    if (finePointer) {
+      board.addEventListener("pointermove", function (ev) {
+        lastPointer = ev;
+        if (!focusRaf) focusRaf = window.requestAnimationFrame(syncPointerFocus);
+      });
+      board.addEventListener("pointerleave", function () {
+        lastPointer = null;
+        if (focusRaf) { window.cancelAnimationFrame(focusRaf); focusRaf = 0; }
+        starButtons.forEach(function (btn) { btn.classList.remove("is-near"); });
+        clearTrace();
+      });
+      // 滚轮滚动时指针不动，但星位在动，按新位置重算，别让高亮粘在旧星上
+      window.addEventListener("scroll", function () {
+        if (!lastPointer || focusRaf) return;
+        focusRaf = window.requestAnimationFrame(syncPointerFocus);
+      }, { passive: true });
+    }
     if (finePointer && !reduceMotion) {
       board.classList.add("is-parallax");
       var parRaf = 0;
@@ -1291,17 +1408,11 @@
           parRaf = 0;
           board.style.setProperty("--par-x", parX.toFixed(3));
           board.style.setProperty("--par-y", parY.toFixed(3));
-          // 近星高亮：指针进入星点周围一圈就点亮，离开即熄，扩大可感知的命中范围
-          var near = nearestStarAt(ev.clientX, ev.clientY);
-          starButtons.forEach(function (btn) {
-            btn.classList.toggle("is-near", btn.getAttribute("data-star") === near);
-          });
         });
       });
       board.addEventListener("pointerleave", function () {
         board.style.setProperty("--par-x", "0");
         board.style.setProperty("--par-y", "0");
-        starButtons.forEach(function (btn) { btn.classList.remove("is-near"); });
       });
     }
 
@@ -1326,8 +1437,6 @@
           if (site.deployed === false) { setStar(star.id, true); return; }
           window.open(site.url, "_blank", "noopener");
         });
-        btn.addEventListener("mouseenter", function () { trace(star.id, site.id); });
-        btn.addEventListener("mouseleave", clearTrace);
         btn.addEventListener("focus", function () { trace(star.id, site.id); });
         btn.addEventListener("blur", clearTrace);
         auxButtons.push(btn);
@@ -1344,17 +1453,23 @@
     var layoutRaf = 0;
     var starCenters = [];
     var auxCenters = [];
+    var labelRects = [];
     // 主星的“手感半径”：指针落在这个距离内都算指向该星，不必压中圆点；
     // 实际半径还会按相邻主星距离收紧，避免把邻近星点吞进热区
     var NEAR_R = 46;
     var AUX_NEAR = 18;
 
-    function nearestStarAt(clientX, clientY) {
-      if (!starCenters.length) return null;
+    function pointerToBoard(clientX, clientY) {
       var rect = board.getBoundingClientRect();
       var z = pageZoom();
-      var x = (clientX - rect.left) / z;
-      var y = (clientY - rect.top) / z;
+      return { x: (clientX - rect.left) / z, y: (clientY - rect.top) / z };
+    }
+
+    function nearestStarAt(clientX, clientY) {
+      if (!starCenters.length) return null;
+      var pt = pointerToBoard(clientX, clientY);
+      var x = pt.x;
+      var y = pt.y;
       // 指针压在辅星附近时让位给辅星本身，别被主星热区覆盖
       for (var a = 0; a < auxCenters.length; a++) {
         if (Math.hypot(auxCenters[a].x - x, auxCenters[a].y - y) <= AUX_NEAR) return null;
@@ -1364,6 +1479,24 @@
       starCenters.forEach(function (pt) {
         var ratio = Math.hypot(pt.x - x, pt.y - y) / pt.near;
         if (ratio < bestRatio) { bestRatio = ratio; best = pt.id; }
+      });
+      if (best) return best;
+      // 星标文字也是点星的入口，压在标签上同样算指向该星（先判星点，标签不抢邻近星的点按）
+      for (var l = 0; l < labelRects.length; l++) {
+        var lb = labelRects[l];
+        if (x >= lb.x - 4 && x <= lb.x + lb.w + 4 && y >= lb.y - 4 && y <= lb.y + lb.h + 4) return lb.id;
+      }
+      return null;
+    }
+
+    function nearestAuxAt(clientX, clientY) {
+      if (!auxCenters.length) return null;
+      var pt = pointerToBoard(clientX, clientY);
+      var best = null;
+      var bestD = AUX_NEAR;
+      auxCenters.forEach(function (aux) {
+        var d = Math.hypot(aux.x - pt.x, aux.y - pt.y);
+        if (d <= bestD) { bestD = d; best = aux; }
       });
       return best;
     }
@@ -1405,7 +1538,7 @@
         pt.near = Math.min(NEAR_R, nearest * 0.42);
       });
       starCenters = starPts;
-      var labelRects = starButtons.map(function (btn) {
+      labelRects = starButtons.map(function (btn) {
         var r = btn.querySelector(".cstar__label").getBoundingClientRect();
         return {
           id: btn.getAttribute("data-star"),
@@ -1428,8 +1561,33 @@
         if (!center) return;
         var n = cluster.items.length;
         var base = (cluster.star.auxAngle || 0) * Math.PI / 180;
-        // 大簇（天璇 8 颗）加大张角而不是一路往外撑半径，让各星的辅星都落在相近的圈层
+        // 大簇（天璇 8 颗）加大张角，让各星的辅星都落在相近的圈层
         var span = n > 1 ? Math.min(3.9, 1.2 + n * 0.36) : 0;
+        var labelBack = null;
+        if (ownLabel && n > 1) {
+          // 扇面不横穿主星标签：按「标签 + 安全间距」量出挡住的角度区间，收窄扇面并朝向背面
+          var pad = AUX_R + LABEL_CLEAR;
+          var ex = ownLabel.x - pad;
+          var ey = ownLabel.y - pad;
+          var ew = ownLabel.w + pad * 2;
+          var eh = ownLabel.h + pad * 2;
+          var corners = [
+            [ex, ey], [ex + ew, ey], [ex, ey + eh], [ex + ew, ey + eh]
+          ].map(function (c) {
+            var a = Math.atan2(c[1] - center.y, c[0] - center.x);
+            return a < 0 ? a + Math.PI * 2 : a;
+          });
+          var lo = Math.min.apply(null, corners);
+          var hi = Math.max.apply(null, corners);
+          var blocked = hi - lo;
+          var mid = (lo + hi) / 2;
+          if (blocked > Math.PI) {
+            blocked = Math.PI * 2 - blocked;
+            mid += Math.PI;
+          }
+          span = Math.max(0.8, Math.min(span, Math.PI * 2 - blocked - 0.24));
+          labelBack = mid + Math.PI;
+        }
         var step = n > 1 ? span / (n - 1) : 0;
 
         function arcAt(offset) {
@@ -1437,7 +1595,7 @@
           var pts = [];
           var out = 0;
           var ok = false;
-          for (var pass = 0; pass < 16; pass++) {
+          for (var pass = 0; pass < 20; pass++) {
             pts = [];
             for (var i = 0; i < n; i++) {
               var angle = base + offset + (i - (n - 1) / 2) * step;
@@ -1455,18 +1613,37 @@
             out = pts.filter(function (pt) {
               return pt.x < edge || pt.x > W - edge || pt.y < edge || pt.y > H - edge;
             }).length;
-            var crowded = n > 1 && minDist < AUX_GAP + 0.6;
-            var covered = ownLabel && pts.some(function (pt) { return hitsLabel(pt, ownLabel); });
+            // 大簇（天璇 8 颗）被标签挡住小半圈，塞不下 32px 的点击间距；
+            // 取 26px 的折中角距：星点不互相挨着，圈层也不会被撑到远处
+            var crowdLimit = n > 4 ? 26 : AUX_GAP + 0.6;
+            var crowded = n > 1 && minDist < crowdLimit;
+            var covered = pts.some(function (pt) {
+              if (labelRects.some(function (label) { return hitsLabel(pt, label); })) return true;
+              if (starPts.some(function (s) {
+                return Math.hypot(s.x - pt.x, s.y - pt.y) < s.r + AUX_R + 8;
+              })) return true;
+              return placed.some(function (item) {
+                return Math.hypot(item.x - pt.x, item.y - pt.y) < AUX_GAP;
+              });
+            });
             ok = !crowded && !covered;
-            if (ok || R >= 96) break;
-            R *= crowded ? Math.min(1.6, AUX_GAP / Math.max(minDist, 1)) : 1.05;
+            if (ok || R >= 104) break;
+            // 扩圈目标要越过 crowded 的判定线，否则会在阈值附近反复抖动
+            R *= crowded ? Math.min(1.6, (crowdLimit + 0.8) / Math.max(minDist, 1)) : 1.05;
           }
           return { pts: pts, out: out, R: R, ok: ok };
         }
 
         // 贴近主星优先：先比是否满足间距与避让，再比半径，最后才接受偏转；
-        // 偏转范围放到整圈，大簇可以整体转到标签背侧，不用靠加大半径躲开
-        var offsets = [0, 0.2, -0.2, 0.42, -0.42, 0.66, -0.66, 0.95, -0.95, 1.3, -1.3, 1.7, -1.7, 2.1, -2.1, 2.5, -2.5, 2.9, -2.9, Math.PI, -Math.PI];
+        // 标签背侧的朝向排在最前，避免扇面反复横穿标签后被迫撑大
+        var offsets = [];
+        if (labelBack !== null) {
+          var back = labelBack - base;
+          [0, 0.16, -0.16, 0.32, -0.32, 0.5, -0.5].forEach(function (d) { offsets.push(back + d); });
+        }
+        [0, 0.2, -0.2, 0.42, -0.42, 0.66, -0.66, 0.95, -0.95, 1.3, -1.3, 1.7, -1.7, 2.1, -2.1, 2.5, -2.5, 2.9, -2.9, Math.PI, -Math.PI].forEach(function (o) {
+          offsets.push(o);
+        });
         var chosen = null;
         var best = Infinity;
         offsets.forEach(function (offset) {
@@ -1477,6 +1654,7 @@
             chosen = arc;
           }
         });
+        cluster.chosen = chosen;
         cluster.items.forEach(function (item, i) {
           item.x = chosen.pts[i].x;
           item.y = chosen.pts[i].y;
@@ -1547,22 +1725,36 @@
         if (!moved) break;
       }
 
-      // 收口：个别被标签推得过远的辅星拉回同一圈层，避免大簇看起来「散得很开」
-      placed.forEach(function (item) {
-        var parentId = item.btn.getAttribute("data-parent");
-        var center = null;
-        starPts.forEach(function (pt) { if (pt.id === parentId) center = pt; });
-        if (!center) return;
-        var dx = item.x - center.x;
-        var dy = item.y - center.y;
-        var d = Math.hypot(dx, dy);
-        if (d > 66 && d > 0.01) {
-          item.x = center.x + dx / d * 66;
-          item.y = center.y + dy / d * 66;
-        }
+      // 规则化：排布合格的簇吸回统一圈层，避免松弛把个别辅星推得忽远忽近
+      clusters.forEach(function (cluster) {
+        var arc = cluster.chosen;
+        if (!arc || !arc.ok || arc.pts.length !== cluster.items.length) return;
+        var clear = arc.pts.every(function (pt, i) {
+          if (pt.x < edge || pt.x > W - edge || pt.y < edge || pt.y > H - edge) return false;
+          if (labelRects.some(function (label) { return hitsLabel(pt, label); })) return false;
+          if (starPts.some(function (s) {
+            return Math.hypot(s.x - pt.x, s.y - pt.y) < s.r + AUX_R + 6;
+          })) return false;
+          var self = cluster.items[i];
+          return !placed.some(function (other) {
+            return other !== self && other.btn.getAttribute("data-parent") !== cluster.star.id &&
+              Math.hypot(other.x - pt.x, other.y - pt.y) < AUX_GAP - 3;
+          });
+        });
+        if (!clear) return;
+        cluster.items.forEach(function (item, i) {
+          item.x = arc.pts[i].x;
+          item.y = arc.pts[i].y;
+        });
       });
 
-      auxCenters = placed.map(function (item) { return { x: item.x, y: item.y }; });
+      auxCenters = placed.map(function (item) {
+        return {
+          x: item.x, y: item.y,
+          parent: item.btn.getAttribute("data-parent"),
+          site: item.btn.getAttribute("data-site")
+        };
+      });
       placed.forEach(function (item) {
         item.btn.style.setProperty("--x", (item.x / W * 100).toFixed(2) + "%");
         item.btn.style.setProperty("--y", (item.y / H * 100).toFixed(2) + "%");
@@ -1612,8 +1804,6 @@
     starButtons.forEach(function (btn) {
       var id = btn.getAttribute("data-star");
       btn.addEventListener("click", function () { setStar(id); });
-      btn.addEventListener("mouseenter", function () { trace(id, null); });
-      btn.addEventListener("mouseleave", clearTrace);
       btn.addEventListener("focus", function () { trace(id, null); });
       btn.addEventListener("blur", clearTrace);
     });
@@ -1646,7 +1836,9 @@
     el("year").textContent = new Date().getFullYear();
 
     var live = sites.filter(function (s) { return s.deployed !== false; }).length;
-    el("header-stat").textContent = live + " / " + sites.length + " 服务";
+    var stat = el("header-stat");
+    stat.textContent = live + " / " + sites.length;
+    stat.title = live + " / " + sites.length + " 项服务已上线";
 
     if (brand.github) el("github-link").href = brand.github;
   }

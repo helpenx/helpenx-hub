@@ -4,6 +4,55 @@
 
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* 吸顶页眉：向下滚一段收起，向上滚一点恢复，回到顶部或聚焦时始终可见 */
+  var header = document.querySelector(".site-header");
+  if (header) {
+    var lastY = Math.max(0, window.scrollY);
+    var down = 0;
+    var up = 0;
+    var hidden = false;
+    var ticking = false;
+
+    var setHidden = function (next) {
+      if (hidden === next) return;
+      hidden = next;
+      header.classList.toggle("is-hidden", next);
+    };
+
+    var paintHeader = function () {
+      ticking = false;
+      var y = Math.max(0, window.scrollY);
+      var delta = y - lastY;
+      lastY = y;
+      header.classList.toggle("is-stuck", y > 4);
+
+      if (delta > 0) { down += delta; up = 0; }
+      else if (delta < 0) { up -= delta; down = 0; }
+
+      var typingInHeader = header.contains(document.activeElement) &&
+        /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+
+      if (y < 88 || typingInHeader) {
+        down = up = 0;
+        setHidden(false);
+      } else if (hidden) {
+        if (up > 10) { up = 0; setHidden(false); }
+      } else if (down > 32 && y > 160) {
+        down = 0;
+        setHidden(true);
+      }
+    };
+    var onHeaderScroll = function () {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(paintHeader);
+    };
+
+    window.addEventListener("scroll", onHeaderScroll, { passive: true });
+    header.addEventListener("focusin", function () { down = up = 0; setHidden(false); });
+    paintHeader();
+  }
+
   /* 悬停任一节点，亮出它和相邻节点、相关连线，其余淡出 */
   var board = document.querySelector(".arch-board");
   if (board) {

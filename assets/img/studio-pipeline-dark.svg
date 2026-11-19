@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 460" width="680" height="460" role="img" aria-labelledby="t d">
+  <title id="t">HelpEnx Studio 短剧 AI 生产链路示意</title>
+  <desc id="d">从剧本、分镜、角色 / 场景 / 模型等数字资产，到关键帧、视频片段与配音剪辑时间线的流程示意图。</desc>
+  <defs>
+    <linearGradient id="link" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#45b8d8"/>
+      <stop offset="100%" stop-color="#9c8cec"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#45b8d8" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#9c8cec" stop-opacity="0.10"/>
+    </linearGradient>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0v28" fill="none" stroke="#9fb4cc" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="680" height="460" fill="#0d1a2b"/>
+  <rect width="680" height="460" fill="url(#grid)"/>
+  <ellipse cx="340" cy="70" rx="300" ry="120" fill="url(#glow)"/>
+
+  <g font-family="ui-monospace, Consolas, monospace" font-size="10" fill="#93a7bf" letter-spacing="0.06em">
+    <!-- 1. 剧本 -->
+    <g filter="url(#soft)">
+      <rect x="24" y="52" width="140" height="118" rx="12" fill="#162236" stroke="rgba(150,178,214,0.16)"/>
+    </g>
+    <rect x="40" y="70" width="72" height="7" rx="3.5" fill="#45b8d8" opacity="0.55"/>
+    <rect x="40" y="88" width="108" height="5" rx="2.5" fill="#9fb4cc" opacity="0.14"/>
+    <rect x="40" y="100" width="94" height="5" rx="2.5" fill="#9fb4cc" opacity="0.14"/>
+    <rect x="40" y="112" width="104" height="5" rx="2.5" fill="#9fb4cc" opacity="0.14"/>
+    <rect x="40" y="130" width="60" height="5" rx="2.5" fill="#9fb4cc" opacity="0.10"/>
+    <rect x="40" y="142" width="82" height="5" rx="2.5" fill="#9fb4cc" opacity="0.10"/>
+    <text x="24" y="42">SCRIPT</text>
+
+    <!-- 2. 分镜网格 -->
+    <g filter="url(#soft)">
+      <rect x="196" y="52" width="196" height="118" rx="12" fill="#162236" stroke="rgba(150,178,214,0.16)"/>
+    </g>
+    <g fill="none" stroke="#9fb4cc" stroke-opacity="0.14">
+      <rect x="210" y="70" width="52" height="42" rx="6"/>
+      <rect x="270" y="70" width="52" height="42" rx="6"/>
+      <rect x="330" y="70" width="48" height="42" rx="6"/>
+      <rect x="210" y="120" width="52" height="42" rx="6"/>
+      <rect x="270" y="120" width="52" height="42" rx="6"/>
+      <rect x="330" y="120" width="48" height="42" rx="6"/>
+    </g>
+    <g fill="#9c8cec" opacity="0.30">
+      <circle cx="236" cy="91" r="7"/>
+      <circle cx="296" cy="141" r="7"/>
+    </g>
+    <g stroke="#45b8d8" stroke-width="1.6" fill="none" opacity="0.75" stroke-linecap="round">
+      <path d="M282 84h18m-6-6l6 6-6 6"/>
+      <path d="M344 150h20m-6-6l6 6-6 6"/>
+    </g>
+    <text x="196" y="42">STORYBOARD</text>
+
+    <!-- 3. 数字资产：角色 / 场景 / 模型 -->
+    <g filter="url(#soft)">
+      <rect x="424" y="52" width="132" height="118" rx="12" fill="#162236" stroke="rgba(150,178,214,0.16)"/>
+    </g>
+    <g>
+      <circle cx="448" cy="82" r="13" fill="#45b8d8" opacity="0.18" stroke="#45b8d8" stroke-opacity="0.45"/>
+      <circle cx="448" cy="116" r="13" fill="#9c8cec" opacity="0.16" stroke="#9c8cec" stroke-opacity="0.42"/>
+      <rect x="470" y="74" width="68" height="6" rx="3" fill="#9fb4cc" opacity="0.16"/>
+      <rect x="470" y="88" width="46" height="5" rx="2.5" fill="#9fb4cc" opacity="0.10"/>
+      <rect x="470" y="108" width="60" height="6" rx="3" fill="#9fb4cc" opacity="0.16"/>
+      <rect x="470" y="122" width="40" height="5" rx="2.5" fill="#9fb4cc" opacity="0.10"/>
+      <rect x="438" y="142" width="104" height="18" rx="6" fill="#45b8d8" opacity="0.10" stroke="#45b8d8" stroke-opacity="0.30"/>
+      <path d="M448 156l10-9 8 7 9-8 12 10" fill="none" stroke="#45b8d8" stroke-opacity="0.55" stroke-width="1.4"/>
+    </g>
+    <text x="424" y="42">DIGITAL ASSETS</text>
+
+    <!-- 连接线：剧本 → 分镜 → 资产 -->
+    <g stroke="url(#link)" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <path d="M164 111h24"/>
+      <path d="M392 111h24"/>
+      <path d="M490 170v22"/>
+    </g>
+    <g fill="url(#link)">
+      <path d="M188 111l-8-5v10z" transform="rotate(180 184 111)"/>
+      <path d="M416 111l-8-5v10z" transform="rotate(180 412 111)"/>
+      <path d="M490 194l-5-8h10z"/>
+    </g>
+
+    <!-- 4. 关键帧 / 视频片段 -->
+    <g filter="url(#soft)">
+      <rect x="24" y="212" width="368" height="104" rx="12" fill="#162236" stroke="rgba(150,178,214,0.16)"/>
+    </g>
+    <g>
+      <rect x="38" y="236" width="66" height="46" rx="6" fill="#45b8d8" opacity="0.13"/>
+      <rect x="110" y="236" width="66" height="46" rx="6" fill="#45b8d8" opacity="0.20"/>
+      <rect x="182" y="236" width="66" height="46" rx="6" fill="#9c8cec" opacity="0.16"/>
+      <rect x="254" y="236" width="66" height="46" rx="6" fill="#9c8cec" opacity="0.22"/>
+      <rect x="326" y="236" width="52" height="46" rx="6" fill="#9fb4cc" opacity="0.07"/>
+    </g>
+    <g fill="#e8f0fa" opacity="0.9">
+      <path d="M64 252l12 7-12 7z"/>
+      <path d="M136 252l12 7-12 7z"/>
+    </g>
+    <g fill="#9fb4cc" opacity="0.16">
+      <rect x="38" y="228" width="3" height="4" rx="1"/><rect x="50" y="228" width="3" height="4" rx="1"/>
+      <rect x="62" y="228" width="3" height="4" rx="1"/><rect x="74" y="228" width="3" height="4" rx="1"/>
+      <rect x="38" y="290" width="3" height="4" rx="1"/><rect x="50" y="290" width="3" height="4" rx="1"/>
+      <rect x="62" y="290" width="3" height="4" rx="1"/><rect x="74" y="290" width="3" height="4" rx="1"/>
+    </g>
+    <text x="24" y="202">KEYFRAMES &amp; CLIPS</text>
+
+    <!-- 5. 配音与剪辑时间线 -->
+    <g filter="url(#soft)">
+      <rect x="412" y="212" width="244" height="104" rx="12" fill="#162236" stroke="rgba(150,178,214,0.16)"/>
+    </g>
+    <g stroke="#45b8d8" stroke-linecap="round" opacity="0.75">
+      <path d="M428 252v14M436 246v26M444 254v10M452 242v34M460 250v18M468 256v6M476 244v30M484 252v14M492 248v22M500 256v6M508 246v26M516 252v14M524 258v4M532 244v30M540 252v14M548 250v18M556 256v6M564 248v22M572 254v10M580 250v18M588 256v6M596 246v26M604 252v14M612 254v10M620 248v22M628 256v6M636 250v18M644 254v10"/>
+    </g>
+    <rect x="428" y="278" width="120" height="10" rx="5" fill="#9c8cec" opacity="0.20"/>
+    <rect x="556" y="278" width="82" height="10" rx="5" fill="#9c8cec" opacity="0.13"/>
+    <rect x="428" y="230" width="212" height="6" rx="3" fill="#9fb4cc" opacity="0.08"/>
+    <circle cx="512" cy="233" r="5" fill="#45b8d8"/>
+    <text x="412" y="202">AUDIO &amp; EDIT</text>
+
+    <g stroke="url(#link)" stroke-width="1.8" fill="none" stroke-linecap="round">
+      <path d="M392 264h14"/>
+    </g>
+    <path d="M406 264l-8-5v10z" transform="rotate(180 402 264)" fill="url(#link)"/>
+
+    <!-- 6. 质检与返工回路 -->
+    <g stroke="#d8a94f" stroke-width="1.6" fill="none" stroke-dasharray="5 5" opacity="0.7">
+      <path d="M656 264h12v-96h-40"/>
+    </g>
+    <path d="M628 168l7-5v10z" fill="#d8a94f" opacity="0.7"/>
+    <circle cx="668" cy="216" r="12" fill="#d8a94f" opacity="0.12" stroke="#d8a94f" stroke-opacity="0.45"/>
+    <path d="M663 216l3 4 6-8" fill="none" stroke="#d8a94f" stroke-width="1.8" stroke-linecap="round"/>
+
+    <!-- 底部输出条 -->
+    <g filter="url(#soft)">
+      <rect x="24" y="344" width="632" height="72" rx="12" fill="#162236" stroke="rgba(150,178,214,0.16)"/>
+    </g>
+    <rect x="40" y="362" width="150" height="36" rx="8" fill="url(#glow)" stroke="#45b8d8" stroke-opacity="0.35"/>
+    <path d="M56 380h18m-6-6l6 6-6 6" fill="none" stroke="#45b8d8" stroke-width="1.6" stroke-linecap="round"/>
+    <rect x="86" y="372" width="86" height="6" rx="3" fill="#9fb4cc" opacity="0.16"/>
+    <rect x="86" y="384" width="60" height="5" rx="2.5" fill="#9fb4cc" opacity="0.10"/>
+    <g fill="#9fb4cc" opacity="0.10">
+      <rect x="210" y="372" width="120" height="6" rx="3"/>
+      <rect x="346" y="372" width="88" height="6" rx="3"/>
+      <rect x="452" y="372" width="140" height="6" rx="3"/>
+      <rect x="210" y="386" width="72" height="5" rx="2.5"/>
+      <rect x="300" y="386" width="110" height="5" rx="2.5"/>
+      <rect x="428" y="386" width="64" height="5" rx="2.5"/>
+    </g>
+    <g fill="#45b8d8" opacity="0.55">
+      <circle cx="600" cy="380" r="4"/>
+      <circle cx="616" cy="380" r="4"/>
+      <circle cx="632" cy="380" r="4"/>
+    </g>
+    <text x="24" y="334">DELIVERY</text>
+  </g>
+</svg>

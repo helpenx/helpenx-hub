@@ -16,8 +16,136 @@
 <link rel="alternate" hreflang="x-default" href="https://helpenx.com/architecture.html" />
 <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 <meta name="theme-color" content="#f6f8fb" />
-<meta name="color-scheme" content="light" />
+<meta name="color-scheme" content="light dark" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
+<script>
+/* 背景模式：默认自动（08:00–20:00 护眼，20:00–08:00 深色），手动选正常 / 护眼 / 深色会覆盖自动并记住；
+   到 8 点、20 点边界只重算一次，不做轮询 */
+(function () {
+  var root = document.documentElement;
+  var KEY = "hx-bg";
+  var meta = document.querySelector('meta[name="theme-color"]');
+  var LABEL = { normal: "正常", eye: "护眼", dark: "深色" };
+  var current = { mode: "normal", source: "auto" };
+  function saved() {
+    try {
+      var v = localStorage.getItem(KEY);
+      return v === "normal" || v === "eye" || v === "dark" ? v : null;
+    } catch (e) { return null; }
+  }
+  function autoMode() {
+    var hour = new Date().getHours();
+    return hour >= 8 && hour < 20 ? "eye" : "dark";
+  }
+  /* 链路示意图备有正常 / 护眼 / 深色三套配色，切背景时同步换源；data-img-base 记浅色原图 */
+  function imgVariant(src, mode) {
+    return mode === "normal" || !/\.svg$/i.test(src) ? src : src.replace(/\.svg$/i, "-" + mode + ".svg");
+  }
+  function syncImages() {
+    var mode = root.getAttribute("data-theme") || "normal";
+    var nodes = document.querySelectorAll('img[src*="assets/img/"]');
+    for (var i = 0; i < nodes.length; i++) {
+      var img = nodes[i];
+      var base = img.getAttribute("data-img-base");
+      if (!base) {
+        if (!/\.svg$/i.test(img.getAttribute("src") || "")) continue;
+        base = img.getAttribute("src");
+        img.setAttribute("data-img-base", base);
+      }
+      var next = imgVariant(base, mode);
+      if (img.getAttribute("src") !== next) img.setAttribute("src", next);
+    }
+  }
+  function apply(mode, source) {
+    current.mode = mode;
+    current.source = source;
+    root.setAttribute("data-theme", mode);
+    if (mode === "eye") root.setAttribute("data-eyecare", "on");
+    else root.removeAttribute("data-eyecare");
+    root.style.colorScheme = mode === "dark" ? "dark" : "light";
+    if (meta) meta.setAttribute("content",
+      mode === "eye" ? "#f6f1e7" : mode === "dark" ? "#0b1422" : "#f6f8fb");
+    syncImages();
+    var box = document.querySelector("[data-theme-switch]");
+    if (!box) return;
+    box.setAttribute("data-mode", mode);
+    var btn = box.querySelector("[data-theme-btn]");
+    if (btn) btn.setAttribute("aria-label",
+      "切换背景模式，当前" + (source === "auto" ? "自动 · " : "") + LABEL[mode]);
+    [].slice.call(box.querySelectorAll("[data-theme-choice]")).forEach(function (opt) {
+      var choice = opt.getAttribute("data-theme-choice");
+      var on = choice === "auto" ? source === "auto" : source === "manual" && choice === mode;
+      opt.setAttribute("aria-checked", on ? "true" : "false");
+    });
+  }
+  function resolve() {
+    var pick = saved();
+    apply(pick || autoMode(), pick ? "manual" : "auto");
+    document.dispatchEvent(new CustomEvent("hx:theme", { detail: current }));
+  }
+  function schedule() {
+    var now = new Date();
+    var next = null;
+    [8, 20].forEach(function (h) {
+      var t = new Date(now);
+      t.setHours(h, 0, 0, 0);
+      if (t <= now) t.setDate(t.getDate() + 1);
+      if (!next || t < next) next = t;
+    });
+    window.setTimeout(function () { resolve(); schedule(); }, next - now + 800);
+  }
+  function bind() {
+    var box = document.querySelector("[data-theme-switch]");
+    if (!box) return;
+    var btn = box.querySelector("[data-theme-btn]");
+    var menu = box.querySelector("[data-theme-menu]");
+    var opts = [].slice.call(box.querySelectorAll("[data-theme-choice]"));
+    function close(focus) {
+      if (menu.hidden) return;
+      menu.hidden = true;
+      btn.setAttribute("aria-expanded", "false");
+      if (focus) btn.focus();
+    }
+    btn.addEventListener("click", function () {
+      if (menu.hidden) {
+        menu.hidden = false;
+        btn.setAttribute("aria-expanded", "true");
+      } else close(false);
+    });
+    opts.forEach(function (opt, i) {
+      opt.addEventListener("click", function () {
+        var choice = opt.getAttribute("data-theme-choice");
+        try {
+          if (choice === "auto") localStorage.removeItem(KEY);
+          else localStorage.setItem(KEY, choice);
+        } catch (e) {}
+        resolve();
+        close(true);
+      });
+      opt.addEventListener("keydown", function (ev) {
+        if (ev.key !== "ArrowDown" && ev.key !== "ArrowUp") return;
+        ev.preventDefault();
+        var step = ev.key === "ArrowDown" ? 1 : -1;
+        opts[(i + step + opts.length) % opts.length].focus();
+      });
+    });
+    document.addEventListener("click", function (ev) { if (!box.contains(ev.target)) close(false); });
+    document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") close(true); });
+    box.addEventListener("focusout", function (ev) {
+      if (!box.contains(ev.relatedTarget)) close(false);
+    });
+    resolve();
+  }
+  resolve();
+  schedule();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bind);
+  else bind();
+  window.addEventListener("storage", function (ev) { if (ev.key === KEY) resolve(); });
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") resolve();
+  });
+})();
+</script>
 <meta property="og:type" content="article" />
 <meta property="og:site_name" content="HelpenX Hub · 星阵万象" />
 <meta property="og:title" content="星阵视界 Studio · 系统架构" />
@@ -40,9 +168,9 @@
 <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32x32.png" />
 <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16x16.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
-<link rel="preload" href="./assets/css/styles.css?v=202611191530" as="style" />
-<link rel="preload" href="./assets/js/architecture.js?v=202611171810" as="script" />
-<link rel="stylesheet" href="./assets/css/styles.css?v=202611191530" fetchpriority="high" />
+<link rel="preload" href="./assets/css/styles.css?v=202611191315" as="style" />
+<link rel="preload" href="./assets/js/architecture.js?v=202611191040" as="script" />
+<link rel="stylesheet" href="./assets/css/styles.css?v=202611191315" fetchpriority="high" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -104,6 +232,37 @@
     <span class="brand__sub">星阵万象</span>
   </a>
   <div class="header__right">
+    <div class="theme" data-theme-switch data-mode="auto">
+      <button class="theme__btn" type="button" data-theme-btn aria-haspopup="true" aria-expanded="false"
+        aria-controls="theme-menu" aria-label="切换背景模式">
+        <svg class="theme__glyph" data-mode="auto" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor"/></svg>
+        <svg class="theme__glyph" data-mode="normal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7"/></svg>
+        <svg class="theme__glyph" data-mode="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.6 12S6.1 5.6 12 5.6 21.4 12 21.4 12 17.9 18.4 12 18.4 2.6 12 2.6 12Z"/><circle cx="12" cy="12" r="2.9"/></svg>
+        <svg class="theme__glyph" data-mode="dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.4A8.2 8.2 0 0 1 9.6 4a8.2 8.2 0 1 0 10.4 10.4Z"/></svg>
+      </button>
+      <div class="theme__menu" id="theme-menu" data-theme-menu role="menu" aria-label="背景模式" hidden>
+        <button class="theme__opt" type="button" role="menuitemradio" aria-checked="true" data-theme-choice="auto">
+          <svg class="theme__opt-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor"/></svg>
+          <span class="theme__label">自动<span class="theme__sub">08–20 护眼 · 夜间深色</span></span>
+          <svg class="theme__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.6 4.4 4.4L19 7.4"/></svg>
+        </button>
+        <button class="theme__opt" type="button" role="menuitemradio" aria-checked="false" data-theme-choice="normal">
+          <svg class="theme__opt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7"/></svg>
+          <span class="theme__label">正常<span class="theme__sub">明亮白底</span></span>
+          <svg class="theme__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.6 4.4 4.4L19 7.4"/></svg>
+        </button>
+        <button class="theme__opt" type="button" role="menuitemradio" aria-checked="false" data-theme-choice="eye">
+          <svg class="theme__opt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.6 12S6.1 5.6 12 5.6 21.4 12 21.4 12 17.9 18.4 12 18.4 2.6 12 2.6 12Z"/><circle cx="12" cy="12" r="2.9"/></svg>
+          <span class="theme__label">护眼<span class="theme__sub">暖色纸面</span></span>
+          <svg class="theme__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.6 4.4 4.4L19 7.4"/></svg>
+        </button>
+        <button class="theme__opt" type="button" role="menuitemradio" aria-checked="false" data-theme-choice="dark">
+          <svg class="theme__opt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.4A8.2 8.2 0 0 1 9.6 4a8.2 8.2 0 1 0 10.4 10.4Z"/></svg>
+          <span class="theme__label">深色<span class="theme__sub">深空夜底</span></span>
+          <svg class="theme__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.6 4.4 4.4L19 7.4"/></svg>
+        </button>
+      </div>
+    </div>
     <a class="ghlink" href="https://github.com/neopen" target="_blank" rel="noopener me" aria-label="HelpenX 的 GitHub">
       <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
       <span>GitHub</span>
@@ -531,6 +690,6 @@
   </div>
 </footer>
 
-<script src="./assets/js/architecture.js?v=202611171810" defer></script>
+<script src="./assets/js/architecture.js?v=202611191040" defer></script>
 </body>
 </html>
